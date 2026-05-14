@@ -4,6 +4,114 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-white text-gray-900 font-sans;
+    font-weight: 300;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-400 text-brand-800 px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-brand-600 text-brand-600 px-6 py-3 rounded-lg font-bold hover:bg-brand-50 transition-all duration-200;
+  }
+
+  .btn-light {
+    @apply border-2 border-white text-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-brand-700 transition-all duration-200;
+  }
+
+  .section-heading {
+    @apply text-4xl font-bold text-brand-800 mb-4;
+  }
+
+  .max-container {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+}
+
+@keyframes navLinkHover {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.nav-link {
+  position: relative;
+  transition: all 0.2s ease-out;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.nav-logo {
+  transition: all 0.3s ease-out;
+}
+
+.nav-logo:hover {
+  transform: scale(1.05);
+}
+
+.nav-button {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-button:active {
+  transform: translateY(0);
+}
+
+.theme-toggle {
+  transition: all 0.3s ease-out;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) rotate(180deg);
+}
+
+.hamburger-menu {
+  transition: all 0.3s ease-out;
+}
+
+.hamburger-menu:hover {
+  transform: scale(1.1);
 }
