@@ -63,7 +63,7 @@ export function LandingPage() {
         <ProjectsSection colors={colors} />
         <MembersSection colors={colors} />
         <TerminalSection colors={colors} />
-        <CTASection colors={colors} dark={dark} />
+        <CTASection dark={dark} />
       </main>
 
       {/* Footer */}

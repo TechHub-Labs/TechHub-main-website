@@ -42,10 +42,7 @@ export function MembersSection({ colors }: MembersSectionProps) {
             className="text-4xl sm:text-6xl font-bold mb-4 tracking-tight"
             style={{ color: colors.text }}
           >
-            <span className="underline decoration-[3px] decoration-[#A3D045] underline-offset-[10px]">
-              Mee
-            </span>
-            t the Builders
+            <span className="section-title-underline">Meet the Builders</span>
           </h2>
           <p
             className="text-base sm:text-lg leading-relaxed mt-4 max-w-xl"

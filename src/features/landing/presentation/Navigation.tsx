@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom"; // Add this import
 import { ThemeColors } from "../domain/types";
 
 interface NavigationProps {
@@ -14,17 +15,18 @@ interface NavigationProps {
 }
 
 const navLinks = [
-  "Home",
-  "About",
-  "Members",
-  "Projects",
-  "Executive Council",
-  "Play",
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Members", path: "/#members" },
+  { name: "Projects", path: "/#projects" },
+  { name: "Executive Council", path: "/#council" },
+  { name: "Play", path: "/#play" },
 ];
 
 export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const location = useLocation(); // Initialize useLocation here
 
   return (
     <nav
@@ -37,105 +39,66 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
         transition: "background 0.3s, border-color 0.3s",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <span
-            className="text-3xl font-bold tracking-tight whitespace-nowrap"
-            style={{ color: colors.text }}
-          >
-            NH TechHub
-          </span>
-
-          {/* Nav Links - Hidden on mobile */}
-          <div className="hidden md:flex gap-6 lg:gap-8 items-center">
-            {navLinks.map((link) => (
-              <div key={link} className="relative">
-                <span
-                  className="text-lg font-light cursor-pointer transition-opacity hover:opacity-70"
-                  style={{
-                    color: colors.text,
-                  }}
-                  onMouseEnter={() => setHoveredLink(link)}
-                  onMouseLeave={() => setHoveredLink(null)}
-                >
-                  {link}
-                </span>
-                {link === "Home" && (
-                  <div
-                    className="absolute left-0 right-0 h-1 mt-1"
-                    style={{
-                      background: colors.btnPrimary,
-                    }}
-                  />
-                )}
-                {link !== "Home" && (
-                  <div
-                    className="absolute left-0 right-0 h-1 mt-1"
-                    style={{
-                      background: colors.btnPrimary,
-                      animation: hoveredLink === link 
-                        ? 'slideInFromLeft 0.3s ease-out forwards' 
-                        : 'slideOutToLeft 0.3s ease-out forwards',
-                      opacity: hoveredLink === link ? 1 : 0,
-                    }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Right Actions */}
-          <div className="flex gap-2 sm:gap-3 items-center">
-            <button
-              onClick={onThemeToggle}
-              className="px-3 sm:px-4 py-2 rounded-full border-2 text-sm font-semibold transition-all hover:scale-105"
-              style={{
-                borderColor: colors.textMuted,
-                color: colors.textMuted,
-              }}
-            >
-              {dark ? "☀" : "☾"}
-            </button>
-            <button
-              className="hidden sm:block px-8 py-3 rounded text-base font-medium transition-all hover:opacity-90"
-              style={{
-                background: colors.btnPrimary,
-                color: colors.btnPrimaryText,
-              }}
-            >
-              Join Us
-            </button>
-
-            {/* Hamburger Menu - Visible on mobile */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1">
+          <div className="flex items-center justify-between h-16">
+            <Link
+              to="/"
+              className="text-2xl font-bold tracking-tight"
               style={{ color: colors.text }}
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              NH TechHub
+            </Link>
+
+            <div className="hidden md:flex gap-6 lg:gap-8 items-center">
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <div key={link.name} className="relative">
+                    <Link
+                      to={link.path}
+                      className="text-[15px] font-medium transition-opacity hover:opacity-70"
+                      style={{ color: colors.text }}
+                      onMouseEnter={() => setHoveredLink(link.name)}
+                      onMouseLeave={() => setHoveredLink(null)}
+                    >
+                      {link.name}
+                    </Link>
+                    {isActive && (
+                      <div
+                        className="absolute left-0 right-0 h-0.5 mt-1"
+                        style={{ background: "#A3D045" }}
+                      />
+                    )}
+                    {!isActive && hoveredLink === link.name && (
+                      <div
+                        className="absolute left-0 right-0 h-0.5 mt-1 animate-pulse"
+                        style={{ background: colors.textSubtle }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={onThemeToggle}
+                className="px-3 py-1.5 rounded-full border text-sm transition-all hover:scale-105"
+                style={{
+                  borderColor: colors.textSubtle,
+                  color: colors.textSubtle,
+                }}
               >
-                {mobileMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
-            </button>
+                {dark ? "☀" : "☾"}
+              </button>
+              <button
+                className="hidden sm:block px-6 py-2.5 rounded font-bold text-sm transition-transform hover:scale-[1.02]"
+                style={{ background: "#A3D045", color: "#0F1524" }}
+              >
+                Join Us
+              </button>
+            </div>
           </div>
         </div>
 
@@ -148,13 +111,13 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
             <div className="flex flex-col gap-3 pt-4">
               {navLinks.map((link) => (
                 <span
-                  key={link}
+                  key={link.name}
                   className="text-sm font-light cursor-pointer transition-opacity hover:opacity-70 block py-2"
                   style={{
                     color: colors.text,
                   }}
                 >
-                  {link}
+                  {link.name}
                 </span>
               ))}
               <button

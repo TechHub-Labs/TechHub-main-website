@@ -31,13 +31,13 @@ export function HeroSection({ colors }: HeroProps) {
       } else {
         timeout = setTimeout(() => {
           setIsDeleting(true);
-        }, 1000);
+        }, 400);
       }
     } else {
       if (typed.length > 0) {
         timeout = setTimeout(() => {
           setTyped(typed.slice(0, -1));
-        }, 30);
+        }, 10);
       } else {
         setIsDeleting(false);
         setCurrentWordIndex((prev) => (prev + 1) % words.length);
@@ -48,7 +48,7 @@ export function HeroSection({ colors }: HeroProps) {
   }, [typed, isDeleting, currentWordIndex, words]);
 
   useEffect(() => {
-    const iv = setInterval(() => setCursorVisible((v) => !v), 530);
+    const iv = setInterval(() => setCursorVisible((v) => !v), 500);
     return () => clearInterval(iv);
   }, []);
 

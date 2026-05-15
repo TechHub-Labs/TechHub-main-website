@@ -44,10 +44,7 @@ export function ProjectsSection({ colors }: ProjectsSectionProps) {
               className="text-4xl sm:text-6xl font-bold mb-4 tracking-tight"
               style={{ color: colors.text }}
             >
-              <span className="underline decoration-[3px] decoration-[#A3D045] underline-offset-[10px]">
-                Wha
-              </span>
-                t We're Building
+              <span className="section-title-underline">What We're Building</span>
             </h2>
             <p
               className="text-base sm:text-lg leading-relaxed max-w-xl mt-4 font-normal"

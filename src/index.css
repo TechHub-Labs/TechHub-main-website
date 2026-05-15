@@ -70,6 +70,79 @@
   }
 }
 
+@keyframes underlineSlideIn {
+  from {
+    width: 0;
+    transform-origin: left;
+  }
+  to {
+    width: 100%;
+    transform-origin: left;
+  }
+}
+
+.section-title-underline {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.section-title-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  height: 3px;
+  width: 60px;
+  background-color: #A3D045;
+  transition: width 0.4s ease-out;
+}
+
+.section-title-underline:hover::after {
+  width: 100%;
+}
+
+@keyframes underlineSlideOut {
+  from {
+    width: 100%;
+    transform-origin: left;
+  }
+  to {
+    width: 0;
+    transform-origin: left;
+  }
+}
+
+@keyframes titleUnderlineExpand {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.section-title-with-underline {
+  @apply relative inline-block;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title-with-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  height: 3px;
+  width: 60px;
+  background-color: #A3D045;
+  transition: width 0.4s ease-out;
+}
+
+.section-title-with-underline:hover::after {
+  width: 100%;
+}
+
 .nav-link {
   position: relative;
   transition: all 0.2s ease-out;

@@ -65,10 +65,7 @@ export function TerminalSection({ colors }: TerminalSectionProps) {
             className="text-4xl sm:text-6xl font-semibold mb-4 tracking-tight"
             style={{ color: colors.text }}
           >
-            <span className="underline decoration-[3px] decoration-[#A3D045] underline-offset-[10px]">
-              Test
-            </span>{" "}
-            Your Speed
+            <span className="section-title-underline">Test Your Speed</span>
           </h2>
           <p
             className="text-base sm:text-lg leading-relaxed max-w-xl"
