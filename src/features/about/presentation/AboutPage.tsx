@@ -4,6 +4,7 @@ import { AboutHero } from './AboutHero';
 import { TheProblem } from './TheProblem';
 import { TheSolution } from './TheSolution';
 import { Trajectory } from './Trajectory';
+import { MoreThanCommunity } from './MoreThanCommunity';
 import { ValuesAndCulture } from './ValuesAndCulture';
 
 // Shared Components
@@ -24,15 +25,23 @@ export function AboutPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <WebsiteBackground isDark={dark} bgColor={colors.bg} />
-      
+
       <Navigation colors={colors} dark={dark} onThemeToggle={() => setDark(!dark)} />
-      
+
       <main className="flex-1 w-full">
         <PageMargin>
           <AboutHero colors={colors} />
+        </PageMargin>
+
+        {/* TheProblem bleeds full-width (handles its own negative margins) */}
+        <PageMargin>
           <TheProblem colors={colors} />
+        </PageMargin>
+
+        <PageMargin>
           <TheSolution colors={colors} />
           <Trajectory colors={colors} />
+          <MoreThanCommunity colors={colors} />
           <ValuesAndCulture colors={colors} dark={dark} />
           <CTASection dark={dark} colors={colors} />
         </PageMargin>

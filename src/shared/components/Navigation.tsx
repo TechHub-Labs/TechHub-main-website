@@ -92,6 +92,20 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
               >
                 {dark ? "☀" : "☾"}
               </button>
+
+              {/* Mobile hamburger */}
+              <button
+                className="md:hidden p-2 rounded border transition-all hover:scale-[1.03]"
+                style={{
+                  borderColor: colors.textSubtle,
+                  color: colors.textSubtle,
+                }}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                onClick={() => setMobileMenuOpen((v) => !v)}
+              >
+                {mobileMenuOpen ? "✕" : "☰"}
+              </button>
+
               <button
                 className="hidden sm:block px-6 py-2.5 rounded font-bold text-sm transition-transform hover:scale-[1.02]"
                 style={{ background: "#A3D045", color: "#0F1524" }}
