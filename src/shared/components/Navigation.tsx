@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom"; // Add this import
-import { ThemeColors } from "../domain/types";
+import { ThemeColors } from "../../features/landing/domain/types";
 
 interface NavigationProps {
   colors: ThemeColors;

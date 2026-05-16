@@ -5,7 +5,7 @@
  */
 
 import { InstagramLogoIcon, LinkedInLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-import { ThemeColors } from '../domain/types';
+import { ThemeColors } from '../../features/landing/domain/types';
 
 interface FooterProps {
   colors: ThemeColors;

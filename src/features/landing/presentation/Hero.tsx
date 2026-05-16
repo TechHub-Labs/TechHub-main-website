@@ -66,8 +66,7 @@ export function HeroSection({ colors }: HeroProps) {
 
   return (
     <section
-      className="relative pt-3 overflow-hidden flex items-center min-h-[calc(100vh-80px)]"
-      style={{ background: colors.bgHero }}
+      className="relative pt-3 overflow-hidden flex items-center min-h-[calc(100vh-80px)]" 
     >
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
