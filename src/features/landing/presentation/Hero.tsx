@@ -52,8 +52,8 @@ export function HeroSection({ colors }: HeroProps) {
     return () => clearInterval(iv);
   }, []);
 
-  const topLeftCardBg = isDark ? '#1b3233' : '#eaf2e8';
-  const normalCardBg = isDark ? '#1e2870' : '#eef2fc';
+  const topLeftCardBg = isDark ? '#14363E' : '#EEF4EC';
+  const normalCardBg = isDark ? '#18286A' : '#EEF2FE';
 
   // Placeholder avatars for the "Active members" card
   const avatars = [

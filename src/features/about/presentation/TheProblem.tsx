@@ -48,7 +48,7 @@ export function TheProblem({ colors: _colors }: { colors: ThemeColors }) {
   return (
     <section
       ref={sectionRef}
-      className="bg-[#0F1524] text-white py-20 sm:py-28 px-6 sm:px-10 lg:px-16 -mx-4 lg:-mx-[99px]"
+      className="bg-[#0F1524] text-white py-20 sm:py-28 px-4 lg:left-0 -mx-4 lg:-mx-[99px]"
     >
       <div className="max-w-4xl mx-auto">
 
@@ -57,7 +57,6 @@ export function TheProblem({ colors: _colors }: { colors: ThemeColors }) {
           className="mb-10"
           style={{
             opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(20px)',
             transition: 'opacity 0.6s ease, transform 0.6s ease',
           }}
         >
@@ -91,7 +90,6 @@ export function TheProblem({ colors: _colors }: { colors: ThemeColors }) {
                 className="flex items-center gap-4"
                 style={{
                   opacity: itemsVisible[i] ? 1 : 0,
-                  transform: itemsVisible[i] ? 'translateX(0)' : 'translateX(-20px)',
                   transition: 'opacity 0.5s ease, transform 0.5s ease',
                 }}
               >

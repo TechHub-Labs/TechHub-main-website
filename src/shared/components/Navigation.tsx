@@ -5,7 +5,7 @@
  */
 
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Add this import
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeColors } from "../../features/landing/domain/types";
 
 interface NavigationProps {
@@ -17,16 +17,17 @@ interface NavigationProps {
 const navLinks = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
-  { name: "Members", path: "/#members" },
-  { name: "Projects", path: "/#projects" },
-  { name: "Executive Council", path: "/#council" },
-  { name: "Play", path: "/#play" },
+  { name: "Members", path: "/members" },
+  { name: "Projects", path: "/projects" },
+  { name: "Executive Council", path: "/executives" },
+  { name: "Play", path: "/play" },
 ];
 
 export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-  const location = useLocation(); // Initialize useLocation here
+  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <nav
@@ -107,6 +108,7 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
               </button>
 
               <button
+                onClick={() => navigate('/join')}
                 className="hidden sm:block px-6 py-2.5 rounded font-bold text-sm transition-transform hover:scale-[1.02]"
                 style={{ background: "#A3D045", color: "#0F1524" }}
               >
@@ -134,7 +136,8 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
                   {link.name}
                 </span>
               ))}
-              <button
+              <button 
+                onClick={() => navigate('/join')} 
                 className="w-full px-4 py-2 rounded text-sm font-medium transition-all hover:opacity-90 mt-2"
                 style={{
                   background: colors.btnPrimary,

@@ -20,6 +20,7 @@ export function WebsiteBackground({ isDark = false, bgColor }: WebsiteBackground
         background-size: 17px 16px !important;
         background-attachment: fixed !important;
         transition: background-color 0.3s ease;
+        z-index: 10;
       }
     `}</style>
   );

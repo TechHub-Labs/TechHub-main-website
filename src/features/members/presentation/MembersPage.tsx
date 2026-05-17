@@ -517,7 +517,7 @@ export function MembersPage() {
 
           {/* ── FILTER TABS ── */}
           <div
-            className="flex flex-wrap gap-2 sm:gap-3 mb-10"
+            className="flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center"
             style={{
               opacity: headerVisible ? 1 : 0,
               transition: 'opacity 0.6s ease 0.2s',

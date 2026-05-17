@@ -31,14 +31,7 @@ export function AboutPage() {
       <main className="flex-1 w-full">
         <PageMargin>
           <AboutHero colors={colors} />
-        </PageMargin>
-
-        {/* TheProblem bleeds full-width (handles its own negative margins) */}
-        <PageMargin>
           <TheProblem colors={colors} />
-        </PageMargin>
-
-        <PageMargin>
           <TheSolution colors={colors} />
           <Trajectory colors={colors} />
           <MoreThanCommunity colors={colors} />
