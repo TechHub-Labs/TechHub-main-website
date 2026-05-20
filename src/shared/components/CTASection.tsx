@@ -11,7 +11,7 @@ interface CTASectionProps {
   colors?: ThemeColors;
 }
 
-export function CTASection({ dark, colors }: CTASectionProps) {
+export function CTASection({ dark }: CTASectionProps) {
   const cardBg = dark ? '#ffffff' : '#1e2870';
   const textColor = dark ? '#0d1340' : '#ffffff';
   const textMuted = dark ? 'rgba(13,19,64,0.7)' : 'rgba(255,255,255,0.7)';

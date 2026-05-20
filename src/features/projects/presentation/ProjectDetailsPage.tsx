@@ -27,7 +27,6 @@ const activeBuilders = [
 
 export function ProjectDetailsPage() {
   const { dark, setDark, colors } = useTheme();
-  const isDark = dark;
   const { id } = useParams<{ id: string }>();
   const project = allProjects.find(p => p.id === id) || allProjects[0];
   const [visible, setVisible] = useState(false);
@@ -42,7 +41,7 @@ export function ProjectDetailsPage() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <WebsiteBackground isDark={dark} bgColor={colors.bg} />
+      <WebsiteBackground isDark={dark} bgColhor={colors.bg} />
       <Navigation colors={colors} dark={dark} onThemeToggle={() => setDark(!dark)} />
       <main className="flex-1 w-full">
         <PageMargin>
