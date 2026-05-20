@@ -3,7 +3,8 @@
  * * Showcases team members with their roles and quotes.
  */
 
-import { Builder, ThemeColors } from '../domain/types';
+import { Link } from "react-router-dom";
+import { Builder, ThemeColors } from "../domain/types";
 
 interface MembersSectionProps {
   colors: ThemeColors;
@@ -79,10 +80,7 @@ export function MembersSection({ colors }: MembersSectionProps) {
               >
                 {member.role}
               </p>
-              <p
-                className="text-sm italic px-2"
-                style={{ color: colors.text }}
-              >
+              <p className="text-sm italic px-2" style={{ color: colors.text }}>
                 {member.quote}
               </p>
             </div>
@@ -91,16 +89,18 @@ export function MembersSection({ colors }: MembersSectionProps) {
 
         {/* View All Button */}
         <div className="text-center mt-8">
-          <button
-            className="px-6 py-2.5 rounded border text-sm sm:text-base font-medium transition-all duration-300 hover:scale-105 hover:shadow-md hover:-translate-y-1 active:scale-95 inline-flex items-center gap-2"
-            style={{
-              background: 'transparent',
-              color: colors.text,
-              borderColor: colors.text,
-            }}
-          >
-            View All Members &rarr;
-          </button>
+          <Link to="/members">
+            <button
+              className="px-6 py-2.5 rounded border text-sm sm:text-base font-medium transition-all duration-300 hover:scale-105 hover:shadow-md hover:-translate-y-1 active:scale-95 inline-flex items-center gap-2"
+              style={{
+                background: "transparent",
+                color: colors.text,
+                borderColor: colors.text,
+              }}
+            >
+              View All Members &rarr;
+            </button>
+          </Link>
         </div>
       </div>
     </section>

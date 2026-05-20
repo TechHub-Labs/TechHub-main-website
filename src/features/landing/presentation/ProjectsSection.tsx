@@ -3,7 +3,8 @@
  * * Showcases featured projects with status badges and tags.
  */
 
-import { Project, ThemeColors } from '../domain/types';
+import { Link } from "react-router-dom";
+import { Project, ThemeColors } from "../domain/types";
 
 interface ProjectsSectionProps {
   colors: ThemeColors;
@@ -44,21 +45,26 @@ export function ProjectsSection({ colors }: ProjectsSectionProps) {
               className="text-4xl sm:text-6xl font-bold mb-4 tracking-tight"
               style={{ color: colors.text }}
             >
-              <span className="section-title-underline">What We're Building</span>
+              <span className="section-title-underline">
+                What We're Building
+              </span>
             </h2>
             <p
               className="text-base sm:text-lg leading-relaxed max-w-xl mt-4 font-normal"
               style={{ color: colors.text }}
             >
-              Real products shipped by our ecosystem. Take a look at the <br /> platforms and tools our community has built and pushed live.
+              Real products shipped by our ecosystem. Take a look at the <br />{" "}
+              platforms and tools our community has built and pushed live.
             </p>
           </div>
-          <span
-            className="text-sm sm:text-lg font-normal cursor-pointer whitespace-nowrap mt-2 transition-all duration-300 flex items-center gap-1 hover:translate-x-1 hover:opacity-100"
-            style={{ color: colors.text }}
-          >
-            View All Projects &rarr;
-          </span>
+          <Link to="/projects" className="w-max self-start">
+            <span
+              className="text-sm sm:text-lg font-normal cursor-pointer whitespace-nowrap mt-2 transition-all duration-300 flex items-center gap-1 hover:translate-x-1 hover:opacity-100"
+              style={{ color: colors.text }}
+            >
+              View All Projects &rarr;
+            </span>
+          </Link>
         </div>
 
         {/* Projects Grid */}

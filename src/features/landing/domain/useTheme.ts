@@ -55,13 +55,13 @@ export function useTheme() {
       statusPaused: "#ef4444",
       statusInDev: "#3B5BDB",
       statusUpcoming: "#f59e0b",
-      statusLive: "#22c55e", // <-- Added
+      statusLive: "#22c55e",
       divider: "rgba(255,255,255,0.05)"
     } : {
       // --- LIGHT MODE PALETTE ---
       bg: "#f4f5fa",
       bgCard: "#ffffff",
-      bgCardHover: "#f0f2ff",
+      bgCardHover: "#14363E",
       bgHero: "#f4f5fa",
       nav: "#ffffff",
       navBorder: "rgba(13,19,64,0.05)",
@@ -89,7 +89,7 @@ export function useTheme() {
       statusPaused: "#ef4444",
       statusInDev: "#3B5BDB",
       statusUpcoming: "#f59e0b",
-      statusLive: "#22c55e", // <-- Added
+      statusLive: "#22c55e",
       divider: "rgba(13,19,64,0.05)"
     };
   }, [dark]);

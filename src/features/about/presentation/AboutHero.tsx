@@ -7,7 +7,6 @@ import { ThemeColors } from "../../landing/domain/types";
 
 export function AboutHero({ colors }: { colors: ThemeColors }) {
   const isDark = colors.bg === "#0d1340";
-  const topLeftCardBg = isDark ? colors.teal : "#EEF4EC";
   const normalCardBg = isDark ? colors.bgCardHover : colors.bgCard;
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -27,7 +26,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
   }, []);
 
   return (
-    <section ref={heroRef} className="py-10 lg:py-12 relative z-10">
+    <section ref={heroRef} className="relative pt-3 overflow-hidden flex items-center min-h-[calc(100vh-80px)]">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
           {/* LEFT */}
@@ -60,18 +59,18 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               onMouseEnter={() => setHovered('a')}
               onMouseLeave={() => setHovered(null)}
               className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm transition-colors"
-              style={{ background: hovered === 'a' ? colors.teal : topLeftCardBg, color: hovered === 'a' ? colors.tealText : undefined }}
+              style={{ background: hovered === 'a' ? colors.teal : normalCardBg, color: hovered === 'a' ? colors.tealText : undefined }}
             >
               <div className="mt-8">
                 <div
                   className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
-                  style={{ color: colors.text }}
+                  style={{ color: hovered === 'a' ? colors.tealText : colors.text }}
                 >
                   1.8M
                 </div>
                 <div
                   className="text-xs sm:text-sm font-medium"
-                  style={{ color: colors.text }}
+                  style={{ color: hovered === 'a' ? colors.tealText : colors.text }}
                 >
                   tertiary students study tech without guidance.
                 </div>
@@ -87,13 +86,13 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
             >
               <div
                 className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
-                style={{ color: colors.text }}
+                style={{ color: hovered === 'b' ? colors.tealText : colors.text }}
               >
                 &lt;10%
               </div>
               <div
                 className="text-xs sm:text-sm font-medium"
-                style={{ color: colors.text }}
+                style={{ color: hovered === 'b' ? colors.tealText : colors.text }}
               >
                 of campus tech projects ever reach a launch.
               </div>
@@ -109,13 +108,13 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
             >
               <div
                 className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
-                style={{ color: colors.text }}
+                style={{ color: hovered === 'c' ? colors.tealText : colors.text }}
               >
                 1 in 5
               </div>
               <div
                 className="text-xs sm:text-sm font-medium"
-                style={{ color: colors.text }}
+                style={{ color: hovered === 'c' ? colors.tealText : colors.text }}
               >
                 Junior devs have experience shipping production-level code.
               </div>
@@ -130,13 +129,13 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
             >
               <div
                 className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
-                style={{ color: colors.text }}
+                style={{ color: hovered === 'd' ? colors.tealText : colors.text }}
               >
                 70%
               </div>
               <div
                 className="text-xs sm:text-sm font-medium"
-                style={{ color: colors.text }}
+                style={{ color: hovered === 'd' ? colors.tealText : colors.text }}
               >
                 of university tech talent will never work in a cross-functional
                 team before graduating.

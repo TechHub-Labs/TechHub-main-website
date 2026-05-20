@@ -26,9 +26,9 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
     const currentWord = words[currentWordIndex];
     let timeout: ReturnType<typeof setTimeout>;
 
-    const typeSpeed = 100; // moderate typing
-    const deleteSpeed = 50; // moderate deleting
-    const pauseBetween = 800;
+    const typeSpeed = 100;
+    const deleteSpeed = 50;
+    const pauseBetween = 500;
 
     if (!isDeleting) {
       if (typed.length < currentWord.length) {
@@ -59,7 +59,6 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
     return () => clearInterval(iv);
   }, []);
 
-  const topLeftCardBg = isDark ? colors.teal : colors.bgCard;
   const normalCardBg = isDark ? colors.bgCardHover : colors.bgCard;
 
   // Placeholder avatars for the "Active members" card
@@ -144,7 +143,7 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
               onMouseEnter={() => setHoveredCard('members')}
               onMouseLeave={() => setHoveredCard(null)}
               className={`row-span-3 rounded-sm p-6 sm:p-8 flex flex-col justify-between transition-transform hover:scale-[1.02] cursor-default shadow-sm`}
-              style={{ background: hoveredCard === 'members' ? colors.teal : topLeftCardBg, color: hoveredCard === 'members' ? colors.tealText : colors.text }}
+              style={{ background: hoveredCard === 'members' ? colors.teal : normalCardBg, color: hoveredCard === 'members' ? colors.tealText : colors.text }}
             >
               <div className="flex -space-x-3">
                 {avatars.map((src, i) => (
@@ -153,15 +152,15 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
                     src={src}
                     alt={`Member ${i+1}`}
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] object-cover"
-                      style={{ borderColor: hoveredCard === 'members' ? colors.teal : topLeftCardBg }}
+                      style={{ borderColor: hoveredCard === 'members' ? colors.teal : normalCardBg }}
                   />
                 ))}
               </div>
               <div className="mt-8">
-                <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight" style={{ color: colors.text }}>
+                <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight" style={{ color: hoveredCard === 'members' ? colors.tealText : colors.text }}>
                   250+
                 </div>
-                <div className="text-sm sm:text-base font-medium" style={{ color: colors.text }}>
+                <div className="text-sm sm:text-base font-medium" style={{ color: hoveredCard === 'members' ? colors.tealText : colors.text }}>
                   Active members
                 </div>
               </div>
@@ -174,10 +173,10 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
               className={`row-span-2 rounded-sm p-6 sm:p-8 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm`}
               style={{ background: hoveredCard === 'stacks' ? colors.teal : normalCardBg, color: hoveredCard === 'stacks' ? colors.tealText : colors.text }}
             >
-              <div className="text-3xl sm:text-4xl font-medium mb-1 tracking-tight" style={{ color: colors.text }}>
+              <div className="text-3xl sm:text-4xl font-medium mb-1 tracking-tight" style={{ color: hoveredCard === 'stacks' ? colors.tealText : colors.text }}>
                 12+
               </div>
-              <div className="text-xs sm:text-sm font-medium" style={{ color: colors.text }}>
+              <div className="text-xs sm:text-sm font-medium" style={{ color: hoveredCard === 'stacks' ? colors.tealText : colors.text }}>
                 Tech Stacks Used
               </div>
             </div>
@@ -190,10 +189,10 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
               className={`row-span-2 rounded-sm p-6 sm:p-8 flex flex-col justify-center transition-transform hover:scale-[1.02] cursor-default shadow-sm`}
               style={{ background: hoveredCard === 'projects' ? colors.teal : normalCardBg, color: hoveredCard === 'projects' ? colors.tealText : colors.text }}
             >
-              <div className="text-3xl sm:text-4xl font-medium mb-1 tracking-tight" style={{ color: colors.text }}>
+              <div className="text-3xl sm:text-4xl font-medium mb-1 tracking-tight" style={{ color:hoveredCard === 'projects' ? colors.tealText : colors.text }}>
                 40+
               </div>
-              <div className="text-xs sm:text-sm font-medium" style={{ color: colors.text }}>
+              <div className="text-xs sm:text-sm font-medium" style={{ color: hoveredCard === 'projects' ? colors.tealText : colors.text }}>
                 Projects Built
               </div>
             </div>
@@ -205,10 +204,10 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
               className={`row-span-3 rounded-sm p-6 sm:p-8 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm`}
               style={{ background: hoveredCard === 'teams' ? colors.teal : normalCardBg, color: hoveredCard === 'teams' ? colors.tealText : colors.text }}
             >
-              <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight" style={{ color: colors.text }}>
+              <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight" style={{ color: hoveredCard === 'teams' ? colors.tealText : colors.text }}>
                 6+
               </div>
-              <div className="text-sm sm:text-base font-medium" style={{ color: colors.text }}>
+              <div className="text-sm sm:text-base font-medium" style={{ color: hoveredCard === 'teams' ? colors.tealText : colors.text }}>
                 Active Teams
               </div>
             </div>
