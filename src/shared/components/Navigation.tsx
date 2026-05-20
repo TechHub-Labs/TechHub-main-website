@@ -4,7 +4,7 @@
  * Sticky navigation bar with brand, links, and CTA button.
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeColors } from "../../features/landing/domain/types";
 
@@ -26,31 +26,20 @@ const navLinks = [
 export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   return (
     <nav
       style={{
-        background: scrolled ? colors.nav : 'transparent',
+        background: colors.nav,
         borderBottom: `1px solid ${colors.navBorder}`,
         position: "sticky",
         top: 0,
         zIndex: 100,
-        transition: "background 0.22s, border-color 0.22s, box-shadow 0.22s",
-        backdropFilter: scrolled ? 'blur(6px)' : undefined,
-        boxShadow: scrolled ? '0 6px 18px rgba(2,6,23,0.06)' : undefined,
+        transition: "background 0.3s, border-color 0.3s",
       }}
     >
-      {/* ensure pointer uses playful cursor */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1">
           <div className="flex items-center justify-between h-16">
@@ -120,8 +109,8 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
 
               <button
                 onClick={() => navigate('/join')}
-                className="fun-cursor hidden sm:block px-6 py-2.5 rounded font-bold text-sm transition-transform hover:scale-[1.02]"
-                style={{ background: colors.btnPrimary, color: colors.btnPrimaryText }}
+                className="hidden sm:block px-6 py-2.5 rounded font-bold text-sm transition-transform hover:scale-[1.02]"
+                style={{ background: "#A3D045", color: "#0F1524" }}
               >
                 Join Us
               </button>
@@ -137,14 +126,15 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
           >
             <div className="flex flex-col gap-3 pt-4">
               {navLinks.map((link) => (
-                <Link
+                <span
                   key={link.name}
-                  to={link.path}
-                  className="text-sm font-light fun-cursor transition-opacity hover:opacity-70 block py-2"
-                  style={{ color: colors.text }}
+                  className="text-sm font-light cursor-pointer transition-opacity hover:opacity-70 block py-2"
+                  style={{
+                    color: colors.text,
+                  }}
                 >
                   {link.name}
-                </Link>
+                </span>
               ))}
               <button 
                 onClick={() => navigate('/join')} 

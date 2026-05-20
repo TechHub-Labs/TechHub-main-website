@@ -8,7 +8,7 @@ import { ThemeColors } from '../../features/landing/domain/types';
 
 interface CTASectionProps {
   dark: boolean;
-  colors: ThemeColors;
+  colors?: ThemeColors;
 }
 
 export function CTASection({ dark, colors }: CTASectionProps) {

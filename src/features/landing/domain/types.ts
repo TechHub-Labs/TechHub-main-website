@@ -1,9 +1,3 @@
-/**
- * LANDING PAGE TYPES
- * 
- * Data structure definitions for the landing page feature.
- */
-
 export interface Builder {
   name: string;
   role: string;
@@ -35,6 +29,8 @@ export interface ThemeColors {
   textSubtle: string;
   accent: string;
   accentText: string;
+  teal: string;           // ADDED
+  tealText: string;       // ADDED
   btnPrimary: string;
   btnPrimaryText: string;
   btnSecondary: string;
@@ -50,4 +46,8 @@ export interface ThemeColors {
   liveGreen: string;
   liveYellow: string;
   memberBg: string;
+  statusPaused: string;   // ADDED
+  statusInDev: string;    // ADDED
+  statusUpcoming: string; // ADDED
+  statusLive: string;     // ADDED
 }
