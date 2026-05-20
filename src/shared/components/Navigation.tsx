@@ -48,7 +48,7 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
               className="text-2xl font-bold tracking-tight"
               style={{ color: colors.text }}
             >
-              NH TechHub
+              <img src="/images/Logo.jpeg" alt="NH TechHub Logo" className="h-16 w-auto" />
             </Link>
 
             <div className="hidden md:flex gap-6 lg:gap-8 items-center">
