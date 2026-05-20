@@ -1,9 +1,27 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ThemeColors } from './types';
 
 export function useTheme() {
-  // Changed from true to false: Light mode is now the default
-  const [dark, setDark] = useState(false);
+  // initialize from localStorage or system preference
+  const getInitial = () => {
+    try {
+      const saved = localStorage.getItem('nh_techhub_theme');
+      if (saved === 'dark') return true;
+      if (saved === 'light') return false;
+    } catch (e) {}
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  };
+
+  const [dark, setDark] = useState<boolean>(getInitial);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('nh_techhub_theme', dark ? 'dark' : 'light');
+    } catch (e) {}
+  }, [dark]);
 
   const colors: ThemeColors = useMemo(() => {
     return dark ? {
@@ -19,6 +37,8 @@ export function useTheme() {
       textSubtle: "rgba(255,255,255,0.45)",
       accent: "#A3D045",
       accentText: "#0F1524",
+      teal: "#14363E",
+      tealText: "#ffffff",
       btnPrimary: "#A3D045",
       btnPrimaryText: "#0F1524",
       btnSecondary: "transparent",
@@ -32,6 +52,9 @@ export function useTheme() {
       memberBg: "#2a3275",
       liveGreen: "#22c55e",
       liveYellow: "#f59e0b",
+      statusPaused: "#ef4444",
+      statusInDev: "#3B5BDB",
+      statusUpcoming: "#f59e0b",
       divider: "rgba(255,255,255,0.05)"
     } : {
       // --- LIGHT MODE PALETTE ---
@@ -46,6 +69,8 @@ export function useTheme() {
       textSubtle: "rgba(13,19,64,0.45)",
       accent: "#0d1340",
       accentText: "#A3D045",
+      teal: "#14363E",
+      tealText: "#ffffff",
       btnPrimary: "#0d1340",
       btnPrimaryText: "#ffffff",
       btnSecondary: "transparent",
@@ -59,6 +84,9 @@ export function useTheme() {
       memberBg: "#e0e4f5",
       liveGreen: "#22c55e",
       liveYellow: "#f59e0b",
+      statusPaused: "#ef4444",
+      statusInDev: "#3B5BDB",
+      statusUpcoming: "#f59e0b",
       divider: "rgba(13,19,64,0.05)"
     };
   }, [dark]);

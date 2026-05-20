@@ -2,13 +2,14 @@
  * ABOUT US HERO SECTION
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ThemeColors } from "../../landing/domain/types";
 
 export function AboutHero({ colors }: { colors: ThemeColors }) {
   const isDark = colors.bg === "#0d1340";
-  const topLeftCardBg = isDark ? "#14363E" : "#EEF4EC";
-  const normalCardBg = isDark ? "#18286A" : "#EEF2FE";
+  const topLeftCardBg = isDark ? colors.teal : "#EEF4EC";
+  const normalCardBg = isDark ? colors.bgCardHover : colors.bgCard;
+  const [hovered, setHovered] = useState<string | null>(null);
 
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -56,8 +57,10 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
           {/* RIGHT */}
           <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[400px] sm:h-[460px]">
             <div
-              className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm"
-              style={{ background: topLeftCardBg }}
+              onMouseEnter={() => setHovered('a')}
+              onMouseLeave={() => setHovered(null)}
+              className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm transition-colors"
+              style={{ background: hovered === 'a' ? colors.teal : topLeftCardBg, color: hovered === 'a' ? colors.tealText : undefined }}
             >
               <div className="mt-8">
                 <div
@@ -77,8 +80,10 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
 
             {/* Card 3: Tech Stacks Used */}
             <div
-              className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm"
-              style={{ background: normalCardBg }}
+              onMouseEnter={() => setHovered('b')}
+              onMouseLeave={() => setHovered(null)}
+              className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm transition-colors"
+              style={{ background: hovered === 'b' ? colors.teal : normalCardBg, color: hovered === 'b' ? colors.tealText : undefined }}
             >
               <div
                 className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
@@ -97,8 +102,10 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
             {/* COLUMN 2 */}
             {/* Card 2: Projects Built */}
             <div
-              className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-center transition-transform hover:scale-[1.02] cursor-default shadow-sm"
-              style={{ background: normalCardBg }}
+              onMouseEnter={() => setHovered('c')}
+              onMouseLeave={() => setHovered(null)}
+              className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-center transition-transform hover:scale-[1.02] cursor-default shadow-sm transition-colors"
+              style={{ background: hovered === 'c' ? colors.teal : normalCardBg, color: hovered === 'c' ? colors.tealText : undefined }}
             >
               <div
                 className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
@@ -116,8 +123,10 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
 
             {/* Card 4: Active Teams */}
             <div
-              className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm"
-              style={{ background: normalCardBg }}
+              onMouseEnter={() => setHovered('d')}
+              onMouseLeave={() => setHovered(null)}
+              className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] cursor-default shadow-sm transition-colors"
+              style={{ background: hovered === 'd' ? colors.teal : normalCardBg, color: hovered === 'd' ? colors.tealText : undefined }}
             >
               <div
                 className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"

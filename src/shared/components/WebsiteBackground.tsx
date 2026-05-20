@@ -4,23 +4,34 @@ interface WebsiteBackgroundProps {
 }
 
 export function WebsiteBackground({ isDark = false, bgColor }: WebsiteBackgroundProps) {
-  // The exact SVG patterns provided from your CSS
-  const lightPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='16'%3E%3Crect x='0' y='0' width='3' height='3' rx='0.6' fill='rgb(220%2C218%2C235)'/%3E%3Crect x='8' y='8' width='3' height='3' rx='0.6' fill='rgb(220%2C218%2C235)'/%3E%3C/svg%3E")`;
-  
-  const darkPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='16'%3E%3Crect x='0' y='0' width='3' height='3' rx='0.6' fill='rgba(255%2C255%2C255%2C0.04)'/%3E%3Crect x='8' y='8' width='3' height='3' rx='0.6' fill='rgba(255%2C255%2C255%2C0.04)'/%3E%3C/svg%3E")`;
+  // Smaller, tighter SVG pattern (more clustered dots/squares)
+  const lightPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect x='0' y='0' width='2' height='2' rx='0.4' fill='%23e9eaf0'/%3E%3Crect x='5' y='5' width='2' height='2' rx='0.4' fill='%23e9eaf0'/%3E%3C/svg%3E")`;
+
+  const darkPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect x='0' y='0' width='2' height='2' rx='0.4' fill='rgba(255%2C255%2C255%2C0.04)'/%3E%3Crect x='5' y='5' width='2' height='2' rx='0.4' fill='rgba(255%2C255%2C255%2C0.04)'/%3E%3C/svg%3E")`;
 
   const bgImage = isDark ? darkPattern : lightPattern;
 
+  // Small playful custom cursor (SVG circle) and pattern applied site-wide
+  const cursorSvg = encodeURIComponent(`%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='11' cy='11' r='6' fill='%2314363E'/%3E%3C/svg%3E`);
+
   return (
     <style>{`
+      :root { --site-bg: ${bgColor}; }
+      html, body, #root {
+        height: 100%;
+      }
       body {
-        background-color: ${bgColor} !important;
+        background-color: var(--site-bg) !important;
         background-image: ${bgImage} !important;
         background-repeat: repeat !important;
-        background-size: 17px 16px !important;
+        background-size: 10px 10px !important;
         background-attachment: fixed !important;
         transition: background-color 0.3s ease;
-        z-index: 10;
+      }
+
+      /* Custom cursor for playfulness */
+      .fun-cursor, button, a {
+        cursor: url("data:image/svg+xml,${cursorSvg}") 11 11, auto;
       }
     `}</style>
   );

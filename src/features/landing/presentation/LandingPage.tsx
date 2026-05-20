@@ -30,7 +30,7 @@ export function LandingPage() {
 
       <main className="flex-1 w-full">
         <PageMargin>
-          <HeroSection colors={colors} />
+          <HeroSection colors={colors} dark={dark} />
           <ProjectsSection colors={colors} />
           <MembersSection colors={colors} />
           <TerminalSection colors={colors} />

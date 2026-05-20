@@ -85,9 +85,9 @@ export function TerminalSection({ colors }: TerminalSectionProps) {
           }}
         >
           <div className="px-5 py-4 flex items-center gap-2.5">
-            <span className="w-3 h-3 rounded-full bg-[#ef4444]" />
-            <span className="w-3 h-3 rounded-full bg-[#f59e0b]" />
-            <span className="w-3 h-3 rounded-full bg-[#22c55e]" />
+            <span className="w-3 h-3 rounded-full" style={{ background: colors.statusPaused }} />
+            <span className="w-3 h-3 rounded-full" style={{ background: colors.statusUpcoming }} />
+            <span className="w-3 h-3 rounded-full" style={{ background: colors.statusLive }} />
           </div>
 
           {/* Terminal Content */}
@@ -96,8 +96,8 @@ export function TerminalSection({ colors }: TerminalSectionProps) {
               <button
                 className="px-8 py-3 rounded text-sm sm:text-base font-bold transition-transform hover:scale-[1.02] active:scale-95 shadow-sm"
                 style={{
-                  background: '#A3D045',
-                  color: '#0F1524',
+                  background: colors.accent,
+                  color: colors.accentText,
                 }}
                 onClick={startGame}
               >
@@ -114,10 +114,10 @@ export function TerminalSection({ colors }: TerminalSectionProps) {
                 <div key={i} className="mb-4">
                   {line.in && (
                     <div>
-                      <span style={{ color: "rgba(255,255,255,0.4)" }}>
+                      <span style={{ color: colors.textSubtle }}>
                         $ {" "}
                       </span>
-                      <span style={{ color: '#A3D045' }}>{line.in}</span>
+                      <span style={{ color: colors.accent }}>{line.in}</span>
                     </div>
                   )}
                   <div className="mt-1.5 leading-relaxed">
@@ -125,13 +125,13 @@ export function TerminalSection({ colors }: TerminalSectionProps) {
                   </div>
                 </div>
               ))}
-              <div className="flex items-center mt-2" style={{ color: '#A3D045' }}>
-                <span style={{ color: "rgba(255,255,255,0.4)", marginRight: 10 }}>
+              <div className="flex items-center mt-2" style={{ color: colors.accent }}>
+                <span style={{ color: colors.textSubtle, marginRight: 10 }}>
                   $
                 </span>
                 <input
                   className="flex-1 bg-transparent border-none outline-none text-sm sm:text-base"
-                  style={{ color: '#A3D045' }}
+                  style={{ color: colors.accent }}
                   value={termInput}
                   onChange={(e) => setTermInput(e.target.value)}
                   onKeyDown={handleTermKey}

@@ -220,8 +220,8 @@ function MemberCard({
         boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       }}
       onMouseEnter={e => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = '#3B5BDB';
-        (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(59,91,219,0.15)';
+        (e.currentTarget as HTMLDivElement).style.borderColor = colors.accent;
+        (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
         (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)';
       }}
       onMouseLeave={e => {
@@ -369,7 +369,9 @@ function MemberModal({
             <div className="flex items-center gap-3 mt-1 shrink-0">
               {/* Portfolio link */}
               <a
-                href="#"
+                href={member.portfolio || 'https://nhtechhub.org'}
+                target="_blank"
+                rel="noreferrer"
                 className="transition-opacity hover:opacity-60"
                 style={{ color: colors.text }}
                 aria-label="Portfolio"
@@ -381,7 +383,9 @@ function MemberModal({
               </a>
               {/* LinkedIn */}
               <a
-                href="#"
+                href={member.linkedin || 'https://linkedin.com'}
+                target="_blank"
+                rel="noreferrer"
                 className="transition-opacity hover:opacity-60"
                 style={{ color: colors.text }}
                 aria-label="LinkedIn"
@@ -394,7 +398,9 @@ function MemberModal({
               </a>
               {/* X / Twitter */}
               <a
-                href="#"
+                href={member.twitter || 'https://twitter.com'}
+                target="_blank"
+                rel="noreferrer"
                 className="transition-opacity hover:opacity-60"
                 style={{ color: colors.text }}
                 aria-label="Twitter / X"
@@ -501,10 +507,11 @@ export function MembersPage() {
             </h1>
             {/* Lime green underline accent */}
             <div
-              className="mx-auto h-[3px] bg-[#A3D045] mb-5"
+              className="mx-auto h-[3px] mb-5"
               style={{
                 width: headerVisible ? '64px' : '0px',
                 transition: 'width 0.7s ease 0.3s',
+                background: colors.accent,
               }}
             />
             <p

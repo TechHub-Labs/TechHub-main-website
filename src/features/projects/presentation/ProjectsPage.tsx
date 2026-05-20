@@ -40,13 +40,7 @@ export const allProjects: Project[] = [
   { id: 'soundscape', name: 'SoundScape', desc: 'Create and share ambient sound mixes', tags: ['Web', 'Entertainment'], status: 'BETA', category: 'Entertainment', teamSize: '3', tech: 'React, Web Audio', launchDate: 'TBD', website: 'www.soundscape.io', about: 'SoundScape lets creators blend and share immersive ambient audio environments.', about2: 'Beta testers report significant improvements in focus and mood.' },
 ];
 
-const STATUS_COLORS: Record<Project['status'], string> = {
-  'LIVE': '#22c55e',
-  'BETA': '#22c55e',
-  'PAUSED': '#ef4444',
-  'IN DEVELOPMENT': '#3B5BDB',
-  'UPCOMING': '#f59e0b',
-};
+// Status colors are provided by the theme `colors` at runtime
 
 const PAGE_SIZE = 9;
 
@@ -59,9 +53,9 @@ function ProjectRow({ project, index, colors, isDark }: { project: Project; inde
     obs.observe(el); return () => obs.disconnect();
   }, [index]);
 
-  const tagBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(13,19,64,0.07)';
-  const rowBg = isDark ? '#1a2160' : '#ffffff';
-  const borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(13,19,64,0.08)';
+  const tagBg = colors.tagBg;
+  const rowBg = colors.bgCard;
+  const borderColor = colors.divider;
 
   return (
     <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none' }}>
@@ -71,7 +65,7 @@ function ProjectRow({ project, index, colors, isDark }: { project: Project; inde
         style={{ background: rowBg, borderColor, opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : 'translateX(-12px)', transition: 'opacity 0.45s ease, transform 0.45s ease, background 0.2s' }}
       >
         {/* Icon placeholder */}
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full shrink-0" style={{ background: isDark ? '#2a3275' : '#e0e4f5' }} />
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full shrink-0" style={{ background: colors.memberBg }} />
 
         {/* Name + desc + tags */}
         <div className="flex-1 min-w-0">
@@ -86,8 +80,13 @@ function ProjectRow({ project, index, colors, isDark }: { project: Project; inde
 
         {/* Status */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className="w-2 h-2 rounded-full" style={{ background: STATUS_COLORS[project.status] }} />
-          <span className="text-xs sm:text-sm font-semibold tracking-wide" style={{ color: STATUS_COLORS[project.status] }}>{project.status}</span>
+          <span
+            className="w-2 h-2 rounded-full"
+            style={{
+              background: project.status === 'LIVE' || project.status === 'BETA' ? colors.statusLive : project.status === 'PAUSED' ? colors.statusPaused : project.status === 'IN DEVELOPMENT' ? colors.statusInDev : colors.statusUpcoming
+            }}
+          />
+          <span className="text-xs sm:text-sm font-semibold tracking-wide" style={{ color: project.status === 'LIVE' || project.status === 'BETA' ? colors.statusLive : project.status === 'PAUSED' ? colors.statusPaused : project.status === 'IN DEVELOPMENT' ? colors.statusInDev : colors.statusUpcoming }}>{project.status}</span>
         </div>
       </div>
     </Link>
@@ -121,9 +120,9 @@ export function ProjectsPage() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const inputBg = isDark ? '#1a2160' : '#ffffff';
-  const dropBg = isDark ? '#1a2160' : '#ffffff';
-  const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(13,19,64,0.1)';
+  const inputBg = colors.bgCard;
+  const dropBg = colors.bgCard;
+  const borderColor = colors.divider;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -134,7 +133,7 @@ export function ProjectsPage() {
           {/* HERO */}
           <div className="pt-14 pb-8" style={{ opacity: headerVisible ? 1 : 0, transform: headerVisible ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-3" style={{ color: colors.text }}>Projects</h1>
-            <div className="h-[3px] bg-[#A3D045] mb-4" style={{ width: headerVisible ? '56px' : '0px', transition: 'width 0.7s ease 0.3s' }} />
+            <div className="h-[3px] mb-4" style={{ width: headerVisible ? '56px' : '0px', transition: 'width 0.7s ease 0.3s', background: colors.accent }} />
             <p className="text-base sm:text-lg" style={{ color: colors.textMuted }}>Building real products. Solving real problems.</p>
           </div>
 
@@ -187,11 +186,11 @@ export function ProjectsPage() {
               <span>Page {page} of {totalPages}</span>
               <div className="flex items-center gap-1">
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map(n => (
-                  <button key={n} onClick={() => setPage(n)} className="w-8 h-8 rounded flex items-center justify-center font-medium transition-colors" style={{ background: page === n ? colors.text : 'transparent', color: page === n ? (isDark ? '#0d1340' : '#ffffff') : colors.text }}>{n}</button>
+                  <button key={n} onClick={() => setPage(n)} className="w-8 h-8 rounded flex items-center justify-center font-medium transition-colors" style={{ background: page === n ? colors.text : 'transparent', color: page === n ? (isDark ? colors.accentText : '#ffffff') : colors.text }}>{n}</button>
                 ))}
                 {totalPages > 5 && <span className="px-1">...</span>}
                 {totalPages > 5 && [totalPages - 1, totalPages].map(n => (
-                  <button key={n} onClick={() => setPage(n)} className="w-8 h-8 rounded flex items-center justify-center font-medium transition-colors" style={{ background: page === n ? colors.text : 'transparent', color: page === n ? (isDark ? '#0d1340' : '#ffffff') : colors.text }}>{n}</button>
+                  <button key={n} onClick={() => setPage(n)} className="w-8 h-8 rounded flex items-center justify-center font-medium transition-colors" style={{ background: page === n ? colors.text : 'transparent', color: page === n ? (isDark ? colors.accentText : '#ffffff') : colors.text }}>{n}</button>
                 ))}
                 {page < totalPages && <button onClick={() => setPage(p => p + 1)} className="px-3 h-8 rounded font-medium transition-colors hover:opacity-70" style={{ color: colors.text }}>Next</button>}
               </div>

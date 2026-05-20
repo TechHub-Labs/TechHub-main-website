@@ -8,6 +8,7 @@ export default {
           blue: "#3B5BDB",
           "blue-light": "#4C6EF5",
           navy: "#1E3A8A",
+          teal: "#14363E",
           lime: "#A3D045",
           dark: "#0F1524",
           light: "#F8F9FE",
@@ -80,11 +81,27 @@ export default {
       },
       animation: {
         cursor: "cursor 1s infinite",
+        float: "float 6s ease-in-out infinite",
+        pop: "pop 300ms ease-out",
+        fadeIn: "fadeIn 600ms ease-out",
       },
       keyframes: {
         cursor: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
+        },
+        float: {
+          "0%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-6px)" },
+          "100%": { transform: "translateY(0px)" },
+        },
+        pop: {
+          "0%": { transform: "scale(0.98)", opacity: 0 },
+          "100%": { transform: "scale(1)", opacity: 1 },
+        },
+        fadeIn: {
+          "0%": { opacity: 0, transform: "translateY(6px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
         },
       },
     },

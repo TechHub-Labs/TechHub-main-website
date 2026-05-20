@@ -70,11 +70,11 @@ function CouncilCard({ member, index, onClick, colors, isDark }: {
     <div
       ref={ref} onClick={() => onClick(member)}
       className="rounded-xl overflow-hidden cursor-pointer border border-transparent"
-      style={{ background: isDark ? '#1a2160' : '#ffffff', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(22px)', transition: 'opacity 0.55s ease, transform 0.55s ease, border-color 0.25s, box-shadow 0.25s, transform 0.25s', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-      onMouseEnter={e => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = '#3B5BDB'; el.style.boxShadow = '0 8px 24px rgba(59,91,219,0.14)'; el.style.transform = 'translateY(-4px)'; }}
+      style={{ background: isDark ? colors.bgCard : colors.bgCard, opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(22px)', transition: 'opacity 0.55s ease, transform 0.55s ease, border-color 0.25s, box-shadow 0.25s, transform 0.25s', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+      onMouseEnter={e => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = colors.accent; el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; el.style.transform = 'translateY(-4px)'; }}
       onMouseLeave={e => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = 'transparent'; el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'; el.style.transform = 'translateY(0)'; }}
     >
-      <div className="w-full" style={{ background: isDark ? '#1e2870' : '#eef0fb', aspectRatio: '4/3' }} />
+      <div className="w-full" style={{ background: isDark ? colors.bgCardHover : colors.bgCardHover, aspectRatio: '4/3' }} />
       <div className="px-5 pt-5 pb-6">
         <h3 className="text-xl sm:text-2xl font-bold mb-1 tracking-tight" style={{ color: colors.text }}>{member.name}</h3>
         <p className="text-sm font-medium mb-3" style={{ color: colors.textSubtle }}>{member.role}</p>
@@ -93,8 +93,8 @@ function CouncilModal({ member, onClose, colors, isDark }: {
   useEffect(() => { document.body.style.overflow = 'hidden'; requestAnimationFrame(() => setMounted(true)); return () => { document.body.style.overflow = ''; }; }, []);
   useEffect(() => { const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h); }, [onClose]);
 
-  const tagBg = isDark ? 'rgba(255,255,255,0.08)' : '#f0f2fb';
-  const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(13,19,64,0.08)';
+  const tagBg = colors.tagBg;
+  const borderColor = colors.divider;
 
   return (
     <div ref={overlayRef} onClick={e => { if (e.target === overlayRef.current) onClose(); }} className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6" style={{ background: 'rgba(10,14,40,0.72)', backdropFilter: 'blur(6px)', opacity: mounted ? 1 : 0, transition: 'opacity 0.25s ease' }}>
@@ -110,10 +110,10 @@ function CouncilModal({ member, onClose, colors, isDark }: {
               <p className="text-sm sm:text-base font-medium mt-0.5" style={{ color: colors.textSubtle }}>{member.role}</p>
             </div>
             <div className="flex items-center gap-3 mt-1 shrink-0" style={{ color: colors.text }}>
-              <a href="#" className="hover:opacity-60 transition-opacity"><LinkIcon /></a>
-              <a href="#" className="hover:opacity-60 transition-opacity"><LinkedInIcon /></a>
-              <a href="#" className="hover:opacity-60 transition-opacity"><XIcon /></a>
-            </div>
+                <a href={'https://nhtechhub.org'} target="_blank" rel="noreferrer" className="hover:opacity-60 transition-opacity"><LinkIcon /></a>
+                <a href={'https://linkedin.com/company/nhtechhub'} target="_blank" rel="noreferrer" className="hover:opacity-60 transition-opacity"><LinkedInIcon /></a>
+                <a href={'https://twitter.com/nhtechhub'} target="_blank" rel="noreferrer" className="hover:opacity-60 transition-opacity"><XIcon /></a>
+              </div>
           </div>
           <p className="text-sm sm:text-base italic mt-4 mb-5" style={{ color: colors.textMuted }}>{member.description}</p>
           <div className="h-px mb-5" style={{ background: borderColor }} />
@@ -149,7 +149,7 @@ export function ExecutiveCouncilPage() {
           {/* HERO */}
           <div className="text-center pt-16 pb-10" style={{ opacity: headerVisible ? 1 : 0, transform: headerVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-3" style={{ color: colors.text }}>Executive Council</h1>
-            <div className="mx-auto h-[3px] bg-[#A3D045] mb-5" style={{ width: headerVisible ? '80px' : '0px', transition: 'width 0.7s ease 0.35s' }} />
+            <div className="mx-auto h-[3px] mb-5" style={{ width: headerVisible ? '80px' : '0px', transition: 'width 0.7s ease 0.35s', background: colors.accent }} />
             <p className="text-base sm:text-lg" style={{ color: colors.textMuted }}>Vision. Strategy. Execution.</p>
           </div>
           {/* FILTERS */}

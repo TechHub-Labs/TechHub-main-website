@@ -5,6 +5,7 @@
  */
 
 import { InstagramLogoIcon, LinkedInLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
+import { Link } from 'react-router-dom';
 import { ThemeColors } from '../../features/landing/domain/types';
 
 interface FooterProps {
@@ -65,13 +66,23 @@ export function Footer({ colors }: FooterProps) {
                 </h4>
                 <ul className="space-y-3.5">
                   {col.links.map((link) => (
-                    <li
-                      key={link}
-                      className="text-lg cursor-pointer transition-opacity hover:opacity-70 font-medium"
-                      style={{ color: colors.text }}
-                    >
-                      {link}
-                    </li>
+                        <li key={link}>
+                          <Link
+                            to={
+                              link === 'About Us' ? '/about' :
+                              link === 'Executive Council' ? '/executives' :
+                              link === 'Partners' ? '/partners' :
+                              link === 'Projects' ? '/projects' :
+                              link === 'Play' ? '/play' :
+                              link === 'Members' ? '/members' :
+                              link === 'Contact' ? '/contact' : '#'
+                            }
+                            className="text-lg fun-cursor transition-opacity hover:opacity-70 font-medium"
+                            style={{ color: colors.text }}
+                          >
+                            {link}
+                          </Link>
+                        </li>
                   ))}
                 </ul>
               </div>
@@ -82,31 +93,28 @@ export function Footer({ colors }: FooterProps) {
           <div className="flex flex-col-reverse md:flex-row md:justify-between md:items-end gap-8">
             
             {/* Copyright */}
-            <p
-              className="text-[18px] font-medium"
-              style={{ color: colors.textSubtle }}
-            >
-              © 2026 NH TechHub. All Rights Reserved.
+            <p className="text-[18px] font-medium" style={{ color: colors.textSubtle }}>
+              © {new Date().getFullYear()} NH TechHub. All Rights Reserved.
             </p>
 
             {/* Social Icons */}
             <div className="flex items-center gap-5" style={{ color: colors.text }}>
               {/* Instagram */}
-              <a href="#" className="hover:opacity-70 transition-opacity">
+              <a href="https://instagram.com/nhtechhub" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
                 <InstagramLogoIcon width={22} height={22} />
               </a>
               {/* LinkedIn */}
-              <a href="#" className="hover:opacity-70 transition-opacity">
+              <a href="https://linkedin.com/company/nhtechhub" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
                 <LinkedInLogoIcon width={22} height={22} />
               </a>
               {/* TikTok */}
-              <a href="#" className="hover:opacity-70 transition-opacity">
+              <a href="https://nhtechhub.org" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                 </svg>
               </a>
               {/* X / Twitter */}
-              <a href="#" className="hover:opacity-70 transition-opacity">
+              <a href="https://twitter.com/nhtechhub" target="_blank" rel="noreferrer" className="hover:opacity-70 transition-opacity">
                 <TwitterLogoIcon width={20} height={20} />
               </a>
             </div>
