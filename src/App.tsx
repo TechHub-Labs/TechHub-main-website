@@ -11,6 +11,7 @@ import { ExecutiveCouncilPage } from './features/executives/presentation/Executi
 import { JoinUsPage } from './features/joinus/presentation/JoinUsPage';
 import { MembersPage } from './features/members/presentation/MembersPage';
 import { PlayPage } from './features/play/presentation/PlayPage';
+import { CustomCursor } from './shared/components/CustomCursor';
 
 // // Admin Features
 // import { LoginPage } from './features/admin/presentation/LoginPage';
@@ -20,8 +21,10 @@ import { PlayPage } from './features/play/presentation/PlayPage';
 
 function App() {
   return (
-    // <AuthProvider>
+    <>
+    {/* //<AuthProvider> */}
       <Router>
+        <CustomCursor />
         <Routes>
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<LandingPage />} />
@@ -48,7 +51,8 @@ function App() {
           </Route> */}
         </Routes>
       </Router>
-    // </AuthProvider>
+    {/* //</AuthProvider> */}
+    </>
   );
 }
 
