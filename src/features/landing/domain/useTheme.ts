@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react';
 import { ThemeColors } from './types';
 
 export function useTheme() {
-  // initialize from localStorage or system preference
   const getInitial = () => {
     try {
       const saved = localStorage.getItem('nh_techhub_theme');
@@ -37,8 +36,6 @@ export function useTheme() {
       textSubtle: "rgba(255,255,255,0.45)",
       accent: "#A3D045",
       accentText: "#0F1524",
-      teal: "#14363E",
-      tealText: "#ffffff",
       btnPrimary: "#A3D045",
       btnPrimaryText: "#0F1524",
       btnSecondary: "transparent",
@@ -46,15 +43,13 @@ export function useTheme() {
       btnSecondaryBorder: "rgba(255,255,255,0.4)",
       tagBg: "rgba(255,255,255,0.1)",
       tagText: "rgba(255,255,255,0.7)",
+      statCard: "#1a2160",
       terminalBg: "#0a0e1a",
       footerBg: "#070c2e",
       footerText: "rgba(255,255,255,0.5)",
       memberBg: "#2a3275",
       liveGreen: "#22c55e",
       liveYellow: "#f59e0b",
-      statusPaused: "#ef4444",
-      statusInDev: "#3B5BDB",
-      statusUpcoming: "#f59e0b",
       divider: "rgba(255,255,255,0.05)"
     } : {
       // --- LIGHT MODE PALETTE ---
@@ -69,8 +64,6 @@ export function useTheme() {
       textSubtle: "rgba(13,19,64,0.45)",
       accent: "#0d1340",
       accentText: "#A3D045",
-      teal: "#14363E",
-      tealText: "#ffffff",
       btnPrimary: "#0d1340",
       btnPrimaryText: "#ffffff",
       btnSecondary: "transparent",
@@ -78,15 +71,13 @@ export function useTheme() {
       btnSecondaryBorder: "rgba(13,19,64,0.4)",
       tagBg: "rgba(13,19,64,0.08)",
       tagText: "rgba(13,19,64,0.65)",
+      statCard: "#ffffff",
       terminalBg: "#1a1a2e",
       footerBg: "#e8eaf5",
       footerText: "rgba(13,19,64,0.55)",
       memberBg: "#e0e4f5",
       liveGreen: "#22c55e",
       liveYellow: "#f59e0b",
-      statusPaused: "#ef4444",
-      statusInDev: "#3B5BDB",
-      statusUpcoming: "#f59e0b",
       divider: "rgba(13,19,64,0.05)"
     };
   }, [dark]);

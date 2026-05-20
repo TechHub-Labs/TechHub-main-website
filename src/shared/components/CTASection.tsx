@@ -1,15 +1,17 @@
 /**
  * CALL-TO-ACTION SECTION
- * 
- * Final section encouraging users to join. Features an inverted card design 
+ * * Final section encouraging users to join. Features an inverted card design 
  * and a subtle circuit board pattern at the bottom.
  */
 
+import { ThemeColors } from '../../features/landing/domain/types';
+
 interface CTASectionProps {
   dark: boolean;
+  colors: ThemeColors;
 }
 
-export function CTASection({ dark }: CTASectionProps) {
+export function CTASection({ dark, colors }: CTASectionProps) {
   const cardBg = dark ? '#ffffff' : '#1e2870';
   const textColor = dark ? '#0d1340' : '#ffffff';
   const textMuted = dark ? 'rgba(13,19,64,0.7)' : 'rgba(255,255,255,0.7)';
@@ -31,7 +33,7 @@ export function CTASection({ dark }: CTASectionProps) {
               backgroundImage: `url('/images/CTAsection.svg')`,
               backgroundSize: 'none',
               backgroundPosition: 'bottom center',
-              backgroundRepeat: 'none'
+              backgroundRepeat: 'no-repeat'
             }}
           />
 
