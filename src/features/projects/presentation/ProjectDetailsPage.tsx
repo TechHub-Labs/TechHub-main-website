@@ -41,7 +41,7 @@ export function ProjectDetailsPage() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <WebsiteBackground isDark={dark} bgColhor={colors.bg} />
+      <WebsiteBackground isDark={dark} bgColor={colors.bg} />
       <Navigation colors={colors} dark={dark} onThemeToggle={() => setDark(!dark)} />
       <main className="flex-1 w-full">
         <PageMargin>
