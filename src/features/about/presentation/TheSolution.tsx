@@ -89,7 +89,7 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
           />
           <p
             className="text-lg sm:text-xl leading-relaxed font-medium"
-            style={{ color: "#4C4C4C" }}
+            style={{ color: colors.textMuted }}
           >
             TechHub started with a small group of students who believed learning
             should go beyond classrooms and tutorials. Instead of waiting for
@@ -143,7 +143,7 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
         <p
           className="text-left text-base sm:text-xl font-medium"
           style={{
-            color: "#4C4C4C",
+            color: colors.textMuted,
             opacity: taglineVisible ? 1 : 0,
             transform: taglineVisible ? 'translateY(0)' : 'translateY(10px)',
             transition: 'opacity 0.6s ease, transform 0.6s ease',

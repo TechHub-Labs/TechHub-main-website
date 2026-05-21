@@ -231,7 +231,7 @@ function TimelineCard({
 
       <p
         className="mt-4 text-base sm:text-xl font-medium leading-relaxed w-full"
-        style={{ color: "#4C4C4C" }}
+        style={{ color: colors.textMuted }}
       >
         {item.desc}
       </p>
