@@ -1,234 +1,185 @@
-/**
- * TRAJECTORY SECTION — "The Trajectory of a Movement."
- * Center vertical line with large spacing between nodes.
- * Left nodes: text-left, right-pointing arrow, dot on center line.
- * Right nodes: dot on center line, left-pointing arrow, text-right.
- */
-
-import { useEffect, useRef, useState } from 'react';
-import { ThemeColors } from '../../landing/domain/types';
+import { useEffect, useRef, useState } from "react";
+import { ThemeColors } from "../../landing/domain/types";
 
 const timeline = [
   {
-    year: '2024 — The Foundation',
-    desc: 'A few members began collaborating on projects to bridge the gap between theory and reality.',
-    side: 'left' as const,
+    year: "2024 — The Foundation",
+    desc: "A few members began collaborating on projects to bridge the gap between theory and reality.",
+    side: "left" as const,
   },
   {
-    year: '2025 — Structure Emerged',
-    desc: 'Specialized roles and leadership systems were introduced to handle growing complexity.',
-    side: 'right' as const,
+    year: "2025 — Structure Emerged",
+    desc: "Specialized roles and leadership systems were introduced to handle growing complexity.",
+    side: "right" as const,
   },
   {
-    year: '2026 — Projects Shipping',
-    desc: 'Internal products and collaborations gained traction, moving from local to global relevance.',
-    side: 'left' as const,
+    year: "2026 — Projects Shipping",
+    desc: "Internal products and collaborations gained traction, moving from local to global relevance.",
+    side: "left" as const,
   },
   {
-    year: 'The Future — Beyond Campus',
-    desc: 'TechHub evolves into a larger innovation ecosystem, becoming a launchpad for world-class innovators.',
-    side: 'right' as const,
+    year: "The Future — Beyond Campus",
+    desc: "TechHub evolves into a larger innovation ecosystem, becoming a launchpad for world-class innovators.",
+    side: "right" as const,
   },
 ];
 
 export function Trajectory({ colors }: { colors: ThemeColors }) {
-  const isDark = colors.bg === '#0d1340';
-
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   const [nodesVisible, setNodesVisible] = useState<boolean[]>(
-    new Array(timeline.length).fill(false)
+    new Array(timeline.length).fill(false),
   );
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          timeline.forEach((_, i) => {
-            setTimeout(() => {
-              setNodesVisible(prev => {
+        if (!entry.isIntersecting) return;
+        setVisible(true);
+        timeline.forEach((_, index) => {
+          setTimeout(
+            () => {
+              setNodesVisible((prev) => {
                 const next = [...prev];
-                next[i] = true;
+                next[index] = true;
                 return next;
               });
-            }, 250 + i * 300);
-          });
-          observer.disconnect();
-        }
+            },
+            200 + index * 250,
+          );
+        });
+        observer.disconnect();
       },
-      { threshold: 0.06 }
+      { threshold: 0.1 },
     );
-    if (sectionRef.current) observer.observe(sectionRef.current);
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
     return () => observer.disconnect();
   }, []);
-
-  const trackColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(13,19,64,0.1)';
-  const fillColor = isDark
-    ? 'linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.06))'
-    : 'linear-gradient(to bottom, rgba(13,19,64,0.3), rgba(13,19,64,0.06))';
-  const arrowFill = isDark ? 'rgba(255,255,255,0.22)' : 'rgba(13,19,64,0.22)';
-  const dotBorder = isDark ? '#0d1340' : '#f4f5fa';
 
   return (
     <section ref={sectionRef} className="py-15 sm:py-28 -mx-4 lg:-mx-[99px]">
       <div className="px-4 lg:px-[99px]">
-
-        {/* ── HEADER ── */}
+        {/* HEADER */}
         <div
-          className="mb-20"
+          className="mb-20 lg:mb-32 max-w-full"
           style={{
             opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
+            transform: visible ? "translateY(0)" : "translateY(20px)",
+            transition: "all .7s ease",
           }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: colors.text }}>
+          <h2
+            className="w-full text-4xl font-semibold leading-tight tracking-tight sm:text-5xl"
+            style={{ color: colors.text }}
+          >
             The Trajectory of a Movement.
           </h2>
           <div
-            className="h-[3px] bg-[#A3D045] mb-5"
-            style={{ width: visible ? '56px' : '0px', transition: 'width 0.6s ease 0.3s' }}
+            className="h-[3px] bg-[#A3D045] mb-5 mt-6"
+            style={{
+              width: visible ? "117px" : "0px",
+              transition: "width 0.7s ease 0.35s",
+            }}
           />
-          <p className="text-base sm:text-lg" style={{ color: colors.textMuted }}>
-            Since 2024, TechHub has evolved from a small collective into a structured ecosystem for African builders.
+          <p
+            className="mt-6 text-base leading-relaxed sm:text-2xl font-medium w-full"
+            style={{ color: colors.textMuted }}
+          >
+            Since 2024, TechHub has evolved from a small collective into a
+            structured ecosystem for African builders.
           </p>
         </div>
 
-        {/* ── TIMELINE BODY ── */}
-        <div className="relative">
-
-          {/* Vertical center track */}
+        {/* TIMELINE CONTAINER */}
+        <div className="relative flex flex-col w-full max-w-5xl mx-auto">
+          {/* CENTER VERTICAL LINE */}
           <div
-            className="absolute"
-            style={{
-              left: '50%',
-              top: 0,
-              bottom: 0,
-              width: '1.5px',
-              transform: 'translateX(-50%)',
-              background: trackColor,
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: visible ? '100%' : '0%',
-                background: fillColor,
-                transition: 'height 2.6s cubic-bezier(0.25, 1, 0.5, 1) 0.5s',
-              }}
-            />
-          </div>
+            className="absolute left-[20px] top-0 h-full w-[4px] rounded-full md:left-1/2 md:-translate-x-1/2"
+            style={{ background: colors.divider }}
+          />
 
-          {/* Nodes — each occupies ~160px min height to create the big spacing from design */}
-          {timeline.map((node, i) => {
-            const isLeft = node.side === 'left';
+          {timeline.map((item, index) => {
+            const isLeft = item.side === "left";
 
             return (
               <div
-                key={i}
-                className="relative flex items-start"
-                style={{ minHeight: '160px' }}
+                key={index}
+                className="relative grid grid-cols-[40px_1fr] gap-6 pb-20 md:grid-cols-[1fr_80px_1fr] w-full items-start"
               >
-                {/* LEFT content area */}
+                {/* --- DESKTOP LEFT SIDE --- */}
                 <div
-                  className="flex-1 flex items-start justify-end"
-                  style={{ paddingRight: '28px', paddingTop: '2px' }}
+                  className={`hidden md:flex w-full ${isLeft ? "justify-end pr-8" : ""}`}
                 >
                   {isLeft && (
-                    <div
-                      className="text-right"
-                      style={{
-                        maxWidth: '210px',
-                        opacity: nodesVisible[i] ? 1 : 0,
-                        transform: nodesVisible[i] ? 'translateX(0)' : 'translateX(-28px)',
-                        transition: 'opacity 0.55s ease, transform 0.55s ease',
-                      }}
-                    >
-                      <h4
-                        className="text-sm sm:text-base font-bold mb-2 leading-snug"
-                        style={{ color: colors.text }}
-                      >
-                        {node.year}
-                      </h4>
-                      <p
-                        className="text-xs sm:text-sm leading-relaxed"
-                        style={{ color: colors.textMuted }}
-                      >
-                        {node.desc}
-                      </p>
-                    </div>
+                    <TimelineCard
+                      item={item}
+                      visible={nodesVisible[index]}
+                      align="left"
+                      colors={colors}
+                    />
                   )}
                 </div>
 
-                {/* CENTER column: arrow + dot stacked */}
-                <div
-                  className="relative flex flex-col items-center shrink-0 z-10"
-                  style={{ width: '28px' }}
-                >
-                  {/* Arrow icon */}
+                {/* --- CENTER DIVIDER (NODE & ARROWS) --- */}
+                <div className="relative flex justify-center mt-2">
+                  {/* ARROW (Only visible on Desktop) */}
                   <div
+                    className={`
+                      absolute -top-0.5 hidden md:block
+                      ${isLeft ? "-left-6" : "-right-6"}
+                    `}
                     style={{
-                      marginBottom: '4px',
-                      opacity: nodesVisible[i] ? 1 : 0,
-                      transition: 'opacity 0.4s ease 0.15s',
+                      opacity: nodesVisible[index] ? 1 : 0,
+                      transition: ".4s ease",
                     }}
                   >
-                    <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                    <svg width="20" height="20" viewBox="0 0 10 10">
                       {isLeft ? (
-                        /* Right-pointing play triangle */
-                        <path d="M1.5 1.5L7.5 4.5L1.5 7.5V1.5Z" fill={arrowFill} />
+                        <path d="M1 1L9 5L1 9Z" fill="#DCE4FF" />
                       ) : (
-                        /* Left-pointing play triangle */
-                        <path d="M7.5 1.5L1.5 4.5L7.5 7.5V1.5Z" fill={arrowFill} />
+                        <path d="M9 1L1 5L9 9Z" fill="#DCE4FF" />
                       )}
                     </svg>
                   </div>
 
-                  {/* Center dot */}
+                  {/* THE DOT NODE */}
                   <div
+                    className="relative z-10 h-3.5 w-3.5 rounded-full"
                     style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      background: '#3B5BDB',
-                      border: `2px solid ${dotBorder}`,
-                      opacity: nodesVisible[i] ? 1 : 0,
-                      transform: nodesVisible[i] ? 'scale(1)' : 'scale(0)',
-                      transition: 'opacity 0.4s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
+                      background: colors.text,
+                      boxShadow: `0 0 0 4px ${colors.bg}`,
+                      opacity: nodesVisible[index] ? 1 : 0,
+                      transform: nodesVisible[index] ? "scale(1)" : "scale(0)",
+                      transition: "all .45s cubic-bezier(.34,1.56,.64,1)",
                     }}
                   />
                 </div>
 
-                {/* RIGHT content area */}
-                <div
-                  className="flex-1 flex items-start justify-start"
-                  style={{ paddingLeft: '28px', paddingTop: '2px' }}
-                >
+                {/* --- RIGHT SIDE (MOBILE & DESKTOP) --- */}
+                <div className={`flex w-full ${!isLeft ? "md:pl-8" : ""}`}>
+                  {/* MOBILE ALWAYS SHOWS ON RIGHT */}
+                  <div className="md:hidden w-full">
+                    <TimelineCard
+                      item={item}
+                      visible={nodesVisible[index]}
+                      align="right"
+                      colors={colors}
+                    />
+                  </div>
+
+                  {/* DESKTOP RIGHT CARD */}
                   {!isLeft && (
-                    <div
-                      style={{
-                        maxWidth: '210px',
-                        opacity: nodesVisible[i] ? 1 : 0,
-                        transform: nodesVisible[i] ? 'translateX(0)' : 'translateX(28px)',
-                        transition: 'opacity 0.55s ease, transform 0.55s ease',
-                      }}
-                    >
-                      <h4
-                        className="text-sm sm:text-base font-bold mb-2 leading-snug"
-                        style={{ color: colors.text }}
-                      >
-                        {node.year}
-                      </h4>
-                      <p
-                        className="text-xs sm:text-sm leading-relaxed"
-                        style={{ color: colors.textMuted }}
-                      >
-                        {node.desc}
-                      </p>
+                    <div className="hidden md:block w-full">
+                      <TimelineCard
+                        item={item}
+                        visible={nodesVisible[index]}
+                        align="right"
+                        colors={colors}
+                      />
                     </div>
                   )}
                 </div>
@@ -236,8 +187,54 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
             );
           })}
         </div>
-
       </div>
     </section>
+  );
+}
+
+// ----------------------
+// TIMELINE CARD SUB-COMPONENT
+// ----------------------
+function TimelineCard({
+  item,
+  visible,
+  align,
+  colors,
+}: {
+  item: {
+    year: string;
+    desc: string;
+  };
+  visible: boolean;
+  align: "left" | "right";
+  colors: ThemeColors;
+}) {
+  return (
+    <div
+      className="w-full max-w-[400px]"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible
+          ? "translateX(0)"
+          : align === "left"
+            ? "translateX(-50px)"
+            : "translateX(50px)",
+        transition: "opacity .6s ease, transform .6s ease",
+      }}
+    >
+      <h4
+        className="text-xl sm:text-2xl font-medium leading-snug w-full tracking-tight"
+        style={{ color: colors.text }}
+      >
+        {item.year}
+      </h4>
+
+      <p
+        className="mt-4 text-base sm:text-xl font-medium leading-relaxed w-full"
+        style={{ color: "#4C4C4C" }}
+      >
+        {item.desc}
+      </p>
+    </div>
   );
 }
