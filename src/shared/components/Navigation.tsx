@@ -124,24 +124,29 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
             className="md:hidden pb-4 border-t"
             style={{ borderColor: colors.navBorder }}
           >
-            <div className="flex flex-col gap-3 pt-4">
+            <div className="flex flex-col gap-3 pt-4 px-4 sm:px-6">
               {navLinks.map((link) => (
-                <span
+                <Link
                   key={link.name}
-                  className="text-sm font-light cursor-pointer transition-opacity hover:opacity-70 block py-2"
+                  to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-base font-medium transition-opacity hover:opacity-70 block py-2"
                   style={{
                     color: colors.text,
                   }}
                 >
                   {link.name}
-                </span>
+                </Link>
               ))}
               <button 
-                onClick={() => navigate('/join')} 
-                className="w-full px-4 py-2 rounded text-sm font-medium transition-all hover:opacity-90 mt-2"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigate('/join');
+                }} 
+                className="w-full px-4 py-3 rounded font-bold transition-all hover:opacity-90 mt-2"
                 style={{
-                  background: colors.btnPrimary,
-                  color: colors.btnPrimaryText,
+                  background: "#A3D045", 
+                  color: "#0F1524"
                 }}
               >
                 Join Us
