@@ -1,6 +1,7 @@
 /**
  * THE SOLUTION SECTION — "So a Few Builders Decided to Change That."
- * Design: Light bg, heading + sub, 4 rows of text+image pairs, closing tagline.
+ * Matches design: header top, then 4 rows each with text-left + image-right,
+ * closing tagline centered at bottom.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -27,11 +28,14 @@ const items = [
 
 export function TheSolution({ colors }: { colors: ThemeColors }) {
   const isDark = colors.bg === '#0d1340';
-  const imgBg = isDark ? '#1e2870' : '#f0f2fb';
+  const imgBg = isDark ? '#1e2870' : '#e8ecf5';
 
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const [rowsVisible, setRowsVisible] = useState<boolean[]>(new Array(items.length).fill(false));
+  const [rowsVisible, setRowsVisible] = useState<boolean[]>(
+    new Array(items.length).fill(false)
+  );
+  const [taglineVisible, setTaglineVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -45,12 +49,13 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
                 next[i] = true;
                 return next;
               });
-            }, i * 180);
+            }, 300 + i * 200);
           });
+          setTimeout(() => setTaglineVisible(true), 300 + items.length * 200 + 200);
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.08 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -58,82 +63,90 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
 
   return (
     <section ref={sectionRef} className="py-20 sm:py-28">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto w-full">
 
-        {/* Header */}
+        {/* ── HEADER ── */}
         <div
+          className="mb-14"
           style={{
             opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
+            transform: visible ? 'translateY(0)' : 'translateY(22px)',
+            transition: 'opacity 0.65s ease, transform 0.65s ease',
           }}
-          className="mb-14"
         >
           <h2
-            className="text-3xl sm:text-4xl font-bold mb-4 leading-tight"
+            className="text-4xl sm:text-5xl font-bold mb-4 leading-tight"
             style={{ color: colors.text }}
           >
             So a Few Builders Decided to Change That.
           </h2>
-          {/* Underline accent */}
           <div
             className="h-[3px] bg-[#A3D045] mb-5"
             style={{
               width: visible ? '56px' : '0px',
-              transition: 'width 0.6s ease 0.3s',
+              transition: 'width 0.7s ease 0.35s',
             }}
           />
           <p
-            className="text-base sm:text-lg leading-relaxed max-w-2xl"
-            style={{ color: colors.textMuted }}
+            className="text-lg sm:text-xl leading-relaxed font-medium"
+            style={{ color: "#4C4C4C" }}
           >
-            TechHub started with a small group of students who believed learning should go beyond classrooms and tutorials. Instead of waiting for opportunities, they began creating them.
+            TechHub started with a small group of students who believed learning
+            should go beyond classrooms and tutorials. Instead of waiting for
+            opportunities, they began creating them.
           </p>
         </div>
 
-        {/* Items — each is text left, image placeholder right */}
-        <div className="space-y-10 sm:space-y-12 mb-14">
+        {/* ── ITEMS LIST ── */}
+        <div className="space-y-10 sm:space-y-12 mb-16 justify-center">
           {items.map((item, i) => (
             <div
               key={i}
-              className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-start sm:items-center"
+              className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-6 sm:gap-52 items-center"
               style={{
                 opacity: rowsVisible[i] ? 1 : 0,
-                transform: rowsVisible[i] ? 'translateY(0)' : 'translateY(18px)',
+                transform: rowsVisible[i] ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'opacity 0.55s ease, transform 0.55s ease',
               }}
             >
-              {/* Text */}
+              {/* Text block */}
               <div className="flex-1">
                 <h4
-                  className="text-xl sm:text-2xl font-bold mb-2"
+                  className="text-xl sm:text-3xl font-medium mb-2 leading-snug"
                   style={{ color: colors.text }}
                 >
                   {item.title}
                 </h4>
                 <p
-                  className="text-sm sm:text-base leading-relaxed"
+                  className="text-base sm:text-lg leading-relaxed"
                   style={{ color: colors.textMuted }}
                 >
                   {item.desc}
                 </p>
               </div>
-              {/* Image placeholder — matching the grey rectangles in design */}
+
+              {/* Image placeholder — exact proportions from design */}
               <div
-                className="w-full sm:w-[160px] h-[120px] sm:h-[120px] rounded-lg shrink-0 transition-transform duration-300 hover:scale-[1.02]"
-                style={{ background: imgBg }}
+                className="w-full sm:w-[300px] h-[300px] shrink-0 rounded"
+                style={{
+                  background: imgBg,
+                  transform: rowsVisible[i] ? 'scale(1)' : 'scale(0.96)',
+                  transition: 'transform 0.5s ease 0.1s, opacity 0.55s ease',
+                  opacity: rowsVisible[i] ? 1 : 0,
+                }}
               />
             </div>
           ))}
         </div>
 
-        {/* Closing tagline — matches "Slowly, a culture began to form; A culture of builders." */}
+        {/* ── CLOSING TAGLINE ── */}
         <p
-          className="text-center text-base sm:text-lg font-semibold"
+          className="text-left text-lg sm:text-xl font-medium"
           style={{
-            color: colors.text,
-            opacity: visible ? 1 : 0,
-            transition: 'opacity 0.6s ease 1.2s',
+            color: "#4C4C4C",
+            opacity: taglineVisible ? 1 : 0,
+            transform: taglineVisible ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'opacity 0.6s ease, transform 0.6s ease',
           }}
         >
           Slowly, a culture began to form; A culture of builders.

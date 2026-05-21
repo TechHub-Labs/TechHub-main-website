@@ -32,7 +32,7 @@ export function useTheme() {
       nav: "#0d1340",
       navBorder: "rgba(255,255,255,0.05)",
       text: "#ffffff",
-      textMuted: "rgba(255,255,255,0.65)",
+      textMuted: "#7F7F7F",
       textSubtle: "rgba(255,255,255,0.45)",
       accent: "#A3D045",
       accentText: "#0F1524",
