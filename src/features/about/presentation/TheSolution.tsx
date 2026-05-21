@@ -62,8 +62,8 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-28">
-      <div className="max-w-4xl mx-auto w-full">
+    <section ref={sectionRef} className="py-15 sm:py-28 -mx-4 lg:-mx-[99px]">
+      <div className="px-4 lg:px-[99px]">
 
         {/* ── HEADER ── */}
         <div
@@ -118,7 +118,7 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
                   {item.title}
                 </h4>
                 <p
-                  className="text-base sm:text-lg leading-relaxed"
+                  className="text-base sm:text-xl leading-relaxed"
                   style={{ color: colors.textMuted }}
                 >
                   {item.desc}
@@ -141,7 +141,7 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
 
         {/* ── CLOSING TAGLINE ── */}
         <p
-          className="text-left text-lg sm:text-xl font-medium"
+          className="text-left text-base sm:text-xl font-medium"
           style={{
             color: "#4C4C4C",
             opacity: taglineVisible ? 1 : 0,

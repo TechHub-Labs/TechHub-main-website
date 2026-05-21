@@ -84,7 +84,7 @@ export function TheProblem({ colors: _colors }: { colors: ThemeColors }) {
       ref={sectionRef}
       className="bg-[#0F1B4D] text-white py-20 sm:py-28 -mx-4 lg:-mx-[99px]"
     >
-      <div className="max-w-4xl mx-auto px-8 lg:px-12">
+      <div className="px-4 lg:px-[99px]">
 
         {/* ── HEADING ── */}
         <div

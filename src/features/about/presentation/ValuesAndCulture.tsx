@@ -47,8 +47,8 @@ export function ValuesAndCulture({ colors, dark }: { colors: ThemeColors; dark: 
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-28">
-      <div className="max-w-4xl mx-auto">
+    <section ref={sectionRef} className="py-20 sm:py-28 -mx-4 lg:-mx-[99px]">
+      <div className="px-4 lg:px-[99px]">
 
         {/* ── FOUNDATION HEADING ── */}
         <div
@@ -223,7 +223,7 @@ export function ValuesAndCulture({ colors, dark }: { colors: ThemeColors; dark: 
         {/* ── LEADERSHIP THROUGH EXECUTION ── */}
         {/* Dark navy full-bleed block matching design exactly */}
         <div
-          className="rounded-2xl bg-[#0F1524] px-8 sm:px-12 py-12 sm:py-16 -mx-4 sm:-mx-0"
+          className="bg-[#0F1524] px-8 sm:px-12 py-12 sm:py-16 -mx-4 lg:-mx-[99px]"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? 'translateY(0)' : 'translateY(20px)',

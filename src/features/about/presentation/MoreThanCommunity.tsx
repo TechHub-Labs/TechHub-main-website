@@ -87,8 +87,8 @@ export function MoreThanCommunity({ colors }: { colors: ThemeColors }) {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-28">
-      <div className="max-w-4xl mx-auto">
+    <section ref={sectionRef} className="py-20 sm:py-28 -mx-4 lg:-mx-[99px]">
+      <div className="px-4 lg:px-[99px]">
 
         {/* Header */}
         <div

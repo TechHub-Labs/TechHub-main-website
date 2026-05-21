@@ -71,8 +71,8 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
   const dotBorder = isDark ? '#0d1340' : '#f4f5fa';
 
   return (
-    <section ref={sectionRef} className="py-20 sm:py-28">
-      <div className="max-w-4xl mx-auto">
+    <section ref={sectionRef} className="py-15 sm:py-28 -mx-4 lg:-mx-[99px]">
+      <div className="px-4 lg:px-[99px]">
 
         {/* ── HEADER ── */}
         <div
