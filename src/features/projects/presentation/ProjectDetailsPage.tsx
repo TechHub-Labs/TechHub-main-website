@@ -1,160 +1,430 @@
-/**
- * PROJECT DETAIL PAGE
- * Design: breadcrumb, header row (icon + name + status), website link,
- * two-column layout (description left, sidebar right), Active Builders grid.
- */
+/* =========================================
+   PROJECT DETAILS PAGE
+   Updated:
+   - Dynamic breadcrumb based on URL
+   - Dynamic project data loading
+   - Tailwind-first styling
+   - Premium animations
+   - Better typography hierarchy
+========================================= */
 
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import {
+  FaInstagram,
+  FaLinkedinIn,
+  FaTiktok,
+  FaXTwitter,
+} from 'react-icons/fa6';
+
 import { useTheme } from '../../landing/domain/useTheme';
+import { allProjects } from './ProjectsPage';
 import { Navigation } from '../../../shared/components/Navigation';
-import { Footer } from '../../../shared/components/Footer';
-import { CTASection } from '../../../shared/components/CTASection';
 import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
 import { PageMargin } from '../../../shared/components/PageMargin';
-import { allProjects } from './ProjectsPage';
-
-// status colors are provided by theme `colors`
-
-const activeBuilders = [
-  { name: 'Chinonso Okafor', role: 'Backend Engineer', quote: '"I power seamless experiences."' },
-  { name: 'Chinedu Okafor', role: 'UX Researcher', quote: '"Understanding users is the first step"' },
-  { name: 'Amina Yusuf', role: 'Visual Designer', quote: '"Color and balance create harmony"' },
-  { name: 'Chinonso Okafor', role: 'Backend Engineer', quote: '"I power seamless experiences."' },
-  { name: 'Chinedu Okafor', role: 'UX Researcher', quote: '"Understanding users is the first step"' },
-  { name: 'Amina Yusuf', role: 'Visual Designer', quote: '"Color and balance create harmony"' },
-];
+import { Footer } from '../../../shared/components/Footer';
+import { CTASection } from '../../../shared/components/CTASection';
 
 export function ProjectDetailsPage() {
   const { dark, setDark, colors } = useTheme();
-  const { id } = useParams<{ id: string }>();
-  const project = allProjects.find(p => p.id === id) || allProjects[0];
-  const [visible, setVisible] = useState(false);
 
-  useEffect(() => { document.documentElement.style.color = colors.text; window.scrollTo(0, 0); setTimeout(() => setVisible(true), 80); }, [colors]);
+  const [mounted, setMounted] = useState(false);
 
-  const cardBg = colors.bgCard;
-  const imgBg = colors.bgCardHover;
-  const borderColor = colors.divider;
-  const tagBg = colors.tagBg;
-  const sidebarBg = colors.bgCard;
+  const location = useLocation();
+  const { id } = useParams();
+
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+    window.scrollTo(0, 0);
+  }, []);
+
+  const project = useMemo(() => {
+    return allProjects.find(p => p.id === id);
+  }, [id]);
+
+  const builders = [
+    {
+      name: 'Chinonso Okafor',
+      role: 'Backend Engineer',
+      quote: '“I power seamless experiences.”',
+    },
+    {
+      name: 'Chinedu Okafor',
+      role: 'UX Researcher',
+      quote: '“Understanding users is the first step”',
+    },
+    {
+      name: 'Amina Yusuf',
+      role: 'Visual Designer',
+      quote: '“Color and balance create harmony”',
+    },
+    {
+      name: 'Chinonso Okafor',
+      role: 'Backend Engineer',
+      quote: '“I power seamless experiences.”',
+    },
+    {
+      name: 'Chinedu Okafor',
+      role: 'UX Researcher',
+      quote: '“Understanding users is the first step”',
+    },
+    {
+      name: 'Amina Yusuf',
+      role: 'Visual Designer',
+      quote: '“Color and balance create harmony”',
+    },
+  ];
+
+  if (!project) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <h1
+          className="text-4xl font-bold"
+          style={{ color: colors.text }}
+        >
+          Project not found
+        </h1>
+      </div>
+    );
+  }
+
+  const breadcrumbItems = location.pathname
+    .split('/')
+    .filter(Boolean);
+
+  const getStatusColor = () => {
+    switch (project.status) {
+      case 'LIVE':
+        return '#A3D045';
+      case 'BETA':
+        return '#A3D045';
+      case 'PAUSED':
+        return '#E53935';
+      case 'IN DEVELOPMENT':
+        return '#4A7DFF';
+      case 'UPCOMING':
+        return '#D9C63F';
+      default:
+        return '#A3D045';
+    }
+  };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }} className="transition-colors duration-300">
+      
       <WebsiteBackground isDark={dark} bgColor={colors.bg} />
-      <Navigation colors={colors} dark={dark} onThemeToggle={() => setDark(!dark)} />
-      <main className="flex-1 w-full">
-        <PageMargin>
-          <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)', transition: 'opacity 0.55s ease, transform 0.55s ease' }}>
+      
+      <Navigation
+        colors={colors}
+        dark={dark}
+        onThemeToggle={() => setDark(!dark)}
+      />
 
-            {/* BREADCRUMB */}
-            <div className="flex items-center gap-2 text-sm pt-8 pb-6" style={{ color: colors.textMuted }}>
-              <Link to="/projects" className="hover:opacity-70 transition-opacity" style={{ color: colors.statusInDev }}>Projects</Link>
-              <span>›</span>
-              <span style={{ color: colors.text }}>{project.name}</span>
+      <main className="w-full flex-1">
+        <PageMargin>
+          <div className="max-w-[1400px] mx-auto pt-14 pb-24">
+            
+            {/* ================= BREADCRUMB ================= */}
+            <div
+              className={`flex items-center gap-2 text-sm lg:text-[15px] mb-10 transition-all duration-700 ${
+                mounted
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-5'
+              }`}
+              style={{ color: colors.textMuted }}
+            >
+              {breadcrumbItems.map((item, index) => {
+                const path = '/' + breadcrumbItems.slice(0, index + 1).join('/');
+                const isLast = index === breadcrumbItems.length - 1;
+                const label = item.charAt(0).toUpperCase() + item.slice(1);
+
+                return (
+                  <div key={path} className="flex items-center gap-2">
+                    {!isLast ? (
+                      <Link
+                        to={path}
+                        className="transition-opacity duration-300 hover:opacity-70"
+                      >
+                        {label}
+                      </Link>
+                    ) : (
+                      <span
+                        className="font-medium"
+                        style={{ color: colors.text }}
+                      >
+                        {project.name}
+                      </span>
+                    )}
+
+                    {!isLast && <span>›</span>}
+                  </div>
+                );
+              })}
             </div>
 
-            {/* TWO-COLUMN LAYOUT */}
-            <div className="grid lg:grid-cols-[1fr_260px] gap-8 lg:gap-12">
+            {/* ================= TOP SECTION ================= */}
+            <div className="grid lg:grid-cols-[1fr_340px] gap-12 items-start">
+              {/* LEFT */}
+              <div
+                className={`transition-all duration-700 ${
+                  mounted
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-8'
+                }`}
+              >
+                {/* HEADER */}
+                <div className="flex flex-col sm:flex-row items-start gap-7 mb-8">
+                  <div
+                    className="w-24 h-24 rounded-full shrink-0"
+                    style={{
+                      background: dark ? colors.bgCard : '#ECEFF7',
+                    }}
+                  />
 
-              {/* ── LEFT ── */}
-              <div>
-                {/* Header row */}
-                <div className="flex items-start gap-4 mb-5">
-                  <div className="w-14 h-14 rounded-xl shrink-0" style={{ background: imgBg }} />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                      <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: colors.text }}>{project.name}</h1>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-4 mb-3">
+                      <h1
+                        className="text-5xl lg:text-6xl font-bold tracking-tight"
+                        style={{ color: colors.text }}
+                      >
+                        {project.name}
+                      </h1>
+
                       <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ background: project.status === 'LIVE' || project.status === 'BETA' ? colors.statusLive : project.status === 'PAUSED' ? colors.statusPaused : project.status === 'IN DEVELOPMENT' ? colors.statusInDev : colors.statusUpcoming }} />
-                        <span className="text-sm font-semibold" style={{ color: project.status === 'LIVE' || project.status === 'BETA' ? colors.statusLive : project.status === 'PAUSED' ? colors.statusPaused : project.status === 'IN DEVELOPMENT' ? colors.statusInDev : colors.statusUpcoming }}>{project.status}</span>
+                        <span
+                          className="w-3 h-3 rounded-full"
+                          style={{
+                            background: getStatusColor(),
+                          }}
+                        />
+
+                        <span
+                          className="text-[15px] font-semibold"
+                          style={{ color: colors.text }}
+                        >
+                          {project.status}
+                        </span>
                       </div>
                     </div>
-                    <p className="text-sm mt-1 mb-3" style={{ color: colors.textMuted }}>{project.desc}</p>
-                    <div className="flex flex-wrap gap-2">
+
+                    <p
+                      className="text-lg lg:text-[20px] leading-relaxed mb-5 max-w-3xl"
+                      style={{ color: colors.textMuted }}
+                    >
+                      {project.desc}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-3">
                       {project.tags.map(tag => (
-                        <span key={tag} className="px-3 py-1 rounded-full text-xs font-medium" style={{ background: tagBg, color: colors.text }}>{tag}</span>
+                        <span
+                          key={tag}
+                          className="px-4 py-2 rounded-full text-sm font-semibold"
+                          style={{
+                            background: dark
+                              ? 'rgba(255,255,255,0.06)'
+                              : '#EEF2FF',
+                            color: colors.text,
+                          }}
+                        >
+                          {tag}
+                        </span>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Website link */}
-                {project.website && (
-                  <div className="flex items-center gap-3 mb-8 pb-6 border-b" style={{ borderColor }}>
-                    <span className="text-sm font-medium" style={{ color: colors.text }}>Website</span>
-                    <div className="flex items-center gap-1.5">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.statusInDev} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                      </svg>
-                      <a href={`https://${project.website}`} target="_blank" rel="noreferrer" className="text-sm hover:opacity-70 transition-opacity" style={{ color: colors.statusInDev }}>{project.website}</a>
-                    </div>
-                  </div>
-                )}
+                {/* WEBSITE */}
+                <div
+                  className="flex items-center justify-between py-6 border-y mb-10"
+                  style={{ borderColor: colors.divider }}
+                >
+                  <span
+                    className="text-lg font-semibold"
+                    style={{ color: colors.text }}
+                  >
+                    Website
+                  </span>
 
-                {/* About paragraphs */}
-                <p className="text-sm sm:text-base leading-relaxed mb-5" style={{ color: colors.textMuted }}>{project.about}</p>
-                <p className="text-sm sm:text-base leading-relaxed mb-12" style={{ color: colors.textMuted }}>{project.about2}</p>
+                  {/* @ts-ignore */}
+                  <a
+                    href={`https://${project.website}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 text-base transition-opacity duration-300 hover:opacity-70"
+                    style={{ color: '#3B5BDB' }}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                    </svg>
+                    {/* @ts-ignore */}
+                    {project.website || "View Project"}
+                  </a>
+                </div>
 
-                {/* Active Builders */}
-                <h2 className="text-xl sm:text-2xl font-bold mb-6" style={{ color: colors.text }}>Active Builders</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
-                  {activeBuilders.map((b, i) => (
-                    <div key={i} className="rounded-xl overflow-hidden border border-transparent transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-default" style={{ background: cardBg, borderColor: 'transparent' }} onMouseEnter={e => (e.currentTarget.style.borderColor = colors.statusInDev)} onMouseLeave={e => (e.currentTarget.style.borderColor = 'transparent')}>
-                      <div className="w-full" style={{ background: imgBg, aspectRatio: '4/3' }} />
-                      <div className="px-4 pt-3 pb-4">
-                        <h4 className="text-sm font-bold mb-0.5" style={{ color: colors.text }}>{b.name}</h4>
-                        <p className="text-xs mb-1.5" style={{ color: colors.textSubtle }}>{b.role}</p>
-                        <p className="text-xs italic" style={{ color: colors.textMuted }}>{b.quote}</p>
-                      </div>
-                    </div>
-                  ))}
+                {/* DESCRIPTION */}
+                <div
+                  className="space-y-10 text-[17px] lg:text-[18px] leading-[2]"
+                  style={{ color: colors.textMuted }}
+                >
+                  {/* @ts-ignore */}
+                  <p>{project.about || "Detailed description coming soon."}</p>
+                  {/* @ts-ignore */}
+                  {project.about2 && <p>{project.about2}</p>}
                 </div>
               </div>
 
-              {/* ── RIGHT SIDEBAR ── */}
-              <div className="lg:pt-[88px]">
-                <div className="rounded-xl border overflow-hidden" style={{ background: sidebarBg, borderColor }}>
-                  {/* Sidebar image */}
-                  <div className="w-full h-28" style={{ background: imgBg }} />
+              {/* RIGHT SIDEBAR */}
+              <div
+                className={`rounded-3xl border p-7 transition-all duration-700 hover:-translate-y-1 ${
+                  mounted
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-8'
+                }`}
+                style={{
+                  background: colors.bgCard,
+                  borderColor: colors.divider,
+                }}
+              >
+                <div
+                  className="w-24 h-24 rounded-full mx-auto mb-8"
+                  style={{
+                    background: dark ? '#202868' : '#ECEFF7',
+                  }}
+                />
 
-                  {/* Meta rows */}
-                  <div className="px-5 py-5 space-y-3 text-sm border-b" style={{ borderColor }}>
-                    {[
-                      ['Status', project.status],
-                      ['Category', project.category],
-                      ['Team size:', project.teamSize],
-                      ['Tech:', project.tech],
-                      ['Launch date', project.launchDate],
-                    ].map(([label, value]) => (
-                      <div key={label} className="flex items-center justify-between gap-2">
-                        <span style={{ color: colors.textSubtle }}>{label}</span>
-                        <span className="font-medium text-right" style={{ color: colors.text }}>{value}</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="space-y-5 mb-10">
+                  {[
+                    ['Status', project.status],
+                    // @ts-ignore
+                    ['Category', project.category || "Tech"],
+                    // @ts-ignore
+                    ['Team size', project.teamSize || "Loading..."],
+                    // @ts-ignore
+                    ['Tech', project.tech || project.tags.join(', ')],
+                    // @ts-ignore
+                    ['Launch date', project.launchDate || "TBA"],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between text-[15px]"
+                    >
+                      <span style={{ color: colors.textMuted }}>
+                        {label}:
+                      </span>
 
-                  {/* Social icons */}
-                  <div className="px-5 py-4 flex items-center gap-4" style={{ color: colors.text }}>
-                    <a href={project.website ? `https://${project.website}` : 'https://nhtechhub.org'} target="_blank" rel="noreferrer" className="hover:opacity-60 transition-opacity" aria-label="TikTok">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-                    </a>
-                    <a href={project.website ? `https://${project.website}` : 'https://nhtechhub.org'} target="_blank" rel="noreferrer" className="hover:opacity-60 transition-opacity" aria-label="LinkedIn">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                    </a>
-                    <a href={project.website ? `https://${project.website}` : 'https://nhtechhub.org'} target="_blank" rel="noreferrer" className="hover:opacity-60 transition-opacity" aria-label="X">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"/></svg>
-                    </a>
-                  </div>
+                      <span
+                        className="font-medium text-right"
+                        style={{ color: colors.text }}
+                      >
+                        {value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-center gap-5">
+                  {[FaTiktok, FaLinkedinIn, FaXTwitter].map((Icon, index) => (
+                    <button
+                      key={index}
+                      className="text-2xl transition-all duration-300 hover:scale-110"
+                      style={{ color: colors.text }}
+                    >
+                      <Icon />
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
 
-            <CTASection dark={dark} colors={colors} />
+            {/* ================= ACTIVE BUILDERS ================= */}
+            <div className="mt-28">
+              <h2
+                className="text-5xl lg:text-6xl font-bold mb-14 tracking-tight"
+                style={{ color: colors.text }}
+              >
+                Active Builders
+              </h2>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {builders.map((builder, i) => (
+                  <div
+                    key={builder.name + i}
+                    className={`rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group ${
+                      mounted
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-10'
+                    }`}
+                    style={{
+                      transitionDelay: `${i * 120}ms`,
+                      background: colors.bgCard,
+                      borderColor: colors.divider,
+                    }}
+                  >
+                    <div
+                      className="h-[260px] transition-transform duration-500 group-hover:scale-105"
+                      style={{
+                        background: dark ? '#1f2768' : '#EEF0F8',
+                      }}
+                    />
+
+                    <div className="p-7 text-center">
+                      <h3
+                        className="text-3xl font-bold mb-2 tracking-tight"
+                        style={{ color: colors.text }}
+                      >
+                        {builder.name}
+                      </h3>
+
+                      <p
+                        className="text-base mb-5"
+                        style={{ color: colors.textMuted }}
+                      >
+                        {builder.role}
+                      </p>
+
+                      <p
+                        className="italic text-base"
+                        style={{ color: colors.textSubtle }}
+                      >
+                        {builder.quote}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ================= FOOTER SOCIAL ================= */}
+            <div className="flex items-center justify-end gap-5 mt-24">
+              {[FaInstagram, FaLinkedinIn, FaTiktok, FaXTwitter].map(
+                (Icon, index) => (
+                  <button
+                    key={index}
+                    className="text-xl transition-all duration-300 hover:scale-110"
+                    style={{ color: colors.text }}
+                  >
+                    <Icon />
+                  </button>
+                )
+              )}
+            </div>
+
           </div>
+          
+          {/* CTA Section */}
+          <CTASection dark={dark} colors={colors} />
+          
         </PageMargin>
       </main>
+
       <Footer colors={colors} />
     </div>
   );

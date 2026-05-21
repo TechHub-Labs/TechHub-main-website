@@ -224,7 +224,7 @@ export function ValuesAndCulture({
         {/* ── LEADERSHIP THROUGH EXECUTION ── */}
         {/* Dark navy full-bleed block matching design exactly */}
         <div
-          className="px-8 sm:px-12 py-12 sm:py-16 -mx-4 lg:-mx-[99px]"
+          className="px-4 lg:px-[99px] py-12 sm:py-16 -mx-4 lg:-mx-[99px]"
           style={{
             background: "#0F1B4D",
             opacity: visible ? 1 : 0,

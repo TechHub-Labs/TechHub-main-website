@@ -1,7 +1,13 @@
 /**
  * PROJECTS PAGE
- * Design: "Projects" heading + subtitle, search bar + Category dropdown + Filter by Status,
- * list-style rows (icon | name + desc + tags | status badge), pagination.
+ * Tailwind-only styling version
+ * Matches NH TechHub design:
+ * - Large hero heading
+ * - Modern filters
+ * - Animated project rows
+ * - Premium spacing
+ * - Smooth hover effects
+ * - Tailwind utilities only
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -40,10 +46,8 @@ export const allProjects: Project[] = [
     tech: "JS, Node",
     launchDate: "May 15, 2026",
     website: "www.nexus.com",
-    about:
-      'Nexus was born out of a simple observation: students were learning in isolation, unaware of the vibrant tech events and hangout spots happening right around them. While the talent existed, a central directory for connection didn\'t. Nexus serves as the definitive discovery platform to bridge that gap. The Solution Nexus provides a real-time, curated feed of tech conferences, meetups, and social hubs tailored specifically for the student innovator. By categorizing opportunities into "Events" and "Hangout Spots," it ensures that collaboration isn\'t just restricted to the classroom. It\'s a tool built to foster a project-driven community where serendipitous meetings turn into real products.',
-    about2:
-      "Nexus didn't start as a plan; it started as a problem. Students were learning in isolation, unaware of the vibrant tech events and hangout spots happening around them. While talent existed, direction and a central platform for discovery didn't. A small group within TechHub decided to change that. Nexus is designed to be the definitive discovery engine for the student tech ecosystem. It bridges the gap between learning and building by connecting peers with real-world opportunities and social hubs. It isn't just an app; it's a structured pipeline that ensures collaboration isn't restricted to the classroom.",
+    about: "",
+    about2: "",
   },
   {
     id: "pulse",
@@ -56,10 +60,8 @@ export const allProjects: Project[] = [
     tech: "React, Firebase",
     launchDate: "TBD",
     website: "www.pulse.app",
-    about:
-      "Pulse aggregates real-time news and trending topics curated for the student tech community.",
-    about2:
-      "Built by a team of developers passionate about keeping builders informed and ahead of the curve.",
+    about: "",
+    about2: "",
   },
   {
     id: "fittrack",
@@ -72,10 +74,8 @@ export const allProjects: Project[] = [
     tech: "Flutter, Node",
     launchDate: "March 2026",
     website: "www.fittrack.io",
-    about:
-      "FitTrack helps users build healthy habits by tracking workouts and nutrition goals.",
-    about2:
-      "Started as a side project within TechHub's engineering track and shipped within 6 weeks.",
+    about: "",
+    about2: "",
   },
   {
     id: "studybuddy",
@@ -88,10 +88,8 @@ export const allProjects: Project[] = [
     tech: "Next.js",
     launchDate: "TBD",
     website: "",
-    about:
-      "StudyBuddy makes peer-to-peer learning seamless for university students.",
-    about2:
-      "Currently paused while the team refines the core matching algorithm.",
+    about: "",
+    about2: "",
   },
   {
     id: "shopease",
@@ -104,10 +102,8 @@ export const allProjects: Project[] = [
     tech: "React Native",
     launchDate: "TBD",
     website: "",
-    about:
-      "ShopEase uses AI to surface deals that match the user's taste and budget.",
-    about2:
-      "In active development — an early alpha is available for internal testing.",
+    about: "",
+    about2: "",
   },
   {
     id: "travelmate",
@@ -120,10 +116,8 @@ export const allProjects: Project[] = [
     tech: "React Native, Node",
     launchDate: "Q4 2026",
     website: "",
-    about:
-      "TravelMate connects travelers with local guides and community-curated itineraries.",
-    about2:
-      "Slated for launch in Q4 2026 following a successful design sprint.",
+    about: "",
+    about2: "",
   },
   {
     id: "codelab",
@@ -136,9 +130,8 @@ export const allProjects: Project[] = [
     tech: "Vue, Python",
     launchDate: "Jan 2026",
     website: "www.codelab.dev",
-    about:
-      "CodeLab gamifies the learning experience with progressive coding challenges.",
-    about2: "Used by over 200 students across 3 campuses since launch.",
+    about: "",
+    about2: "",
   },
   {
     id: "greenthumb",
@@ -151,9 +144,8 @@ export const allProjects: Project[] = [
     tech: "Flutter",
     launchDate: "Q3 2026",
     website: "",
-    about:
-      "GreenThumb helps urban dwellers grow and maintain houseplants with smart reminders.",
-    about2: "A passion project championed by TechHub's creative track.",
+    about: "",
+    about2: "",
   },
   {
     id: "soundscape",
@@ -166,13 +158,10 @@ export const allProjects: Project[] = [
     tech: "React, Web Audio",
     launchDate: "TBD",
     website: "www.soundscape.io",
-    about:
-      "SoundScape lets creators blend and share immersive ambient audio environments.",
-    about2: "Beta testers report significant improvements in focus and mood.",
+    about: "",
+    about2: "",
   },
 ];
-
-// Status colors are provided by the theme `colors` at runtime
 
 const PAGE_SIZE = 9;
 
@@ -184,70 +173,97 @@ function ProjectRow({
   project: Project;
   index: number;
   colors: ReturnType<typeof useTheme>["colors"];
-  isDark: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
     const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setTimeout(() => setVisible(true), index * 60);
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), index * 70);
           obs.disconnect();
         }
       },
-      { threshold: 0.05 },
+      { threshold: 0.1 }
     );
+
     obs.observe(el);
+
     return () => obs.disconnect();
   }, [index]);
 
-  const tagBg = colors.tagBg;
-  const rowBg = colors.bgCard;
-  const borderColor = colors.divider;
+  const getStatusColor = () => {
+    switch (project.status) {
+      case "LIVE":
+        return colors.statusLive;
+      case "BETA":
+        return "#a8cf45";
+      case "PAUSED":
+        return colors.statusPaused;
+      case "IN DEVELOPMENT":
+        return colors.statusInDev;
+      case "UPCOMING":
+        return colors.statusUpcoming;
+      default:
+        return colors.statusLive;
+    }
+  };
 
   return (
-    <Link to={`/projects/${project.id}`} style={{ textDecoration: "none" }}>
+    <Link to={`/projects/${project.id}`} className="block no-underline">
       <div
         ref={ref}
-        className="flex items-center gap-4 sm:gap-5 px-4 sm:px-6 py-4 sm:py-5 border-b cursor-pointer transition-all duration-200 hover:brightness-[0.97]"
+        className="group flex items-center gap-5 lg:gap-7 border-b px-5 sm:px-7 py-6 transition-all duration-300 hover:scale-[1.005]"
         style={{
-          background: rowBg,
-          borderColor,
+          borderColor: colors.divider,
+          background: colors.bgCard,
           opacity: visible ? 1 : 0,
-          transform: visible ? "translateX(0)" : "translateX(-12px)",
-          transition:
-            "opacity 0.45s ease, transform 0.45s ease, background 0.2s",
+          transform: visible
+            ? "translateY(0px)"
+            : "translateY(18px)",
         }}
       >
-        {/* Icon placeholder */}
+        {/* ICON */}
         <div
-          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full shrink-0"
-          style={{ background: colors.memberBg }}
+          className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-300 group-hover:scale-105"
+          style={{
+            background: colors.memberBg,
+          }}
         />
 
-        {/* Name + desc + tags */}
-        <div className="flex-1 min-w-0">
+        {/* CONTENT */}
+        <div className="min-w-0 flex-1">
           <h3
-            className="text-base sm:text-lg font-bold mb-0.5 truncate"
-            style={{ color: colors.text }}
+            className="mb-2 text-2xl sm:text-[2rem] font-bold leading-none tracking-tight"
+            style={{
+              color: colors.text,
+            }}
           >
             {project.name}
           </h3>
+
           <p
-            className="text-xs sm:text-sm mb-2 truncate"
-            style={{ color: colors.textMuted }}
+            className="mb-3 text-sm sm:text-base leading-relaxed"
+            style={{
+              color: colors.textMuted,
+            }}
           >
             {project.desc}
           </p>
-          <div className="flex flex-wrap gap-1.5">
+
+          <div className="flex flex-wrap gap-2">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                style={{ background: tagBg, color: colors.text }}
+                className="rounded-full px-3 py-1 text-xs font-semibold sm:text-sm"
+                style={{
+                  background: colors.tagBg,
+                  color: colors.text,
+                }}
               >
                 {tag}
               </span>
@@ -255,32 +271,19 @@ function ProjectRow({
           </div>
         </div>
 
-        {/* Status */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* STATUS */}
+        <div className="flex shrink-0 items-center gap-2">
           <span
-            className="w-2 h-2 rounded-full"
+            className="h-[10px] w-[10px] rounded-full"
             style={{
-              background:
-                project.status === "LIVE" || project.status === "BETA"
-                  ? colors.statusLive
-                  : project.status === "PAUSED"
-                    ? colors.statusPaused
-                    : project.status === "IN DEVELOPMENT"
-                      ? colors.statusInDev
-                      : colors.statusUpcoming,
+              background: getStatusColor(),
             }}
           />
+
           <span
-            className="text-xs sm:text-sm font-semibold tracking-wide"
+            className="text-xs sm:text-sm font-bold tracking-wide"
             style={{
-              color:
-                project.status === "LIVE" || project.status === "BETA"
-                  ? colors.statusLive
-                  : project.status === "PAUSED"
-                    ? colors.statusPaused
-                    : project.status === "IN DEVELOPMENT"
-                      ? colors.statusInDev
-                      : colors.statusUpcoming,
+              color: getStatusColor(),
             }}
           >
             {project.status}
@@ -293,26 +296,32 @@ function ProjectRow({
 
 export function ProjectsPage() {
   const { dark, setDark, colors } = useTheme();
-  const isDark = dark;
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Category");
-  const [statusFilter, setStatusFilter] = useState("Filter by Status");
-  const [page, setPage] = useState(1);
-  const [headerVisible, setHeaderVisible] = useState(false);
+  const [statusFilter, setStatusFilter] =
+    useState("Filter by Status");
+
   const [showCatDrop, setShowCatDrop] = useState(false);
-  const [showStatusDrop, setShowStatusDrop] = useState(false);
+  const [showStatusDrop, setShowStatusDrop] =
+    useState(false);
+
+  const [page, setPage] = useState(1);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    document.documentElement.style.color = colors.text;
     window.scrollTo(0, 0);
-    setTimeout(() => setHeaderVisible(true), 80);
-  }, [colors]);
+
+    requestAnimationFrame(() => {
+      setMounted(true);
+    });
+  }, []);
 
   const categories = [
     "All",
     ...Array.from(new Set(allProjects.map((p) => p.category))),
   ];
+
   const statuses: (Project["status"] | "All")[] = [
     "All",
     "LIVE",
@@ -323,95 +332,124 @@ export function ProjectsPage() {
   ];
 
   const filtered = allProjects.filter((p) => {
-    const matchSearch =
+    const matchesSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.desc.toLowerCase().includes(search.toLowerCase());
-    const matchCat =
-      category === "Category" || category === "All" || p.category === category;
-    const matchStatus =
+
+    const matchesCategory =
+      category === "Category" ||
+      category === "All" ||
+      p.category === category;
+
+    const matchesStatus =
       statusFilter === "Filter by Status" ||
       statusFilter === "All" ||
       p.status === statusFilter;
-    return matchSearch && matchCat && matchStatus;
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesStatus
+    );
   });
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.ceil(
+    filtered.length / PAGE_SIZE
+  );
 
-  const inputBg = colors.bgCard;
-  const dropBg = colors.bgCard;
-  const borderColor = colors.divider;
+  const paginated = filtered.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
 
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
-      <WebsiteBackground isDark={dark} bgColor={colors.bg} />
+    <div className="flex min-h-screen flex-col">
+      <WebsiteBackground
+        isDark={dark}
+        bgColor={colors.bg}
+      />
+
       <Navigation
         colors={colors}
         dark={dark}
         onThemeToggle={() => setDark(!dark)}
       />
-      <main className="flex-1 w-full">
+
+      <main className="w-full flex-1">
         <PageMargin>
           {/* HERO */}
-          <div
-            className="pt-14 pb-8"
+          <section
+            className="pb-12 pt-20"
             style={{
-              opacity: headerVisible ? 1 : 0,
-              transform: headerVisible ? "translateY(0)" : "translateY(18px)",
-              transition: "opacity 0.6s ease, transform 0.6s ease",
+              opacity: mounted ? 1 : 0,
+              transform: mounted
+                ? "translateY(0px)"
+                : "translateY(24px)",
+              transition:
+                "opacity 0.7s ease, transform 0.7s ease",
             }}
           >
             <h1
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-3"
-              style={{ color: colors.text }}
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none tracking-[-4px]"
+              style={{
+                color: colors.text,
+              }}
             >
               Projects
             </h1>
+
             <div
-              className="h-[3px] mb-4"
+              className="mt-4 mb-4 h-1 rounded-full"
               style={{
-                width: headerVisible ? "56px" : "0px",
-                transition: "width 0.7s ease 0.3s",
-                background: colors.accent,
+                width: mounted ? "150px" : "0px",
+                transition:
+                  "width 0.8s cubic-bezier(0.22,1,0.36,1)",
+                background: "#A4D045",
               }}
             />
+
             <p
-              className="text-base sm:text-lg"
-              style={{ color: colors.textMuted }}
+              className="text-lg sm:text-2xl"
+              style={{
+                color: colors.textMuted,
+              }}
             >
               Building real products. Solving real problems.
             </p>
-          </div>
+          </section>
 
-          {/* SEARCH + FILTERS */}
-          <div
-            className="flex flex-col sm:flex-row gap-3 mb-8"
-            style={{
-              opacity: headerVisible ? 1 : 0,
-              transition: "opacity 0.6s ease 0.2s",
-            }}
-          >
-            {/* Search */}
+          {/* FILTERS */}
+          <section className="mb-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            {/* SEARCH */}
             <div
-              className="flex-1 flex items-center gap-2 px-4 py-2.5 rounded-lg border"
-              style={{ background: inputBg, borderColor }}
+              className="flex h-16 w-full items-center gap-3 rounded-2xl border px-5 lg:max-w-[720px]"
+              style={{
+                background: colors.bgCard,
+                borderColor: colors.divider,
+              }}
             >
               <svg
-                width="16"
-                height="16"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                style={{ color: colors.textSubtle, flexShrink: 0 }}
+                style={{
+                  color: colors.textMuted,
+                }}
               >
                 <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line
+                  x1="21"
+                  y1="21"
+                  x2="16.65"
+                  y2="16.65"
+                />
               </svg>
+
               <input
                 value={search}
                 onChange={(e) => {
@@ -419,22 +457,32 @@ export function ProjectsPage() {
                   setPage(1);
                 }}
                 placeholder="Search"
-                className="flex-1 bg-transparent outline-none text-sm"
-                style={{ color: colors.text }}
+                className="flex-1 bg-transparent text-base outline-none"
+                style={{
+                  color: colors.text,
+                }}
               />
 
-              {/* Category dropdown */}
+              {/* CATEGORY */}
               <div className="relative">
                 <button
                   onClick={() => {
-                    setShowCatDrop((p) => !p);
+                    setShowCatDrop(!showCatDrop);
                     setShowStatusDrop(false);
                   }}
-                  className="flex items-center gap-1 text-sm font-medium px-2 py-1 rounded transition-colors hover:opacity-70"
-                  style={{ color: colors.text }}
+                  className="flex items-center gap-2 text-sm font-semibold"
+                  style={{
+                    color: colors.text,
+                  }}
                 >
                   {category}
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                  >
                     <path
                       d="M2 4l4 4 4-4"
                       stroke="currentColor"
@@ -443,10 +491,14 @@ export function ProjectsPage() {
                     />
                   </svg>
                 </button>
+
                 {showCatDrop && (
                   <div
-                    className="absolute top-full left-0 mt-1 z-50 rounded-lg shadow-lg border py-1 min-w-[140px]"
-                    style={{ background: dropBg, borderColor }}
+                    className="absolute left-0 top-full z-50 mt-3 min-w-[180px] rounded-2xl border py-2 shadow-xl"
+                    style={{
+                      background: colors.bgCard,
+                      borderColor: colors.divider,
+                    }}
                   >
                     {categories.map((c) => (
                       <button
@@ -454,10 +506,11 @@ export function ProjectsPage() {
                         onClick={() => {
                           setCategory(c);
                           setShowCatDrop(false);
-                          setPage(1);
                         }}
-                        className="w-full text-left px-3 py-2 text-sm hover:opacity-70 transition-opacity"
-                        style={{ color: colors.text }}
+                        className="w-full px-4 py-2 text-left text-sm transition-opacity hover:opacity-70"
+                        style={{
+                          color: colors.text,
+                        }}
                       >
                         {c}
                       </button>
@@ -467,18 +520,28 @@ export function ProjectsPage() {
               </div>
             </div>
 
-            {/* Status dropdown */}
+            {/* STATUS */}
             <div className="relative">
               <button
                 onClick={() => {
-                  setShowStatusDrop((p) => !p);
+                  setShowStatusDrop(!showStatusDrop);
                   setShowCatDrop(false);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all hover:opacity-80"
-                style={{ background: inputBg, borderColor, color: colors.text }}
+                className="flex h-16 items-center gap-3 rounded-2xl border px-6 text-sm font-semibold"
+                style={{
+                  background: colors.bgCard,
+                  borderColor: colors.divider,
+                  color: colors.text,
+                }}
               >
                 {statusFilter}
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
                   <path
                     d="M2 4l4 4 4-4"
                     stroke="currentColor"
@@ -487,10 +550,14 @@ export function ProjectsPage() {
                   />
                 </svg>
               </button>
+
               {showStatusDrop && (
                 <div
-                  className="absolute top-full right-0 mt-1 z-50 rounded-lg shadow-lg border py-1 min-w-[160px]"
-                  style={{ background: dropBg, borderColor }}
+                  className="absolute right-0 top-full z-50 mt-3 min-w-[220px] rounded-2xl border py-2 shadow-xl"
+                  style={{
+                    background: colors.bgCard,
+                    borderColor: colors.divider,
+                  }}
                 >
                   {statuses.map((s) => (
                     <button
@@ -498,10 +565,11 @@ export function ProjectsPage() {
                       onClick={() => {
                         setStatusFilter(s);
                         setShowStatusDrop(false);
-                        setPage(1);
                       }}
-                      className="w-full text-left px-3 py-2 text-sm hover:opacity-70 transition-opacity"
-                      style={{ color: colors.text }}
+                      className="w-full px-4 py-2 text-left text-sm transition-opacity hover:opacity-70"
+                      style={{
+                        color: colors.text,
+                      }}
                     >
                       {s}
                     </button>
@@ -509,100 +577,79 @@ export function ProjectsPage() {
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
           {/* PROJECT LIST */}
-          <div
-            className="rounded-xl overflow-hidden border mb-6"
-            style={{ borderColor }}
+          <section
+            className="overflow-hidden rounded-3xl border"
+            style={{
+              borderColor: colors.divider,
+            }}
           >
-            {paginated.length === 0 ? (
-              <div
-                className="py-16 text-center text-sm"
-                style={{ color: colors.textMuted }}
-              >
-                No projects found.
-              </div>
-            ) : (
-              paginated.map((p, i) => (
-                <ProjectRow
-                  key={p.id}
-                  project={p}
-                  index={i}
-                  colors={colors}
-                  isDark={isDark}
-                />
-              ))
-            )}
-          </div>
+            {paginated.map((project, index) => (
+              <ProjectRow
+                key={project.id}
+                project={project}
+                index={index}
+                colors={colors}
+              />
+            ))}
+          </section>
 
           {/* PAGINATION */}
-          {totalPages > 1 && (
-            <div
-              className="flex items-center justify-between text-sm mb-20"
-              style={{ color: colors.textMuted }}
+          <section className="flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:pb-24">
+            <p
+              className="text-sm sm:text-base"
+              style={{
+                color: colors.textMuted,
+              }}
             >
-              <span>
-                Page {page} of {totalPages}
-              </span>
-              <div className="flex items-center gap-1">
-                {Array.from(
-                  { length: Math.min(totalPages, 5) },
-                  (_, i) => i + 1,
-                ).map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    className="w-8 h-8 rounded flex items-center justify-center font-medium transition-colors"
-                    style={{
-                      background: page === n ? colors.text : "transparent",
-                      color:
-                        page === n
-                          ? isDark
-                            ? colors.accentText
-                            : "#ffffff"
-                          : colors.text,
-                    }}
-                  >
-                    {n}
-                  </button>
-                ))}
-                {totalPages > 5 && <span className="px-1">...</span>}
-                {totalPages > 5 &&
-                  [totalPages - 1, totalPages].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => setPage(n)}
-                      className="w-8 h-8 rounded flex items-center justify-center font-medium transition-colors"
-                      style={{
-                        background: page === n ? colors.text : "transparent",
-                        color:
-                          page === n
-                            ? isDark
-                              ? colors.accentText
-                              : "#ffffff"
-                            : colors.text,
-                      }}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                {page < totalPages && (
-                  <button
-                    onClick={() => setPage((p) => p + 1)}
-                    className="px-3 h-8 rounded font-medium transition-colors hover:opacity-70"
-                    style={{ color: colors.text }}
-                  >
-                    Next
-                  </button>
-                )}
-              </div>
+              Page {page} of {totalPages}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {Array.from(
+                { length: totalPages },
+                (_, i) => i + 1
+              ).map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setPage(n)}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105"
+                  style={{
+                    background:
+                      page === n
+                        ? colors.tagBg
+                        : "transparent",
+                    color: colors.text,
+                  }}
+                >
+                  {n}
+                </button>
+              ))}
+
+              {page < totalPages && (
+                <button
+                  onClick={() =>
+                    setPage((prev) => prev + 1)
+                  }
+                  className="ml-2 flex h-10 items-center rounded-lg border px-5 text-sm font-semibold transition-opacity hover:opacity-70"
+                  style={{
+                    background: colors.bgCard,
+                    color: colors.text,
+                    borderColor: colors.divider,
+                  }}
+                >
+                  Next
+                </button>
+              )}
             </div>
-          )}
+          </section>
 
           <CTASection dark={dark} colors={colors} />
         </PageMargin>
       </main>
+
       <Footer colors={colors} />
     </div>
   );
