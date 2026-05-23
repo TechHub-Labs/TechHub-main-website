@@ -2,12 +2,12 @@
  * MemberProfileEditor — Upsert own member profile
  * Handles first-time (INSERT) and returning (UPDATE) members via .upsert()
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../../core/supabase/client';
 import { useAuth } from '../../../shared/hooks/useAuth';
 import {
   AdminInput, AdminTextarea, TagEditor,
-  AvatarUploader, AdminToggle, SaveBar,
+  AvatarUploader, SaveBar,
 } from './AdminFormComponents';
 
 const CATEGORY_OPTIONS = ['Undergrad', 'Alumni', "'25", "'26", "'27"];
@@ -17,41 +17,20 @@ export function MemberProfileEditor() {
 
   const [name,     setName]     = useState('');
   const [roleTitle,setRoleTitle]= useState('');
-  const [year,     setYear]     = useState('');
   const [quote,    setQuote]    = useState('');
   const [avatarUrl,setAvatarUrl]= useState<string | null>(null);
   const [skills,   setSkills]   = useState<string[]>([]);
   const [projects, setProjects] = useState<string[]>([]);
-  const [github,   setGithub]   = useState('');
+  const [portfolio,setPortfolio]= useState('');
   const [linkedin, setLinkedin] = useState('');
   const [twitter,  setTwitter]  = useState('');
   const [category, setCategory] = useState<string[]>([]);
-  const [visible,  setVisible]  = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [saved,  setSaved]  = useState(false);
   const [error,  setError]  = useState('');
 
-  // Load existing profile on mount
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('members').select('*').eq('user_id', user.id).single().then(({ data: raw }) => {
-      const data = raw as import('../../../core/supabase/types').Member | null;
-      if (!data) return;
-      setName(data.name ?? '');
-      setRoleTitle(data.role_title ?? '');
-      setYear(data.year ?? '');
-      setQuote(data.quote ?? '');
-      setAvatarUrl(data.avatar_url ?? null);
-      setSkills(data.skills ?? []);
-      setProjects(data.projects ?? []);
-      setGithub(data.github ?? '');
-      setLinkedin(data.linkedin ?? '');
-      setTwitter(data.twitter ?? '');
-      setCategory(data.category ?? []);
-      setVisible(data.visible ?? false);
-    });
-  }, [user]);
+  // No longer fetching existing data since this is a shared login for submissions.
 
   const toggleCategory = (cat: string) =>
     setCategory(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -61,15 +40,27 @@ export function MemberProfileEditor() {
     if (!user) return;
     setSaving(true); setSaved(false); setError('');
 
-    const { error } = await (supabase.from('members') as any).upsert({
-      user_id: user.id, name, role_title: roleTitle, year, quote,
-      avatar_url: avatarUrl, skills, projects, github, linkedin, twitter,
-      category, visible,
-    }, { onConflict: 'user_id' });
+    if (skills.length === 0) return setError('At least one skill is required.');
+    if (projects.length === 0) return setError('At least one project is required.');
+    if (category.length === 0) return setError('Please select a category.');
+
+    const { error } = await supabase.from('members').insert({
+      user_id: user.id, name, role_title: roleTitle, quote,
+      avatar_url: avatarUrl, skills, projects, github: portfolio, linkedin, twitter,
+      category, visible: false,
+    });
 
     setSaving(false);
-    if (error) { setError(error.message); }
-    else { setSaved(true); setTimeout(() => setSaved(false), 3000); }
+    if (error) { 
+      setError(error.message); 
+    } else { 
+      setSaved(true);
+      // Clear form
+      setName(''); setRoleTitle(''); setQuote('');
+      setAvatarUrl(null); setSkills([]); setProjects([]);
+      setPortfolio(''); setLinkedin(''); setTwitter(''); setCategory([]);
+      setTimeout(() => setSaved(false), 3000); 
+    }
   };
 
   if (!user) return null;
@@ -86,17 +77,16 @@ export function MemberProfileEditor() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
-          <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} placeholder="Frontend Developer" />
-          <AdminInput label="Year"       value={year}      onChange={setYear}      placeholder="2025" />
-          <AdminInput label="GitHub URL" value={github}    onChange={setGithub}    placeholder="https://github.com/..." />
-          <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  placeholder="https://linkedin.com/in/..." />
-          <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   placeholder="https://twitter.com/..." />
+          <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} required placeholder="Frontend Developer" />
+          <AdminInput label="Portfolio / Website" value={portfolio} onChange={setPortfolio} required placeholder="https://..." />
+          <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  required placeholder="https://linkedin.com/in/..." />
+          <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   required placeholder="https://twitter.com/..." />
         </div>
 
-        <AdminTextarea label="Quote" value={quote} onChange={setQuote} placeholder="A short quote about your journey…" rows={3} />
+        <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="A short quote about your journey…" rows={3} />
 
-        <TagEditor label="Skills" tags={skills} onChange={setSkills} placeholder="e.g. React, Python…" />
-        <TagEditor label="Projects" tags={projects} onChange={setProjects} placeholder="e.g. Project name" />
+        <TagEditor label="Skills" tags={skills} onChange={setSkills} required placeholder="e.g. React, Python…" />
+        <TagEditor label="Projects" tags={projects} onChange={setProjects} required placeholder="e.g. Project name" />
 
         {/* Category checkboxes */}
         <div style={{ marginBottom: '16px' }}>
@@ -122,12 +112,23 @@ export function MemberProfileEditor() {
           </div>
         </div>
 
-        <AdminToggle
-          label="Visible on Members page"
-          description="Toggle on when your profile is ready to publish"
-          checked={visible}
-          onChange={setVisible}
-        />
+        {/* Approval status — super admin controls visibility */}
+        <div style={{
+          marginTop: '8px', padding: '12px 16px', borderRadius: '8px',
+          background: 'rgba(251,191,36,0.1)',
+          border: '1px solid rgba(251,191,36,0.3)',
+          display: 'flex', alignItems: 'center', gap: '10px',
+        }}>
+          <span style={{ fontSize: '16px' }}>⏳</span>
+          <div>
+            <div style={{ color: '#fbbf24', fontSize: '13px', fontWeight: 600 }}>
+              Pending admin approval
+            </div>
+            <div style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>
+              Submit your profile and notify your admin to publish it.
+            </div>
+          </div>
+        </div>
 
         <SaveBar saving={saving} saved={saved} error={error} />
       </form>

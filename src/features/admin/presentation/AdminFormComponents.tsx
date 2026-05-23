@@ -20,40 +20,62 @@ export function AdminInput({
         type={type} value={value} required={required} placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
         style={{
-          width: '100%', padding: '10px 14px', borderRadius: '8px', boxSizing: 'border-box',
-          background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)',
+          width: '100%', padding: '12px 16px', borderRadius: '12px', boxSizing: 'border-box',
+          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
           color: '#f1f5f9', fontSize: '14px', outline: 'none',
-          transition: 'border-color 0.2s',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
         }}
-        onFocus={e => e.target.style.borderColor = '#A3D045'}
-        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+        onFocus={e => {
+          e.target.style.borderColor = '#A3D045';
+          e.target.style.background = 'rgba(255,255,255,0.05)';
+          e.target.style.boxShadow = '0 0 0 4px rgba(163,208,69,0.15), inset 0 2px 4px rgba(0,0,0,0.1)';
+          e.target.style.transform = 'translateY(-2px)';
+        }}
+        onBlur={e => {
+          e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+          e.target.style.background = 'rgba(255,255,255,0.02)';
+          e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.1)';
+          e.target.style.transform = 'none';
+        }}
       />
     </div>
   );
 }
 
 export function AdminTextarea({
-  label, value, onChange, placeholder, rows = 3,
+  label, value, onChange, placeholder, rows = 3, required,
 }: {
   label: string; value: string; onChange: (v: string) => void;
-  placeholder?: string; rows?: number;
+  placeholder?: string; rows?: number; required?: boolean;
 }) {
   return (
     <div style={{ marginBottom: '16px' }}>
       <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-        {label}
+        {label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}
       </label>
       <textarea
-        value={value} rows={rows} placeholder={placeholder}
+        value={value} rows={rows} placeholder={placeholder} required={required}
         onChange={e => onChange(e.target.value)}
         style={{
-          width: '100%', padding: '10px 14px', borderRadius: '8px', boxSizing: 'border-box',
-          background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)',
+          width: '100%', padding: '12px 16px', borderRadius: '12px', boxSizing: 'border-box',
+          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
           color: '#f1f5f9', fontSize: '14px', outline: 'none', resize: 'vertical',
-          transition: 'border-color 0.2s', fontFamily: 'inherit',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontFamily: 'inherit',
+          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
         }}
-        onFocus={e => e.target.style.borderColor = '#A3D045'}
-        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+        onFocus={e => {
+          e.target.style.borderColor = '#A3D045';
+          e.target.style.background = 'rgba(255,255,255,0.05)';
+          e.target.style.boxShadow = '0 0 0 4px rgba(163,208,69,0.15), inset 0 2px 4px rgba(0,0,0,0.1)';
+          e.target.style.transform = 'translateY(-2px)';
+        }}
+        onBlur={e => {
+          e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+          e.target.style.background = 'rgba(255,255,255,0.02)';
+          e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.1)';
+          e.target.style.transform = 'none';
+        }}
       />
     </div>
   );
@@ -61,9 +83,9 @@ export function AdminTextarea({
 
 // ─── Tag / array editor ───────────────────────────────────────────────────────
 export function TagEditor({
-  label, tags, onChange, placeholder,
+  label, tags, onChange, placeholder, required,
 }: {
-  label: string; tags: string[]; onChange: (tags: string[]) => void; placeholder?: string;
+  label: string; tags: string[]; onChange: (tags: string[]) => void; placeholder?: string; required?: boolean;
 }) {
   const [input, setInput] = useState('');
   const add = () => {
@@ -74,7 +96,7 @@ export function TagEditor({
   return (
     <div style={{ marginBottom: '16px' }}>
       <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-        {label}
+        {label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}
       </label>
       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
         <input
@@ -82,35 +104,50 @@ export function TagEditor({
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), add())}
           style={{
-            flex: 1, padding: '8px 12px', borderRadius: '8px', boxSizing: 'border-box',
-            background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)',
+            flex: 1, padding: '10px 14px', borderRadius: '10px', boxSizing: 'border-box',
+            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
             color: '#f1f5f9', fontSize: '14px', outline: 'none',
-            transition: 'border-color 0.2s',
+            transition: 'all 0.3s',
           }}
-          onFocus={e => e.target.style.borderColor = '#A3D045'}
-          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+          onFocus={e => {
+            e.target.style.borderColor = '#A3D045';
+            e.target.style.boxShadow = '0 0 0 3px rgba(163,208,69,0.15)';
+          }}
+          onBlur={e => {
+            e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+            e.target.style.boxShadow = 'none';
+          }}
         />
         <button onClick={add} type="button" style={{
-          padding: '8px 16px', borderRadius: '8px', background: '#A3D045',
+          padding: '10px 18px', borderRadius: '10px', background: 'linear-gradient(135deg, #A3D045, #8eb83d)',
           color: '#0f172a', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer',
-        }}>
+          transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 4px 12px rgba(163,208,69,0.3)',
+        }}
+        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+        onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+        >
           Add
         </button>
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-        {tags.map(tag => (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        {tags.map((tag, idx) => (
           <span key={tag} style={{
-            display: 'inline-flex', alignItems: 'center', gap: '4px',
-            background: 'rgba(163,208,69,0.12)', color: '#A3D045',
-            borderRadius: '20px', padding: '3px 10px', fontSize: '12px', fontWeight: 500,
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: 'rgba(163,208,69,0.15)', color: '#A3D045', border: '1px solid rgba(163,208,69,0.3)',
+            borderRadius: '20px', padding: '4px 12px', fontSize: '13px', fontWeight: 600,
+            animation: `tagPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 0.05}s both`,
           }}>
             {tag}
             <button onClick={() => onChange(tags.filter(t => t !== tag))} type="button"
-              style={{ background: 'none', border: 'none', color: '#A3D045', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0 }}>
+              style={{ background: 'none', border: 'none', color: '#A3D045', cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: 0, opacity: 0.7, transition: 'opacity 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '0.7'}
+            >
               ×
             </button>
           </span>
         ))}
+        <style>{`@keyframes tagPopIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }`}</style>
       </div>
     </div>
   );
@@ -214,12 +251,16 @@ export function SaveBar({ saving, saved, error }: { saving: boolean; saved: bool
       <button
         type="submit" disabled={saving}
         style={{
-          padding: '10px 28px', borderRadius: '8px',
-          background: saving ? '#334155' : '#A3D045',
-          color: '#0f172a', fontWeight: 700, fontSize: '14px',
+          padding: '12px 32px', borderRadius: '12px',
+          background: saving ? '#334155' : 'linear-gradient(135deg, #A3D045, #8eb83d)',
+          color: '#0f172a', fontWeight: 700, fontSize: '15px', letterSpacing: '0.5px',
           border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
-          transition: 'background 0.2s',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: saving ? 'none' : '0 6px 16px rgba(163,208,69,0.3)',
+          transform: saving ? 'none' : 'translateY(0)',
         }}
+        onMouseEnter={e => !saving && (e.currentTarget.style.transform = 'translateY(-2px)')}
+        onMouseLeave={e => !saving && (e.currentTarget.style.transform = 'translateY(0)')}
       >
         {saving ? 'Saving…' : 'Save Changes'}
       </button>

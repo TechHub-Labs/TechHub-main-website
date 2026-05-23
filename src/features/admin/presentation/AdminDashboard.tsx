@@ -40,8 +40,9 @@ function QuickLink({ to, label, description, color }: { to: string; label: strin
 }
 
 export function AdminDashboard() {
-  const { role, profile } = useAuth();
+  const { role, user } = useAuth();
   const [stats, setStats]   = useState<Stats>({ members: 0, executives: 0, projects: 0 });
+  const roleSql = `UPDATE auth.users SET raw_user_meta_data = jsonb_set(COALESCE(raw_user_meta_data,'{}'), '{role}', '"super_admin"') WHERE email = '${user?.email ?? 'your@email.com'}';`;
 
   useEffect(() => {
     const load = async () => {
@@ -69,9 +70,30 @@ export function AdminDashboard() {
           Welcome back 👋
         </h1>
         <p style={{ color: '#64748b', fontSize: '14px' }}>
-          {profile?.email} · {roleGreeting[role ?? 'member']}
+          {user?.email} · {role ? roleGreeting[role] : 'Determining your access level…'}
         </p>
       </div>
+
+      {/* Role not set warning */}
+      {!role && (
+        <div style={{
+          background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)',
+          borderRadius: '10px', padding: '16px 20px', marginBottom: '24px',
+          display: 'flex', gap: '12px', alignItems: 'flex-start',
+        }}>
+          <span style={{ fontSize: '20px' }}>⚠️</span>
+          <div>
+            <div style={{ color: '#fbbf24', fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>Role not assigned yet</div>
+            <div style={{ color: '#94a3b8', fontSize: '13px', lineHeight: 1.6 }}>
+              Run the role SQL in Supabase → SQL Editor, then refresh this page.
+              <br />
+              <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
+                {roleSql}
+              </code>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats — super_admin only */}
       {role === 'super_admin' && (
@@ -93,10 +115,10 @@ export function AdminDashboard() {
       </h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
         {role === 'member' && (
-          <QuickLink to="/admin/profile"      label="Edit My Profile"  description="Update your photo, bio, skills and socials" color="#38bdf8" />
+          <QuickLink to="/admin/profile"      label="Add your profile"  description="Update your photo, bio, skills and socials" color="#38bdf8" />
         )}
         {role === 'executive' && (
-          <QuickLink to="/admin/exec-profile" label="Edit My Profile"  description="Update your photo, role and quote" color="#a78bfa" />
+          <QuickLink to="/admin/exec-profile" label="Add your profile"  description="Update your photo, role and quote" color="#a78bfa" />
         )}
         {role === 'super_admin' && (
           <>

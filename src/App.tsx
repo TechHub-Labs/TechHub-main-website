@@ -19,6 +19,7 @@ import { SuperAdminMembers }        from "./features/admin/presentation/SuperAdm
 import { SuperAdminExecutives }     from "./features/admin/presentation/SuperAdminExecutives";
 import { SuperAdminProjects }       from "./features/admin/presentation/SuperAdminProjects";
 import { ProtectedRoute }           from "./shared/components/ProtectedRoute";
+import { NotFoundPage }             from "./features/notfound/presentation/NotFoundPage";
 
 function App() {
   return (
@@ -50,6 +51,9 @@ function App() {
             <Route path="executives"    element={<ProtectedRoute allowedRoles={['super_admin']}><SuperAdminExecutives /></ProtectedRoute>} />
             <Route path="projects"      element={<ProtectedRoute allowedRoles={['super_admin']}><SuperAdminProjects /></ProtectedRoute>} />
           </Route>
+
+          {/* ── 404 ── */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -12,9 +12,22 @@ import { Footer } from "../../../shared/components/Footer";
 import { CTASection } from "../../../shared/components/CTASection";
 import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
 import { PageMargin } from "../../../shared/components/PageMargin";
-import { DEMO_COUNCIL_MEMBERS, DemoCouncilMember as CouncilMember } from "../../../core/data/demoData";
+import { supabase } from "../../../core/supabase/client";
 
-const councilMembers: CouncilMember[] = DEMO_COUNCIL_MEMBERS as CouncilMember[];
+// Local interface matching what the page expects
+interface CouncilMember {
+  id: string;
+  name: string;
+  role: string;
+  description: string;
+  quote?: string;
+  avatar_url?: string;
+  category: string[];
+  skills: string[];
+  portfolio?: string;
+  linkedin?: string;
+  twitter?: string;
+}
 
 const FILTERS = ["Founding Council", "'27"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -77,9 +90,9 @@ function CouncilCard({
       }}
     >
       <div
-        className="w-full"
+        className="w-full bg-cover bg-center"
         style={{
-          background: isDark ? colors.bgCardHover : colors.bgCardHover,
+          background: member.avatar_url ? `url(${member.avatar_url}) center / cover` : (isDark ? colors.bgCardHover : colors.bgCardHover),
           aspectRatio: "4/3",
         }}
       />
@@ -316,11 +329,35 @@ export function ExecutiveCouncilPage() {
   const [activeFilter, setActiveFilter] = useState<Filter>("Founding Council");
   const [selected, setSelected] = useState<CouncilMember | null>(null);
   const [headerVisible, setHeaderVisible] = useState(false);
+  const [councilMembers, setCouncilMembers] = useState<CouncilMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.documentElement.style.color = colors.text;
     window.scrollTo(0, 0);
     setTimeout(() => setHeaderVisible(true), 80);
+
+    const loadData = async () => {
+      const { data } = await supabase.from('executives').select('*').eq('visible', true);
+      if (data) {
+        const mapped: CouncilMember[] = data.map((exec: any) => ({
+          id: exec.id,
+          name: exec.name,
+          role: exec.role_title || 'Executive',
+          description: exec.quote || '',
+          quote: exec.quote || '',
+          avatar_url: exec.avatar_url,
+          category: exec.category || [],
+          skills: [],
+          portfolio: '',
+          linkedin: '',
+          twitter: ''
+        }));
+        setCouncilMembers(mapped);
+      }
+      setLoading(false);
+    };
+    loadData();
   }, [colors]);
 
   const filtered = councilMembers.filter((m) =>
@@ -400,17 +437,27 @@ export function ExecutiveCouncilPage() {
             ))}
           </div>
           {/* GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-24">
-            {filtered.map((m, i) => (
-              <CouncilCard
-                key={m.id}
-                member={m}
-                index={i}
-                onClick={handleClick}
-                colors={colors}
-                isDark={dark}
-              />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-24 min-h-[40vh]">
+            {loading ? (
+              <div className="col-span-1 sm:col-span-2 flex justify-center items-center">
+                <p style={{ color: colors.textMuted }}>Loading executives...</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="col-span-1 sm:col-span-2 flex justify-center items-center">
+                <p style={{ color: colors.textMuted }}>No executives found in this category.</p>
+              </div>
+            ) : (
+              filtered.map((m, i) => (
+                <CouncilCard
+                  key={m.id}
+                  member={m}
+                  index={i}
+                  onClick={handleClick}
+                  colors={colors}
+                  isDark={dark}
+                />
+              ))
+            )}
           </div>
           <CTASection dark={dark} colors={colors} />
         </PageMargin>

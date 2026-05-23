@@ -1,10 +1,10 @@
 /**
  * ExecutiveProfileEditor — Upsert own executive profile
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../../core/supabase/client';
 import { useAuth } from '../../../shared/hooks/useAuth';
-import { AdminInput, AdminTextarea, AvatarUploader, AdminToggle, SaveBar } from './AdminFormComponents';
+import { AdminInput, AdminTextarea, AvatarUploader, SaveBar, TagEditor } from './AdminFormComponents';
 
 const CATEGORY_OPTIONS = ["Founding Council", "'27", "'28"];
 
@@ -15,43 +15,45 @@ export function ExecutiveProfileEditor() {
   const [roleTitle, setRoleTitle] = useState('');
   const [quote,     setQuote]     = useState('');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [skills,    setSkills]    = useState<string[]>([]);
+  const [portfolio, setPortfolio] = useState('');
+  const [linkedin,  setLinkedin]  = useState('');
+  const [twitter,   setTwitter]   = useState('');
   const [category,  setCategory]  = useState<string[]>([]);
-  const [visible,   setVisible]   = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [saved,  setSaved]  = useState(false);
   const [error,  setError]  = useState('');
 
-  useEffect(() => {
-    if (!user) return;
-    supabase.from('executives').select('*').eq('user_id', user.id).single().then(({ data: raw }) => {
-      const data = raw as import('../../../core/supabase/types').Executive | null;
-      if (!data) return;
-      setName(data.name ?? '');
-      setRoleTitle(data.role_title ?? '');
-      setQuote(data.quote ?? '');
-      setAvatarUrl(data.avatar_url ?? null);
-      setCategory(data.category ?? []);
-      setVisible(data.visible ?? false);
-    });
-  }, [user]);
+  // No longer fetching existing data since this is a shared login for submissions.
 
-  const toggleCategory = (cat: string) =>
-    setCategory(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
+  const toggleCategory = (cat: string) => setCategory([cat]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     setSaving(true); setSaved(false); setError('');
 
-    const { error } = await (supabase.from('executives') as any).upsert({
+    if (skills.length === 0) return setError('At least one skill is required.');
+    if (category.length === 0) return setError('Please select a category.');
+
+    const { error } = await supabase.from('executives').insert({
       user_id: user.id, name, role_title: roleTitle, quote,
-      avatar_url: avatarUrl, category, visible,
-    }, { onConflict: 'user_id' });
+      avatar_url: avatarUrl, skills, portfolio, linkedin, twitter,
+      category, visible: false,
+    });
 
     setSaving(false);
-    if (error) { setError(error.message); }
-    else { setSaved(true); setTimeout(() => setSaved(false), 3000); }
+    if (error) { 
+      setError(error.message); 
+    } else { 
+      setSaved(true);
+      // Clear form
+      setName(''); setRoleTitle(''); setQuote('');
+      setAvatarUrl(null); setSkills([]); setPortfolio('');
+      setLinkedin(''); setTwitter(''); setCategory([]);
+      setTimeout(() => setSaved(false), 3000); 
+    }
   };
 
   if (!user) return null;
@@ -66,9 +68,17 @@ export function ExecutiveProfileEditor() {
       <form onSubmit={handleSubmit}>
         {user && <AvatarUploader userId={user.id} currentUrl={avatarUrl} onUploaded={setAvatarUrl} />}
 
-        <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
-        <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} required placeholder="President" />
-        <AdminTextarea label="Quote" value={quote} onChange={setQuote} placeholder="Your vision in one sentence…" rows={3} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
+          <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
+          <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} required placeholder="President" />
+          <AdminInput label="Portfolio / Website" value={portfolio} onChange={setPortfolio} required placeholder="https://..." />
+          <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  required placeholder="https://linkedin.com/in/..." />
+          <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   required placeholder="https://twitter.com/..." />
+        </div>
+
+        <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="Your vision in one sentence…" rows={3} />
+        
+        <TagEditor label="Skills" tags={skills} onChange={setSkills} required placeholder="e.g. Node.js, PostgreSQL…" />
 
         {/* Category */}
         <div style={{ marginBottom: '16px' }}>
@@ -94,12 +104,23 @@ export function ExecutiveProfileEditor() {
           </div>
         </div>
 
-        <AdminToggle
-          label="Visible on Executive Council page"
-          description="Toggle on when your profile is ready to publish"
-          checked={visible}
-          onChange={setVisible}
-        />
+        {/* Approval status */}
+        <div style={{
+          marginTop: '8px', padding: '12px 16px', borderRadius: '8px',
+          background: 'rgba(251,191,36,0.1)',
+          border: '1px solid rgba(251,191,36,0.3)',
+          display: 'flex', alignItems: 'center', gap: '10px',
+        }}>
+          <span style={{ fontSize: '16px' }}>⏳</span>
+          <div>
+            <div style={{ color: '#fbbf24', fontSize: '13px', fontWeight: 600 }}>
+              Pending admin approval
+            </div>
+            <div style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>
+              Submit your profile and notify your admin to publish it.
+            </div>
+          </div>
+        </div>
 
         <SaveBar saving={saving} saved={saved} error={error} />
       </form>
