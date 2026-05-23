@@ -18,7 +18,8 @@ import {
 } from 'react-icons/fa6';
 
 import { useTheme } from '../../landing/domain/useTheme';
-import { allProjects } from './ProjectsPage';
+import { allProjects } from '../../../core/data/mockData';
+import { DEMO_PROJECT_BUILDERS as builders } from '../../../core/data/demoData';
 import { Navigation } from '../../../shared/components/Navigation';
 import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
 import { PageMargin } from '../../../shared/components/PageMargin';
@@ -41,39 +42,6 @@ export function ProjectDetailsPage() {
   const project = useMemo(() => {
     return allProjects.find(p => p.id === id);
   }, [id]);
-
-  const builders = [
-    {
-      name: 'Chinonso Okafor',
-      role: 'Backend Engineer',
-      quote: '“I power seamless experiences.”',
-    },
-    {
-      name: 'Chinedu Okafor',
-      role: 'UX Researcher',
-      quote: '“Understanding users is the first step”',
-    },
-    {
-      name: 'Amina Yusuf',
-      role: 'Visual Designer',
-      quote: '“Color and balance create harmony”',
-    },
-    {
-      name: 'Chinonso Okafor',
-      role: 'Backend Engineer',
-      quote: '“I power seamless experiences.”',
-    },
-    {
-      name: 'Chinedu Okafor',
-      role: 'UX Researcher',
-      quote: '“Understanding users is the first step”',
-    },
-    {
-      name: 'Amina Yusuf',
-      role: 'Visual Designer',
-      quote: '“Color and balance create harmony”',
-    },
-  ];
 
   if (!project) {
     return (

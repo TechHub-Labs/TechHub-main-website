@@ -1,20 +1,46 @@
+/**
+ * CustomCursor — Orbital ring cursor + Background Spotlight
+ * ─────────────────────────────────────────────────────────────────────────────
+ * 1. Inner dot    — snaps to cursor position instantly
+ * 2. Broken orbit — spins continuously, trails behind cursor (lerp 0.25)
+ * 3. Dashed ring  — appears + spins opposite direction on hover
+ * 4. SPOTLIGHT    — a large (550px) radial gradient that drifts SLOWLY behind
+ *                   the cursor (lerp 0.06). Uses screen/multiply blend mode
+ *                   to illuminate the moving background square nodes around
+ *                   the cursor — like a torch shining across the grid.
+ * 5. TRAIL DOTS   — 6 tiny squares that shrink and fade, echoing the nodes.
+ *
+ * Desktop only — touch devices get no cursor elements.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../../features/landing/domain/useTheme";
 
+const TRAIL_LENGTH = 6;
+
 export function CustomCursor() {
   const { dark } = useTheme();
-  
-  // DOM Refs for direct 60fps manipulation
-  const dotRef = useRef<HTMLDivElement>(null);
-  const orbit1Ref = useRef<HTMLDivElement>(null);
-  const orbit2Ref = useRef<HTMLDivElement>(null);
 
-  // Physics & Animation Tracking Refs
-  const mouse = useRef({ x: -100, y: -100 });
-  const trailing = useRef({ x: -100, y: -100 });
-  const rotation1 = useRef(0); // Main ring continuous rotation
-  const rotation2 = useRef(0); // Inner ring continuous rotation
-  
+  // ── Cursor element refs ──────────────────────────────────────────────────
+  const dotRef       = useRef<HTMLDivElement>(null);
+  const orbit1Ref    = useRef<HTMLDivElement>(null);
+  const orbit2Ref    = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
+  const trailRefs    = useRef<(HTMLDivElement | null)[]>([]);
+
+  // ── Physics state refs (mutated directly in rAF — no setState) ───────────
+  const mouse     = useRef({ x: -300, y: -300 });
+  const trailing  = useRef({ x: -300, y: -300 });
+  const spotlight = useRef({ x: -300, y: -300 });
+
+  // trail positions ring-buffer
+  const trailPositions = useRef<{ x: number; y: number }[]>(
+    Array.from({ length: TRAIL_LENGTH }, () => ({ x: -300, y: -300 }))
+  );
+
+  const rotation1 = useRef(0);
+  const rotation2 = useRef(0);
+
   const [isHovering, setIsHovering] = useState(false);
   const isHoveringRef = useRef(false);
 
@@ -23,10 +49,7 @@ export function CustomCursor() {
   }, [isHovering]);
 
   useEffect(() => {
-    // Disable gracefully on touch devices
-    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
-      return;
-    }
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const onMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
@@ -34,52 +57,87 @@ export function CustomCursor() {
     };
 
     const onMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isClickable =
-        target.closest("a") !== null ||
-        target.closest("button") !== null ||
-        window.getComputedStyle(target).cursor === "pointer";
-
-      setIsHovering(isClickable);
+      const t = e.target as HTMLElement;
+      setIsHovering(
+        t.closest("a") !== null ||
+        t.closest("button") !== null ||
+        window.getComputedStyle(t).cursor === "pointer"
+      );
     };
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseover", onMouseOver);
 
-    let animationFrameId: number;
+    let raf: number;
+    let frameCount = 0;
 
     const render = () => {
-      // 1. Smooth Trailing Physics (Lerp)
+      frameCount++;
+
+      // ── 1. Lerp trailing cursor ────────────────────────────────────────
       trailing.current.x += (mouse.current.x - trailing.current.x) * 0.25;
       trailing.current.y += (mouse.current.y - trailing.current.y) * 0.25;
 
-      // 2. CONTINUOUS ROTATION LOGIC
-      // The broken ring spins constantly, and accelerates when hovering
-      rotation1.current += isHoveringRef.current ? 4 : 1.5; 
-      // The inner dashed ring spins in the opposite direction
-      rotation2.current -= isHoveringRef.current ? 5 : 2; 
+      // ── 2. Lerp spotlight (very slow — drifts behind cursor) ──────────
+      spotlight.current.x += (mouse.current.x - spotlight.current.x) * 0.06;
+      spotlight.current.y += (mouse.current.y - spotlight.current.y) * 0.06;
 
-      // 3. Apply Transforms to DOM Elements
+      // ── 3. Update trail positions every 2 frames ───────────────────────
+      if (frameCount % 2 === 0) {
+        const tp = trailPositions.current;
+        for (let i = tp.length - 1; i > 0; i--) {
+          tp[i].x = tp[i - 1].x;
+          tp[i].y = tp[i - 1].y;
+        }
+        tp[0].x = mouse.current.x;
+        tp[0].y = mouse.current.y;
+      }
+
+      // ── 4. Spin rings ─────────────────────────────────────────────────
+      rotation1.current += isHoveringRef.current ? 4 : 1.5;
+      rotation2.current -= isHoveringRef.current ? 5 : 2;
+
+      // ── 5. Apply transforms ────────────────────────────────────────────
       if (dotRef.current) {
         const scale = isHoveringRef.current ? 0 : 1;
-        dotRef.current.style.transform = `translate3d(${mouse.current.x}px, ${mouse.current.y}px, 0) translate(-50%, -50%) scale(${scale})`;
+        dotRef.current.style.transform =
+          `translate3d(${mouse.current.x}px,${mouse.current.y}px,0) translate(-50%,-50%) scale(${scale})`;
       }
 
       if (orbit1Ref.current) {
-        // Expand the main broken orbit when hovering over a button
         const scale = isHoveringRef.current ? 1.8 : 1;
-        orbit1Ref.current.style.transform = `translate3d(${trailing.current.x}px, ${trailing.current.y}px, 0) translate(-50%, -50%) scale(${scale}) rotate(${rotation1.current}deg)`;
+        orbit1Ref.current.style.transform =
+          `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation1.current}deg)`;
       }
 
       if (orbit2Ref.current) {
-        // Inner mechanical ring only appears on hover
         const scale = isHoveringRef.current ? 1.2 : 0;
-        const opacity = isHoveringRef.current ? 1 : 0;
-        orbit2Ref.current.style.transform = `translate3d(${trailing.current.x}px, ${trailing.current.y}px, 0) translate(-50%, -50%) scale(${scale}) rotate(${rotation2.current}deg)`;
-        orbit2Ref.current.style.opacity = opacity.toString();
+        orbit2Ref.current.style.transform =
+          `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation2.current}deg)`;
+        orbit2Ref.current.style.opacity = isHoveringRef.current ? "1" : "0";
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      // ── 6. Move spotlight ──────────────────────────────────────────────
+      if (spotlightRef.current) {
+        const sx = spotlight.current.x - 275;  // center the 550px element
+        const sy = spotlight.current.y - 275;
+        spotlightRef.current.style.transform = `translate3d(${sx}px,${sy}px,0)`;
+      }
+
+      // ── 7. Update trail dots ──────────────────────────────────────────
+      trailRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const p = trailPositions.current[i];
+        const progress = (i + 1) / TRAIL_LENGTH;        // 0.16 … 1.0
+        const size = 4 * (1 - progress * 0.7);          // shrinks toward tail
+        const opacity = (1 - progress) * 0.5;           // fades toward tail
+        el.style.transform = `translate3d(${p.x}px,${p.y}px,0) translate(-50%,-50%)`;
+        el.style.width  = `${size}px`;
+        el.style.height = `${size}px`;
+        el.style.opacity = opacity.toString();
+      });
+
+      raf = requestAnimationFrame(render);
     };
 
     render();
@@ -87,59 +145,115 @@ export function CustomCursor() {
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseover", onMouseOver);
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(raf);
     };
   }, []);
 
-  if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
-    return null;
-  }
+  if (window.matchMedia("(pointer: coarse)").matches) return null;
 
-  // --- Theme Dependent Colors (Sharp & Obvious) ---
-  // Dark Mode: Glowing Neon Lime
-  // Light Mode: Vibrant, deep Electric Blue for max contrast against white/grey
-  const cursorColor = dark ? "#A3D045" : "#2563EB"; 
-  const glowColor = dark ? "rgba(163, 208, 69, 0.6)" : "rgba(37, 99, 235, 0.4)";
+  const cursorColor = dark ? "#A3D045"          : "#2563EB";
+  const glowColor   = dark ? "rgba(163,208,69,0.6)" : "rgba(37,99,235,0.4)";
+
+  // Spotlight gradient: very subtle, just enough to illuminate the grid nodes
+  const spotGradient = dark
+    ? "radial-gradient(circle, rgba(163,208,69,0.07) 0%, rgba(163,208,69,0.03) 40%, transparent 70%)"
+    : "radial-gradient(circle, rgba(13,19,64,0.05) 0%, rgba(13,19,64,0.02) 40%, transparent 70%)";
 
   return (
     <>
       <style>{`
-        @media (pointer: fine) {
-          * { cursor: none !important; }
-        }
+        @media (pointer: fine) { * { cursor: none !important; } }
       `}</style>
 
-      {/* Inner Dot - Zero latency tracking */}
+      {/* ── SPOTLIGHT — drifts slowly, illuminates bg nodes ── */}
+      <div
+        ref={spotlightRef}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "550px",
+          height: "550px",
+          borderRadius: "50%",
+          pointerEvents: "none",
+          zIndex: 0,
+          background: spotGradient,
+          mixBlendMode: dark ? "screen" : "multiply",
+          willChange: "transform",
+        }}
+      />
+
+      {/* ── TRAIL DOTS — tiny squares echoing background nodes ── */}
+      {Array.from({ length: TRAIL_LENGTH }).map((_, i) => (
+        <div
+          key={i}
+          ref={el => { trailRefs.current[i] = el; }}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "4px",
+            height: "4px",
+            borderRadius: "0.5px",           // square with tiny radius — matches bg nodes
+            background: cursorColor,
+            pointerEvents: "none",
+            zIndex: 9996,
+            willChange: "transform",
+          }}
+        />
+      ))}
+
+      {/* ── INNER DOT — snaps instantly ── */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-2.5 h-2.5 rounded-full pointer-events-none z-[9999] transition-[transform] duration-200 ease-out"
         style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "10px",
+          height: "10px",
+          borderRadius: "50%",
           backgroundColor: cursorColor,
           boxShadow: `0 0 10px 2px ${glowColor}`,
+          pointerEvents: "none",
+          zIndex: 9999,
           willChange: "transform",
         }}
       />
 
-      {/* Main Orbit Ring - Continually spinning BROKEN circle */}
+      {/* ── BROKEN ORBIT — spins continuously ── */}
       <div
         ref={orbit1Ref}
-        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9998] transition-transform duration-300 ease-out"
         style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "32px",
+          height: "32px",
+          borderRadius: "50%",
           border: `1.5px solid ${cursorColor}`,
-          // Making top and bottom transparent creates the dual "bracket" spinning effect
           borderTopColor: "transparent",
           borderBottomColor: "transparent",
+          pointerEvents: "none",
+          zIndex: 9998,
           willChange: "transform",
         }}
       />
 
-      {/* Secondary Inner Orbit - Dashed lock-on ring (Only appears on hover) */}
+      {/* ── DASHED LOCK-ON RING — appears on hover ── */}
       <div
         ref={orbit2Ref}
-        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9997] transition-all duration-300 ease-out"
         style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "32px",
+          height: "32px",
+          borderRadius: "50%",
           border: `2px dashed ${cursorColor}`,
           filter: `drop-shadow(0 0 4px ${glowColor})`,
+          pointerEvents: "none",
+          zIndex: 9997,
           willChange: "transform",
         }}
       />

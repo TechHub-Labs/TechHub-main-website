@@ -1,0 +1,230 @@
+/**
+ * Shared admin form utilities — inputs, tag editor, avatar uploader
+ */
+import { useRef, useState } from 'react';
+import { supabase } from '../../../core/supabase/client';
+
+// ─── Styled input ─────────────────────────────────────────────────────────────
+export function AdminInput({
+  label, value, onChange, type = 'text', placeholder, required,
+}: {
+  label: string; value: string; onChange: (v: string) => void;
+  type?: string; placeholder?: string; required?: boolean;
+}) {
+  return (
+    <div style={{ marginBottom: '16px' }}>
+      <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        {label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}
+      </label>
+      <input
+        type={type} value={value} required={required} placeholder={placeholder}
+        onChange={e => onChange(e.target.value)}
+        style={{
+          width: '100%', padding: '10px 14px', borderRadius: '8px', boxSizing: 'border-box',
+          background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)',
+          color: '#f1f5f9', fontSize: '14px', outline: 'none',
+          transition: 'border-color 0.2s',
+        }}
+        onFocus={e => e.target.style.borderColor = '#A3D045'}
+        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+      />
+    </div>
+  );
+}
+
+export function AdminTextarea({
+  label, value, onChange, placeholder, rows = 3,
+}: {
+  label: string; value: string; onChange: (v: string) => void;
+  placeholder?: string; rows?: number;
+}) {
+  return (
+    <div style={{ marginBottom: '16px' }}>
+      <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        {label}
+      </label>
+      <textarea
+        value={value} rows={rows} placeholder={placeholder}
+        onChange={e => onChange(e.target.value)}
+        style={{
+          width: '100%', padding: '10px 14px', borderRadius: '8px', boxSizing: 'border-box',
+          background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)',
+          color: '#f1f5f9', fontSize: '14px', outline: 'none', resize: 'vertical',
+          transition: 'border-color 0.2s', fontFamily: 'inherit',
+        }}
+        onFocus={e => e.target.style.borderColor = '#A3D045'}
+        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+      />
+    </div>
+  );
+}
+
+// ─── Tag / array editor ───────────────────────────────────────────────────────
+export function TagEditor({
+  label, tags, onChange, placeholder,
+}: {
+  label: string; tags: string[]; onChange: (tags: string[]) => void; placeholder?: string;
+}) {
+  const [input, setInput] = useState('');
+  const add = () => {
+    const val = input.trim();
+    if (val && !tags.includes(val)) onChange([...tags, val]);
+    setInput('');
+  };
+  return (
+    <div style={{ marginBottom: '16px' }}>
+      <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        {label}
+      </label>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+        <input
+          value={input} placeholder={placeholder ?? 'Add item…'}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), add())}
+          style={{
+            flex: 1, padding: '8px 12px', borderRadius: '8px', boxSizing: 'border-box',
+            background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)',
+            color: '#f1f5f9', fontSize: '14px', outline: 'none',
+            transition: 'border-color 0.2s',
+          }}
+          onFocus={e => e.target.style.borderColor = '#A3D045'}
+          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+        />
+        <button onClick={add} type="button" style={{
+          padding: '8px 16px', borderRadius: '8px', background: '#A3D045',
+          color: '#0f172a', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer',
+        }}>
+          Add
+        </button>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+        {tags.map(tag => (
+          <span key={tag} style={{
+            display: 'inline-flex', alignItems: 'center', gap: '4px',
+            background: 'rgba(163,208,69,0.12)', color: '#A3D045',
+            borderRadius: '20px', padding: '3px 10px', fontSize: '12px', fontWeight: 500,
+          }}>
+            {tag}
+            <button onClick={() => onChange(tags.filter(t => t !== tag))} type="button"
+              style={{ background: 'none', border: 'none', color: '#A3D045', cursor: 'pointer', fontSize: '14px', lineHeight: 1, padding: 0 }}>
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Avatar uploader ──────────────────────────────────────────────────────────
+export function AvatarUploader({
+  userId, currentUrl, onUploaded,
+}: {
+  userId: string; currentUrl: string | null; onUploaded: (url: string) => void;
+}) {
+  const inputRef   = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview]     = useState(currentUrl);
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    const ext  = file.name.split('.').pop();
+    const path = `${userId}/profile.${ext}`;           // scoped to user folder
+    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    if (!error) {
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+      setPreview(data.publicUrl);
+      onUploaded(data.publicUrl);
+    }
+    setUploading(false);
+  };
+
+  return (
+    <div style={{ marginBottom: '24px' }}>
+      <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+        Profile Photo
+      </label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{
+          width: '72px', height: '72px', borderRadius: '50%', overflow: 'hidden',
+          background: '#1e293b', border: '2px solid rgba(255,255,255,0.08)',
+          flexShrink: 0,
+        }}>
+          {preview
+            ? <img src={preview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '24px' }}>👤</div>
+          }
+        </div>
+        <div>
+          <button
+            type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
+            style={{
+              padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)',
+              background: 'transparent', color: '#94a3b8', fontSize: '13px', cursor: 'pointer',
+              transition: 'border-color 0.2s',
+            }}
+            onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.borderColor = '#A3D045'}
+            onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.1)'}
+          >
+            {uploading ? 'Uploading…' : 'Change photo'}
+          </button>
+          <p style={{ color: '#475569', fontSize: '11px', marginTop: '4px' }}>JPG, PNG or WebP · Max 2MB</p>
+        </div>
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" style={{ display: 'none' }}
+        onChange={e => e.target.files?.[0] && upload(e.target.files[0])} />
+    </div>
+  );
+}
+
+// ─── Toggle ───────────────────────────────────────────────────────────────────
+export function AdminToggle({
+  label, description, checked, onChange,
+}: {
+  label: string; description?: string; checked: boolean; onChange: (v: boolean) => void;
+}) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div>
+        <div style={{ color: '#f1f5f9', fontSize: '14px', fontWeight: 500 }}>{label}</div>
+        {description && <div style={{ color: '#64748b', fontSize: '12px', marginTop: '2px' }}>{description}</div>}
+      </div>
+      <button
+        type="button" onClick={() => onChange(!checked)}
+        style={{
+          width: '44px', height: '24px', borderRadius: '12px', border: 'none',
+          background: checked ? '#A3D045' : '#334155', cursor: 'pointer',
+          position: 'relative', transition: 'background 0.2s', flexShrink: 0,
+        }}
+      >
+        <span style={{
+          position: 'absolute', top: '2px', left: checked ? '22px' : '2px',
+          width: '20px', height: '20px', borderRadius: '50%', background: '#fff',
+          transition: 'left 0.2s',
+        }} />
+      </button>
+    </div>
+  );
+}
+
+// ─── Save button / status ─────────────────────────────────────────────────────
+export function SaveBar({ saving, saved, error }: { saving: boolean; saved: boolean; error: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '24px' }}>
+      <button
+        type="submit" disabled={saving}
+        style={{
+          padding: '10px 28px', borderRadius: '8px',
+          background: saving ? '#334155' : '#A3D045',
+          color: '#0f172a', fontWeight: 700, fontSize: '14px',
+          border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
+          transition: 'background 0.2s',
+        }}
+      >
+        {saving ? 'Saving…' : 'Save Changes'}
+      </button>
+      {saved && !error && <span style={{ color: '#A3D045', fontSize: '13px' }}>✓ Saved successfully</span>}
+      {error && <span style={{ color: '#f87171', fontSize: '13px' }}>{error}</span>}
+    </div>
+  );
+}

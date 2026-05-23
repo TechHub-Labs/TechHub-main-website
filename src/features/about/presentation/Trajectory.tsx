@@ -1,28 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ThemeColors } from "../../landing/domain/types";
-
-const timeline = [
-  {
-    year: "2024 — The Foundation",
-    desc: "A few members began collaborating on projects to bridge the gap between theory and reality.",
-    side: "left" as const,
-  },
-  {
-    year: "2025 — Structure Emerged",
-    desc: "Specialized roles and leadership systems were introduced to handle growing complexity.",
-    side: "right" as const,
-  },
-  {
-    year: "2026 — Projects Shipping",
-    desc: "Internal products and collaborations gained traction, moving from local to global relevance.",
-    side: "left" as const,
-  },
-  {
-    year: "The Future — Beyond Campus",
-    desc: "TechHub evolves into a larger innovation ecosystem, becoming a launchpad for world-class innovators.",
-    side: "right" as const,
-  },
-];
+import { DEMO_TIMELINE as timeline } from "../../../core/data/demoData";
 
 export function Trajectory({ colors }: { colors: ThemeColors }) {
   const sectionRef = useRef<HTMLElement>(null);

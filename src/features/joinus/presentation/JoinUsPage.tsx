@@ -24,6 +24,8 @@ export function JoinUsPage() {
   const isDark = dark;
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [stepDir, setStepDir] = useState<'forward' | 'back'>('forward');
+  const [animating, setAnimating] = useState(false);
   const [visible, setVisible] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', level: '', portfolio: '' });
   const [track, setTrack] = useState('');
@@ -31,6 +33,15 @@ export function JoinUsPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => { document.documentElement.style.color = colors.text; window.scrollTo(0, 0); setTimeout(() => setVisible(true), 80); }, [colors]);
+
+  const transitionStep = (nextStep: 1 | 2 | 3, dir: 'forward' | 'back') => {
+    setStepDir(dir);
+    setAnimating(true);
+    setTimeout(() => {
+      setStep(nextStep);
+      setAnimating(false);
+    }, 260);
+  };
 
   const cardBg = isDark ? '#1a2160' : '#ffffff';
   const borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(13,19,64,0.1)';
@@ -67,8 +78,8 @@ export function JoinUsPage() {
     return Object.keys(e).length === 0;
   };
 
-  const handleNext = () => { if (validate1()) { setErrors({}); setStep(2); window.scrollTo(0, 0); } };
-  const handleSubmit = () => { if (validate2()) { setErrors({}); setStep(3); window.scrollTo(0, 0); } };
+  const handleNext = () => { if (validate1()) { setErrors({}); transitionStep(2, 'forward'); window.scrollTo(0, 0); } };
+  const handleSubmit = () => { if (validate2()) { setErrors({}); transitionStep(3, 'forward'); window.scrollTo(0, 0); } };
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -79,7 +90,15 @@ export function JoinUsPage() {
         <PageMargin className="w-full flex flex-col items-center">
           <div
             className="w-full max-w-xl mt-12 mb-16"
-            style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity 0.55s ease, transform 0.55s ease' }}
+            style={{
+              opacity: visible && !animating ? 1 : 0,
+              transform: visible && !animating
+                ? 'translateY(0) translateX(0)'
+                : animating
+                  ? stepDir === 'forward' ? 'translateY(0) translateX(-40px)' : 'translateY(0) translateX(40px)'
+                  : 'translateY(20px)',
+              transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.22,1,0.36,1)',
+            }}
           >
             {/* ── STEP 1 ── */}
             {step === 1 && (
@@ -160,7 +179,7 @@ export function JoinUsPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <button onClick={() => { setStep(1); setErrors({}); }} className="flex-1 py-4 rounded-lg text-base font-semibold border transition-all hover:opacity-70" style={{ background: 'transparent', color: colors.text, borderColor }}>Back</button>
+                  <button onClick={() => { transitionStep(1, 'back'); setErrors({}); }} className="flex-1 py-4 rounded-lg text-base font-semibold border transition-all hover:opacity-70" style={{ background: 'transparent', color: colors.text, borderColor }}>Back</button>
                   <button onClick={handleSubmit} className="flex-[2] py-4 rounded-lg text-base font-semibold transition-all duration-200 hover:opacity-90 hover:scale-[1.01] active:scale-[0.99]" style={{ background: '#0d1340', color: '#ffffff' }}>Submit Application</button>
                 </div>
               </div>

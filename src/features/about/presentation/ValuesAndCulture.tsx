@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ThemeColors } from "../../landing/domain/types";
+import { SectionTitle } from "../../../shared/components/SectionTitle";
 
 const pillars = [
   { num: "01", label: "Build" },
@@ -37,12 +38,22 @@ export function ValuesAndCulture({
 
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
+  const [pillarsVisible, setPillarsVisible] = useState<boolean[]>(new Array(pillars.length).fill(false));
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
+          pillars.forEach((_, i) => {
+            setTimeout(() => {
+              setPillarsVisible(prev => {
+                const next = [...prev];
+                next[i] = true;
+                return next;
+              });
+            }, 100 + i * 120);
+          });
           observer.disconnect();
         }
       },
@@ -64,27 +75,11 @@ export function ValuesAndCulture({
             transition: "opacity 0.6s ease, transform 0.6s ease",
           }}
         >
-          <h2
-            className="text-4xl sm:text-5xl font-bold mb-4"
-            style={{ color: colors.text }}
-          >
-            What is Techhub's Foundation
-          </h2>
-          <div
-            className="h-[3px] bg-[#A3D045] mb-5"
-            style={{
-              width: visible ? "56px" : "0px",
-              transition: "width 0.6s ease 0.3s",
-            }}
+          <SectionTitle
+            title="What is TechHub's Foundation"
+            subtitle="These are our non-negotiables. We don't just gather to network; we operate under a strict philosophy of execution to ensure every idea has a path to deployment."
+            colors={colors}
           />
-          <p
-            className="text-base sm:text-xl font-medium leading-relaxed max-w-5xl"
-            style={{ color: colors.textMuted }}
-          >
-            These are our non-negotiables that drive our ecosystem. We don't
-            just gather to network; we operate under a strict philosophy of
-            execution to ensure every idea has a path to deployment.
-          </p>
         </div>
 
         {/* ── FOUR PILLARS ROW ── */}
@@ -96,11 +91,16 @@ export function ValuesAndCulture({
             transition: "opacity 0.6s ease 0.2s",
           }}
         >
-          {pillars.map((p, i) => (
+        {pillars.map((p, i) => (
             <div
               key={i}
-              className={`py-6 px-5 sm:px-7 flex flex-col items-center sm:items-center gap-1 transition-colors duration-300 hover:bg-[#3B5BDB]/10 cursor-default sm:${i < pillars.length - 1 && i < pillars.length + 1 ? "border-r-2" : ""}`}
-              style={{ borderColor: colors.text }}
+              className={`py-6 px-5 sm:px-7 flex flex-col items-center sm:items-center gap-1 cursor-default sm:${i < pillars.length - 1 && i < pillars.length + 1 ? "border-r-2" : ""}`}
+              style={{
+                borderColor: colors.text,
+                opacity: pillarsVisible[i] ? 1 : 0,
+                transform: pillarsVisible[i] ? 'scale(1) translateY(0)' : 'scale(0.7) translateY(20px)',
+                transition: 'opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+              }}
             >
               <span
                 className="text-2xl font-medium tracking-widest"
@@ -127,18 +127,11 @@ export function ValuesAndCulture({
             transition: "opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s",
           }}
         >
-          <h2
-            className="text-4xl sm:text-5xl font-bold mb-3 underline decoration-[#A3D045] underline-offset-8 decoration-2"
-            style={{ color: colors.text }}
-          >
-            A Culture Built Around Builders
-          </h2>
-          <p
-            className="text-base sm:text-xl"
-            style={{ color: colors.textMuted }}
-          >
-            TechHub is designed for people who love creating things.
-          </p>
+          <SectionTitle
+            title="A Culture Built Around Builders"
+            subtitle="TechHub is designed for people who love creating things."
+            colors={colors}
+          />
         </div>
 
         {/* ── IMAGE GRID ── */}

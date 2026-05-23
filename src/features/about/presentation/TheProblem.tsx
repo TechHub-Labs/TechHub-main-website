@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { ThemeColors } from '../../landing/domain/types';
+import { SectionTitle } from '../../../shared/components/SectionTitle';
 
 const problems = [
   'No Real Projects',
@@ -94,22 +95,11 @@ export function TheProblem({ colors: _colors }: { colors: ThemeColors }) {
             transition: 'opacity 0.6s ease, transform 0.6s ease',
           }}
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-5 leading-tight">
-            <span className="relative inline-block">
-              <span>The Problem</span>
-              <span
-                className="absolute bottom-[-5px] left-0 h-[3px] bg-[#A3D045]"
-                style={{
-                  width: visible ? '100%' : '0%',
-                  transition: 'width 0.8s ease 0.4s',
-                }}
-              />
-            </span>
-            {' '}isn't Talent
-          </h2>
-          <p className="text-base sm:text-lg text-white leading-relaxed max-w-xl mb-14">
-            Students were attending classes, watching tutorials, and learning skills, But many still lacked
-          </p>
+          <SectionTitle
+            title="The Problem isn't Talent"
+            subtitle="Students were attending classes, watching tutorials, and learning skills, But many still lacked"
+            colors={{ ...(_colors as any), text: '#ffffff', textMuted: 'rgba(255,255,255,0.65)' }}
+          />
         </div>
 
         {/* ── LIST + RIGHT PROGRESS LINE ── */}

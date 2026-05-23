@@ -1,137 +1,176 @@
 /**
- * PROJECTS SECTION
- * * Showcases featured projects with status badges and tags.
+ * PROJECTS SECTION — Landing Page
+ * ─────────────────────────────────────────────────────────────────────────────
+ * - SectionTitle with green curtain reveal
+ * - 3D tilt on hover (desktop only, via @media hover:hover)
+ * - Live dot ripple effect
+ * - Staggered AnimatedCard entries
  */
 
-import { Link } from "react-router-dom";
-import { Project, ThemeColors } from "../domain/types";
+import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ThemeColors } from '../domain/types';
+import { DEMO_LANDING_PROJECTS } from '../../../core/data/demoData';
+import { AnimatedCard } from '../../../shared/components/AnimatedCard';
+import { SectionTitle } from '../../../shared/components/SectionTitle';
 
 interface ProjectsSectionProps {
   colors: ThemeColors;
 }
 
-const projects: Project[] = [
-  {
-    status: "LIVE",
-    name: "Nexus",
-    desc: "Discover events and hangout spots around you",
-    tags: ["Mobile", "Discovery"],
-    statusColor: "text-green-400" as const,
-  },
-  {
-    status: "UPCOMING",
-    name: "Pulse",
-    desc: "Stay ahead with the latest tech conferences and meetups",
-    tags: ["Web", "Events"],
-    statusColor: "text-yellow-400" as const,
-  },
-  {
-    status: "LIVE",
-    name: "Vibe",
-    desc: "Your go-to app for nightlife and local entertainment",
-    tags: ["Mobile", "Lifestyle"],
-    statusColor: "text-green-400" as const,
-  },
-];
+function ProjectCard({
+  project,
+  index,
+  colors,
+}: {
+  project: (typeof DEMO_LANDING_PROJECTS)[0];
+  index: number;
+  colors: ThemeColors;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0, shine: 0, shineX: 0, shineY: 0 });
+  const [hovered, setHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Desktop-only 3D tilt
+    if (window.matchMedia('(hover: none)').matches) return;
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientY - rect.top) / rect.height - 0.5) * 14;   // rotateX
+    const y = -((e.clientX - rect.left) / rect.width - 0.5) * 14;  // rotateY
+    const shineX = ((e.clientX - rect.left) / rect.width) * 100;
+    const shineY = ((e.clientY - rect.top) / rect.height) * 100;
+    setTilt({ x, y, shine: 0.18, shineX, shineY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0, shine: 0, shineX: 50, shineY: 50 });
+    setHovered(false);
+  };
+
+  return (
+    <AnimatedCard
+      index={index}
+      stepMs={140}
+      direction={index % 2 === 0 ? 'rotate-left' : 'rotate-right'}
+      threshold={0.1}
+      className="h-full"
+    >
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={handleMouseLeave}
+        className="rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center h-full relative overflow-hidden cursor-default"
+        style={{
+          background: colors.bgCard,
+          border: `1px solid ${colors.cardBorder}`,
+          transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) ${hovered ? 'scale(1.02)' : 'scale(1)'}`,
+          transition: 'transform 0.2s ease, box-shadow 0.3s ease',
+          boxShadow: hovered
+            ? '0 24px 64px rgba(0,0,0,0.14)'
+            : '0 1px 4px rgba(0,0,0,0.06)',
+          willChange: 'transform',
+        }}
+      >
+        {/* Shine overlay (desktop only) */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: `radial-gradient(circle at ${tilt.shineX}% ${tilt.shineY}%, rgba(255,255,255,${tilt.shine}), transparent 60%)`,
+            pointerEvents: 'none',
+            transition: 'opacity 0.2s ease',
+            borderRadius: 'inherit',
+          }}
+        />
+
+        {/* Live status badge with ripple */}
+        <div className="flex items-center gap-2.5 mb-8 relative z-10">
+          <span className="relative flex items-center justify-center">
+            <span
+              className="absolute inline-flex w-4 h-4 rounded-full opacity-60"
+              style={{
+                background: project.status === 'LIVE' ? '#4ade80' : '#fbbf24',
+                animation: project.status === 'LIVE' ? 'rippleDot 2s ease-out infinite' : 'none',
+              }}
+            />
+            <span
+              className="relative w-2.5 h-2.5 rounded-full"
+              style={{ background: project.status === 'LIVE' ? '#4ade80' : '#fbbf24' }}
+            />
+          </span>
+          <span
+            className="text-xs font-bold tracking-widest uppercase"
+            style={{ color: colors.textMuted }}
+          >
+            {project.status}
+          </span>
+        </div>
+
+        {/* Avatar */}
+        <div
+          className="w-20 h-20 rounded-full mx-auto mb-6 transition-transform duration-700"
+          style={{
+            background: colors.memberBg,
+            transform: hovered ? 'scale(1.12) rotate(6deg)' : 'scale(1)',
+          }}
+        />
+
+        <h3
+          className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight relative z-10"
+          style={{ color: colors.text }}
+        >
+          {project.name}
+        </h3>
+        <p className="text-base leading-relaxed mb-8 px-2 relative z-10" style={{ color: colors.textMuted }}>
+          {project.desc}
+        </p>
+
+        {/* Tags */}
+        <div className="flex gap-2.5 justify-center mt-auto flex-wrap relative z-10">
+          {project.tags.map(tag => (
+            <span
+              key={tag}
+              className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 hover:scale-105"
+              style={{ background: colors.tagBg, color: colors.tagText }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </AnimatedCard>
+  );
+}
 
 export function ProjectsSection({ colors }: ProjectsSectionProps) {
   return (
-    <section className="pt-40">
+    <section className="pt-40 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 md:gap-8 mb-12">
-          <div>
-            <h2
-              className="text-4xl sm:text-6xl font-bold mb-4 tracking-tight"
-              style={{ color: colors.text }}
-            >
-              <span className="section-title-underline">
-                What We're Building
-              </span>
-            </h2>
-            <p
-              className="text-base sm:text-lg leading-relaxed max-w-xl mt-4 font-normal"
-              style={{ color: colors.text }}
-            >
-              Real products shipped by our ecosystem. Take a look at the <br />{" "}
-              platforms and tools our community has built and pushed live.
-            </p>
-          </div>
-          <Link to="/projects" className="w-max self-start">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-12">
+          <SectionTitle
+            title="What We're Building"
+            subtitle="Real products shipped by our ecosystem — platforms and tools our community has built and pushed live."
+            colors={colors}
+          />
+          <Link to="/projects" className="shrink-0">
             <span
-              className="text-sm sm:text-lg font-normal cursor-pointer whitespace-nowrap mt-2 transition-all duration-300 flex items-center gap-1 hover:translate-x-1 hover:opacity-100"
+              className="text-sm font-semibold transition-all duration-300 flex items-center gap-1 group whitespace-nowrap"
               style={{ color: colors.text }}
             >
-              View All Projects &rarr;
+              View All
+              <span className="transition-transform duration-300 group-hover:translate-x-2">→</span>
             </span>
           </Link>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-[26px]">
-          {projects.map((project) => (
-            <div
-              key={project.name}
-              className="rounded-lg p-6 sm:p-7 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2 cursor-default flex flex-col items-center text-center shadow-sm"
-              style={{ background: colors.bgCard }}
-            >
-              {/* Status Badge */}
-              <div className="flex items-center justify-center gap-2.5 mb-8">
-                <span
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{
-                    background:
-                      project.status === "LIVE"
-                        ? colors.liveGreen
-                        : colors.liveYellow,
-                  }}
-                />
-                <span
-                  className="text-base font-normal tracking-widest uppercase"
-                  style={{ color: colors.text }}
-                >
-                  {project.status}
-                </span>
-              </div>
-
-              {/* Icon/Avatar */}
-              <div
-                className="w-20 h-20 rounded-full mx-auto mb-6"
-                style={{ background: colors.memberBg }}
-              />
-
-              {/* Title */}
-              <h3
-                className="text-5xl font-semibold mb-3 tracking-tight"
-                style={{ color: colors.text }}
-              >
-                {project.name}
-              </h3>
-
-              {/* Description */}
-              <p
-                className="text-xl font-light leading-relaxed mb-8 px-2"
-                style={{ color: colors.text }}
-              >
-                {project.desc}
-              </p>
-
-              {/* Tags */}
-              <div className="flex gap-3 justify-center mt-auto">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-4 py-1.5 rounded-full text-base font-light"
-                    style={{
-                      background: colors.tagBg,
-                      color: colors.text,
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {DEMO_LANDING_PROJECTS.map((project, i) => (
+            <ProjectCard key={project.name} project={project} index={i} colors={colors} />
           ))}
         </div>
       </div>

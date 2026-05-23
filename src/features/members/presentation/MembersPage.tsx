@@ -11,161 +11,11 @@ import { Footer } from "../../../shared/components/Footer";
 import { CTASection } from "../../../shared/components/CTASection";
 import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
 import { PageMargin } from "../../../shared/components/PageMargin";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-interface Member {
-  id: number;
-  name: string;
-  role: string;
-  quote: string;
-  category: ("All" | "Undergrad" | "Alumni" | "'25" | "'26")[];
-  skills: string[];
-  projects: string[];
-  linkedin?: string;
-  twitter?: string;
-  portfolio?: string;
-}
+import { DEMO_MEMBERS, DemoMember as Member } from "../../../core/data/demoData";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const members: Member[] = [
-  {
-    id: 1,
-    name: "Chinonso Okafor",
-    role: "Backend Engineer",
-    quote: '"I power seamless experiences."',
-    category: ["All", "Undergrad", "'25"],
-    skills: ["Node.js", "PostgreSQL"],
-    projects: ["Nexspot", "Glass"],
-  },
-  {
-    id: 2,
-    name: "Chinedu Okafor",
-    role: "UX Researcher",
-    quote: '"Understanding users is the first step."',
-    category: ["All", "Undergrad", "'25"],
-    skills: ["Figma", "User Testing"],
-    projects: ["EventNav", "Pulse"],
-  },
-  {
-    id: 3,
-    name: "Amina Yusuf",
-    role: "Visual Designer",
-    quote: '"Color and balance create harmony."',
-    category: ["All", "Alumni", "'26"],
-    skills: ["Figma", "Illustrator"],
-    projects: ["Vibe", "Nexspot"],
-  },
-  {
-    id: 4,
-    name: "Tunde Adebayo",
-    role: "Interaction Designer",
-    quote: '"Seamless come from interactions."',
-    category: ["All", "Undergrad", "'25"],
-    skills: ["Framer", "Prototyping"],
-    projects: ["Glass", "Orbit"],
-  },
-  {
-    id: 5,
-    name: "Ngozi Eze",
-    role: "User Interface Designer",
-    quote: '"Every pixel tells a story worth telling."',
-    category: ["All", "Undergrad", "'26"],
-    skills: ["Figma", "CSS"],
-    projects: ["Pulse", "Vibe"],
-  },
-  {
-    id: 6,
-    name: "Ifeanyi Nwosu",
-    role: "Design Strategist",
-    quote: '"Strategy transforms ideas into solutions."',
-    category: ["All", "Alumni", "'25"],
-    skills: ["Strategy", "Figma"],
-    projects: ["EventNav", "Glass"],
-  },
-  {
-    id: 7,
-    name: "Chinelo Okafor",
-    role: "Product Designer",
-    quote: '"Empathy is the heart of design."',
-    category: ["All", "Undergrad", "'25"],
-    skills: ["Figma", "Research"],
-    projects: ["Nexspot", "Orbit"],
-  },
-  {
-    id: 8,
-    name: "Emeka Obi",
-    role: "Frontend",
-    quote: '"Understanding users unlocks innovation."',
-    category: ["All", "Undergrad", "'26"],
-    skills: ["React", "TypeScript"],
-    projects: ["Pulse", "Vibe"],
-  },
-  {
-    id: 9,
-    name: "Amina Yusuf",
-    role: "Visual Designer",
-    quote: '"Color breathes life into wireframes."',
-    category: ["All", "Alumni", "'26"],
-    skills: ["Figma", "Motion"],
-    projects: ["Glass", "Orbit"],
-  },
-  {
-    id: 10,
-    name: "Funmi Adewale",
-    role: "Marketing",
-    quote: '"Experiences things deeply."',
-    category: ["All", "Undergrad", "'25"],
-    skills: ["Copywriting", "SEO"],
-    projects: ["EventNav", "Nexspot"],
-  },
-  {
-    id: 11,
-    name: "Obinna Chukwu",
-    role: "Content Designer",
-    quote: '"Words shape how users engage."',
-    category: ["All", "Undergrad", "'26"],
-    skills: ["Writing", "UX Writing"],
-    projects: ["Pulse", "Glass"],
-  },
-  {
-    id: 12,
-    name: "Halima Bello",
-    role: "Backend Engineer",
-    quote: '"Movement guides attention and emotion."',
-    category: ["All", "Alumni", "'25"],
-    skills: ["Python", "Django"],
-    projects: ["Nexspot", "Vibe"],
-  },
-  {
-    id: 13,
-    name: "Ibrahim Salisu",
-    role: "Content",
-    quote: '"Insights drive meaningful design choices."',
-    category: ["All", "Undergrad", "'26"],
-    skills: ["Content Strategy", "Analytics"],
-    projects: ["EventNav", "Orbit"],
-  },
-  {
-    id: 14,
-    name: "Kemi Oladipo",
-    role: "Accessibility Specialist",
-    quote: '"Inclusion is design\'s true north."',
-    category: ["All", "Alumni", "'25"],
-    skills: ["WCAG", "ARIA"],
-    projects: ["Glass", "Pulse"],
-  },
-  {
-    id: 15,
-    name: "Chidimma Eze",
-    role: "Brand Designer",
-    quote: '"Identity is the soul of a product."',
-    category: ["All", "Undergrad", "'26"],
-    skills: ["Branding", "Figma"],
-    projects: ["Vibe", "Nexspot"],
-  },
-];
+const members: Member[] = DEMO_MEMBERS as Member[];
 
 const FILTERS = ["All", "Undergrad", "Alumni", "'25", "'26"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -309,7 +159,7 @@ function MemberModal({
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 no-scrollbar overflow-y-auto"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-6 no-scrollbar overflow-y-auto"
       style={{
         background: "rgba(10,14,40,0.7)",
         backdropFilter: "blur(6px)",
@@ -327,6 +177,8 @@ function MemberModal({
           transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
           maxHeight: "90vh",
           overflowY: "auto",
+          scrollbarWidth: "none",       // Firefox
+          msOverflowStyle: "none",      // IE/Edge
         }}
       >
         {/* Close button */}

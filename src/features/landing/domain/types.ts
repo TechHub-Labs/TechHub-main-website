@@ -50,4 +50,5 @@ export interface ThemeColors {
   statusInDev: string;    // ADDED
   statusUpcoming: string; // ADDED
   statusLive: string;     // ADDED
+  cardBorder: string;     // ADDED — consistent card border color
 }

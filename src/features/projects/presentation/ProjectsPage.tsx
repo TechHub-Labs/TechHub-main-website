@@ -1,13 +1,7 @@
 /**
  * PROJECTS PAGE
  * Tailwind-only styling version
- * Matches NH TechHub design:
- * - Large hero heading
- * - Modern filters
- * - Animated project rows
- * - Premium spacing
- * - Smooth hover effects
- * - Tailwind utilities only
+ * Matches NH TechHub design with scroll animations, staggered rows
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +12,8 @@ import { Footer } from "../../../shared/components/Footer";
 import { CTASection } from "../../../shared/components/CTASection";
 import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
 import { PageMargin } from "../../../shared/components/PageMargin";
+import { SectionTitle } from "../../../shared/components/SectionTitle";
+import { DEMO_ALL_PROJECTS } from "../../../core/data/demoData";
 
 export interface Project {
   id: string;
@@ -34,134 +30,8 @@ export interface Project {
   about2: string;
 }
 
-export const allProjects: Project[] = [
-  {
-    id: "nexus",
-    name: "Nexus",
-    desc: "Discover events and hangout spots around you",
-    tags: ["Mobile", "Discovery"],
-    status: "LIVE",
-    category: "Discovery",
-    teamSize: "Nil",
-    tech: "JS, Node",
-    launchDate: "May 15, 2026",
-    website: "www.nexus.com",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "pulse",
-    name: "Pulse",
-    desc: "Real-time news and trends tailored for you",
-    tags: ["Web", "News"],
-    status: "BETA",
-    category: "News",
-    teamSize: "4",
-    tech: "React, Firebase",
-    launchDate: "TBD",
-    website: "www.pulse.app",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "fittrack",
-    name: "FitTrack",
-    desc: "Monitor your health and fitness goals effortlessly",
-    tags: ["Mobile", "Health"],
-    status: "LIVE",
-    category: "Health",
-    teamSize: "3",
-    tech: "Flutter, Node",
-    launchDate: "March 2026",
-    website: "www.fittrack.io",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "studybuddy",
-    name: "StudyBuddy",
-    desc: "Connect with peers and share study resources",
-    tags: ["Web", "Education"],
-    status: "PAUSED",
-    category: "Education",
-    teamSize: "2",
-    tech: "Next.js",
-    launchDate: "TBD",
-    website: "",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "shopease",
-    name: "ShopEase",
-    desc: "Personalized shopping recommendations and deals",
-    tags: ["Mobile", "E-commerce"],
-    status: "IN DEVELOPMENT",
-    category: "E-commerce",
-    teamSize: "5",
-    tech: "React Native",
-    launchDate: "TBD",
-    website: "",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "travelmate",
-    name: "TravelMate",
-    desc: "Plan trips and explore destinations with locals",
-    tags: ["Mobile", "Travel"],
-    status: "UPCOMING",
-    category: "Travel",
-    teamSize: "3",
-    tech: "React Native, Node",
-    launchDate: "Q4 2026",
-    website: "",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "codelab",
-    name: "CodeLab",
-    desc: "Interactive coding challenges and tutorials",
-    tags: ["Web", "Education"],
-    status: "LIVE",
-    category: "Education",
-    teamSize: "4",
-    tech: "Vue, Python",
-    launchDate: "Jan 2026",
-    website: "www.codelab.dev",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "greenthumb",
-    name: "GreenThumb",
-    desc: "Gardening tips and plant care reminders",
-    tags: ["Mobile", "Lifestyle"],
-    status: "UPCOMING",
-    category: "Lifestyle",
-    teamSize: "2",
-    tech: "Flutter",
-    launchDate: "Q3 2026",
-    website: "",
-    about: "",
-    about2: "",
-  },
-  {
-    id: "soundscape",
-    name: "SoundScape",
-    desc: "Create and share ambient sound mixes",
-    tags: ["Web", "Entertainment"],
-    status: "BETA",
-    category: "Entertainment",
-    teamSize: "3",
-    tech: "React, Web Audio",
-    launchDate: "TBD",
-    website: "www.soundscape.io",
-    about: "",
-    about2: "",
-  },
-];
+// Cast demo data to match the local Project interface
+export const allProjects: Project[] = DEMO_ALL_PROJECTS as Project[];
 
 const PAGE_SIZE = 9;
 
@@ -217,19 +87,30 @@ function ProjectRow({
     <Link to={`/projects/${project.id}`} className="block no-underline">
       <div
         ref={ref}
-        className="group flex items-center gap-5 lg:gap-7 border-b px-5 sm:px-7 py-6 transition-all duration-300 hover:scale-[1.005]"
+        className="group flex items-center gap-5 lg:gap-7 border-b px-5 sm:px-7 py-6"
         style={{
           borderColor: colors.divider,
           background: colors.bgCard,
           opacity: visible ? 1 : 0,
           transform: visible
-            ? "translateY(0px)"
-            : "translateY(18px)",
+            ? "translateY(0px) translateX(0px)"
+            : index % 2 === 0
+              ? "translateY(18px) translateX(-8px)"
+              : "translateY(18px) translateX(8px)",
+          transition: `opacity 0.55s ease, transform 0.55s cubic-bezier(0.22,1,0.36,1)`,
+        }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLDivElement).style.transform = 'scale(1.008) translateX(4px)';
+          (e.currentTarget as HTMLDivElement).style.background = colors.bgCardHover || colors.bgCard;
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLDivElement).style.transform = 'scale(1) translateX(0)';
+          (e.currentTarget as HTMLDivElement).style.background = colors.bgCard;
         }}
       >
         {/* ICON */}
         <div
-          className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-300 group-hover:scale-105"
+          className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
           style={{
             background: colors.memberBg,
           }}
@@ -259,7 +140,7 @@ function ProjectRow({
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full px-3 py-1 text-xs font-semibold sm:text-sm"
+                className="rounded-full px-3 py-1 text-xs font-semibold sm:text-sm transition-transform duration-200 hover:scale-105"
                 style={{
                   background: colors.tagBg,
                   color: colors.text,
@@ -277,6 +158,7 @@ function ProjectRow({
             className="h-[10px] w-[10px] rounded-full"
             style={{
               background: getStatusColor(),
+              animation: project.status === 'LIVE' ? 'pulseGlow 2s ease-in-out infinite' : 'none',
             }}
           />
 
@@ -289,6 +171,14 @@ function ProjectRow({
             {project.status}
           </span>
         </div>
+
+        {/* Arrow indicator */}
+        <span
+          className="text-xl shrink-0 transition-transform duration-300 group-hover:translate-x-2 opacity-0 group-hover:opacity-100"
+          style={{ color: colors.textMuted }}
+        >
+          →
+        </span>
       </div>
     </Link>
   );
@@ -375,47 +265,25 @@ export function ProjectsPage() {
         onThemeToggle={() => setDark(!dark)}
       />
 
-      <main className="w-full flex-1">
+      <main className="w-full flex-1 overflow-x-hidden">
         <PageMargin>
           {/* HERO */}
           <section
             className="pb-12 pt-20"
             style={{
               opacity: mounted ? 1 : 0,
-              transform: mounted
-                ? "translateY(0px)"
-                : "translateY(24px)",
-              transition:
-                "opacity 0.7s ease, transform 0.7s ease",
+              transform: mounted ? "translateY(0px)" : "translateY(24px)",
+              transition: "opacity 0.7s ease, transform 0.7s ease",
             }}
           >
-            <h1
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none tracking-[-4px]"
-              style={{
-                color: colors.text,
-              }}
-            >
-              Projects
-            </h1>
-
-            <div
-              className="mt-4 mb-4 h-1 rounded-full"
-              style={{
-                width: mounted ? "150px" : "0px",
-                transition:
-                  "width 0.8s cubic-bezier(0.22,1,0.36,1)",
-                background: "#A4D045",
-              }}
+            <SectionTitle
+              title="Projects"
+              tag="h1"
+              subtitle="Building real products. Solving real problems."
+              colors={colors}
+              immediate
+              delay={100}
             />
-
-            <p
-              className="text-lg sm:text-2xl"
-              style={{
-                color: colors.textMuted,
-              }}
-            >
-              Building real products. Solving real problems.
-            </p>
           </section>
 
           {/* FILTERS */}
@@ -439,6 +307,7 @@ export function ProjectsPage() {
                 strokeLinejoin="round"
                 style={{
                   color: colors.textMuted,
+                  flexShrink: 0,
                 }}
               >
                 <circle cx="11" cy="11" r="8" />
@@ -457,7 +326,7 @@ export function ProjectsPage() {
                   setPage(1);
                 }}
                 placeholder="Search"
-                className="flex-1 bg-transparent text-base outline-none"
+                className="flex-1 min-w-0 bg-transparent text-base outline-none"
                 style={{
                   color: colors.text,
                 }}
@@ -470,7 +339,7 @@ export function ProjectsPage() {
                     setShowCatDrop(!showCatDrop);
                     setShowStatusDrop(false);
                   }}
-                  className="flex items-center gap-2 text-sm font-semibold"
+                  className="flex items-center gap-2 text-sm font-semibold whitespace-nowrap"
                   style={{
                     color: colors.text,
                   }}
@@ -482,6 +351,10 @@ export function ProjectsPage() {
                     height="14"
                     viewBox="0 0 12 12"
                     fill="none"
+                    style={{
+                      transform: showCatDrop ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s ease',
+                    }}
                   >
                     <path
                       d="M2 4l4 4 4-4"
@@ -498,6 +371,7 @@ export function ProjectsPage() {
                     style={{
                       background: colors.bgCard,
                       borderColor: colors.divider,
+                      animation: 'popIn 0.2s cubic-bezier(0.34,1.56,0.64,1) both',
                     }}
                   >
                     {categories.map((c) => (
@@ -527,7 +401,7 @@ export function ProjectsPage() {
                   setShowStatusDrop(!showStatusDrop);
                   setShowCatDrop(false);
                 }}
-                className="flex h-16 items-center gap-3 rounded-2xl border px-6 text-sm font-semibold"
+                className="flex h-16 items-center gap-3 rounded-2xl border px-6 text-sm font-semibold w-full lg:w-auto"
                 style={{
                   background: colors.bgCard,
                   borderColor: colors.divider,
@@ -541,6 +415,10 @@ export function ProjectsPage() {
                   height="14"
                   viewBox="0 0 12 12"
                   fill="none"
+                  style={{
+                    transform: showStatusDrop ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s ease',
+                  }}
                 >
                   <path
                     d="M2 4l4 4 4-4"
@@ -557,6 +435,7 @@ export function ProjectsPage() {
                   style={{
                     background: colors.bgCard,
                     borderColor: colors.divider,
+                    animation: 'popIn 0.2s cubic-bezier(0.34,1.56,0.64,1) both',
                   }}
                 >
                   {statuses.map((s) => (
@@ -615,13 +494,14 @@ export function ProjectsPage() {
                 <button
                   key={n}
                   onClick={() => setPage(n)}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-110"
                   style={{
                     background:
                       page === n
                         ? colors.tagBg
                         : "transparent",
                     color: colors.text,
+                    transform: page === n ? 'scale(1.1)' : 'scale(1)',
                   }}
                 >
                   {n}
@@ -633,7 +513,7 @@ export function ProjectsPage() {
                   onClick={() =>
                     setPage((prev) => prev + 1)
                   }
-                  className="ml-2 flex h-10 items-center rounded-lg border px-5 text-sm font-semibold transition-opacity hover:opacity-70"
+                  className="ml-2 flex h-10 items-center rounded-lg border px-5 text-sm font-semibold transition-all hover:scale-105 hover:opacity-70"
                   style={{
                     background: colors.bgCard,
                     color: colors.text,

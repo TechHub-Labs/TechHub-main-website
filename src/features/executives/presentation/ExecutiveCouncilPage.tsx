@@ -2,6 +2,7 @@
  * EXECUTIVE COUNCIL PAGE
  * Design: "Executive Council" hero, 2 filter tabs (Founding Council / '27),
  * 2-column card grid, click-to-open modal identical to Members modal style.
+ * Animations: spring card pop-in, hover tilt, modal scale-in
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -11,118 +12,9 @@ import { Footer } from "../../../shared/components/Footer";
 import { CTASection } from "../../../shared/components/CTASection";
 import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
 import { PageMargin } from "../../../shared/components/PageMargin";
+import { DEMO_COUNCIL_MEMBERS, DemoCouncilMember as CouncilMember } from "../../../core/data/demoData";
 
-interface CouncilMember {
-  id: number;
-  name: string;
-  role: string;
-  description: string;
-  quote: string;
-  portfolio?: string;
-  linkedin?: string;
-  twitter?: string;
-  category: ("Founding Council" | "'27")[];
-  skills: string[];
-}
-
-const councilMembers: CouncilMember[] = [
-  {
-    id: 1,
-    name: "Habeeb Abayomi M.",
-    role: "Executive President",
-    description: "Leads vision and strategic direction.",
-    category: ["Founding Council"],
-    quote: "Empowering student innovators to shape Africa's tech future.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/habeeb-abayomi",
-    twitter: "https://twitter.com/habeeb_abayomi",
-    skills: ["Node.js", "PostgreSQL"],
-  },
-  {
-    id: 2,
-    name: "Chinwe Eze",
-    role: "Chief Technology Officer",
-    description: "Oversees technological innovation",
-    category: ["Founding Council"],
-    quote: "Driving technological excellence to solve real-world problems.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/chinwe-eze",
-    twitter: "https://twitter.com/chinwe_eze",
-    skills: ["React", "TypeScript"],
-  },
-  {
-    id: 3,
-    name: "Olumide Akinola",
-    role: "Head of Marketing",
-    description: "Drives brand awareness and engagement.",
-    category: ["Founding Council"],
-    quote: "Building a strong brand that resonates with our community.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/olumide-akinola",
-    twitter: "https://twitter.com/olumide_akinola",
-    skills: ["Strategy", "Growth"],
-  },
-  {
-    id: 4,
-    name: "Amina Yusuf",
-    role: "Finance Manager",
-    description: "Manages budgets and financial reporting.",
-    category: ["Founding Council"],
-    quote: "Ensuring financial sustainability for our initiatives.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/amina-yusuf",
-    twitter: "https://twitter.com/amina_yusuf",
-    skills: ["Finance", "Excel"],
-  },
-  {
-    id: 5,
-    name: "Emeka Okafor",
-    role: "Operations Director",
-    description: "Ensures efficient daily business operations.",
-    category: ["Founding Council"],
-    quote: "Streamlining operations to maximize impact.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/emeka-okafor",
-    twitter: "https://twitter.com/emeka_okafor",
-    skills: ["Operations", "Logistics"],
-  },
-  {
-    id: 6,
-    name: "Sade Balogun",
-    role: "Human Resources Lead",
-    description: "Handles recruitment, welfare, and compliance.",
-    category: ["Founding Council"],
-    quote: "Fostering a culture of inclusion and growth.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/sade-balogun",
-    twitter: "https://twitter.com/sade_balogun",
-    skills: ["HR", "People Ops"],
-  },
-  {
-    id: 7,
-    name: "Tunde Adeyemi",
-    role: "Product Lead",
-    description: "Coordinates product roadmap and delivery.",
-    category: ["'27"],
-    quote: "Driving product innovation to create meaningful impact.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/tunde-adeyemi",
-    twitter: "https://twitter.com/tunde_adeyemi",
-    skills: ["Product", "Agile"],
-  },
-  {
-    id: 8,
-    name: "Ngozi Okonkwo",
-    role: "Design Lead",
-    description: "Drives visual identity and design systems.",
-    category: ["'27"],
-    quote: "Creating beautiful and functional user experiences.",
-    portfolio: "https://nhtechhub.org",
-    linkedin: "https://linkedin.com/in/ngozi-okonkwo",
-    twitter: "https://twitter.com/ngozi_okonkwo",
-    skills: ["Figma", "Design Systems"],
-  },
-];
+const councilMembers: CouncilMember[] = DEMO_COUNCIL_MEMBERS as CouncilMember[];
 
 const FILTERS = ["Founding Council", "'27"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -251,7 +143,7 @@ function CouncilModal({
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
       }}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-6"
       style={{
         background: "rgba(10,14,40,0.72)",
         backdropFilter: "blur(6px)",
@@ -269,6 +161,8 @@ function CouncilModal({
           transition: "transform 0.32s cubic-bezier(0.34,1.56,0.64,1)",
           maxHeight: "90vh",
           overflowY: "auto",
+          scrollbarWidth: "none" as const,
+          msOverflowStyle: "none" as const,
         }}
       >
         <button

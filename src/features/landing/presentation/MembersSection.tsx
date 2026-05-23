@@ -1,107 +1,148 @@
 /**
- * MEMBERS SECTION
- * * Showcases team members with their roles and quotes.
+ * MEMBERS SECTION — Landing Page
+ * ─────────────────────────────────────────────────────────────────────────────
+ * - SectionTitle with green curtain reveal
+ * - AnimatedCard with alternating left/right slide
+ * - Avatar shimmer gradient placeholder
+ * - Hover: border color-shift + text slide up
  */
 
-import { Link } from "react-router-dom";
-import { Builder, ThemeColors } from "../domain/types";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ThemeColors } from '../domain/types';
+import { DEMO_BUILDERS } from '../../../core/data/demoData';
+import { AnimatedCard } from '../../../shared/components/AnimatedCard';
+import { SectionTitle } from '../../../shared/components/SectionTitle';
 
 interface MembersSectionProps {
   colors: ThemeColors;
 }
 
-const members: Builder[] = [
-  {
-    name: "John Appleseed",
-    role: "Frontend Developer",
-    quote: '"I build clean interfaces that just make sense."',
-  },
-  {
-    name: "Avery Johnson",
-    role: "Product Designer",
-    quote: '"I love creating intuitive user-centered designs."',
-  },
-  {
-    name: "Maria Gonzalez",
-    role: "UX Designer",
-    quote: '"Designing experiences that delight users."',
-  },
-  {
-    name: "Liam Chen",
-    role: "Backend Engineer",
-    quote: '"Crafting scalable systems behind the scenes."',
-  },
-];
+function MemberCard({
+  member,
+  index,
+  colors,
+}: {
+  member: (typeof DEMO_BUILDERS)[0];
+  index: number;
+  colors: ThemeColors;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <AnimatedCard
+      index={index}
+      stepMs={130}
+      direction={index % 2 === 0 ? 'rotate-left' : 'rotate-right'}
+      distance={28}
+    >
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="rounded-2xl overflow-hidden cursor-default relative"
+        style={{
+          background: colors.bgCard,
+          border: `2px solid ${hovered ? '#A3D045' : colors.cardBorder}`,
+          boxShadow: hovered
+            ? '0 20px 60px rgba(163,208,69,0.15)'
+            : '0 1px 8px rgba(0,0,0,0.06)',
+          transition: 'border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+          transform: hovered ? 'translateY(-8px)' : 'translateY(0)',
+        }}
+      >
+        {/* Avatar shimmer placeholder */}
+        <div
+          className="w-full aspect-[4/3] relative overflow-hidden"
+          style={{ background: colors.memberBg }}
+        >
+          {/* Shimmer sweep */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)`,
+              animation: 'shimmer 2.5s ease-in-out infinite',
+            }}
+          />
+          {/* Quote bubble on hover */}
+          <div
+            className="absolute bottom-0 left-0 right-0 p-4 text-sm italic font-medium"
+            style={{
+              background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+              color: '#ffffff',
+              transform: hovered ? 'translateY(0)' : 'translateY(100%)',
+              transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+            }}
+          >
+            {member.quote}
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="p-5 sm:p-6">
+          <h3
+            className="text-xl font-bold tracking-tight mb-1"
+            style={{ color: colors.text }}
+          >
+            {member.name}
+          </h3>
+          <p className="text-sm font-medium" style={{ color: colors.textMuted }}>
+            {member.role}
+          </p>
+
+          {/* Green accent line that grows on hover */}
+          <div
+            style={{
+              marginTop: '12px',
+              height: '2px',
+              borderRadius: '2px',
+              background: '#A3D045',
+              width: hovered ? '100%' : '32px',
+              transition: 'width 0.4s cubic-bezier(0.22,1,0.36,1)',
+            }}
+          />
+        </div>
+      </div>
+    </AnimatedCard>
+  );
+}
 
 export function MembersSection({ colors }: MembersSectionProps) {
   return (
-    <section className="pt-40">
+    <section className="pt-40 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <h2
-            className="text-4xl sm:text-6xl font-bold mb-4 tracking-tight"
-            style={{ color: colors.text }}
-          >
-            <span className="section-title-underline">Meet the Builders</span>
-          </h2>
-          <p
-            className="text-base sm:text-lg leading-relaxed mt-4 max-w-xl"
-            style={{ color: colors.text }}
-          >
-            The engineers, designers, and innovators driving our culture.
-          </p>
+          <SectionTitle
+            title="Meet the Builders"
+            subtitle="The engineers, designers, and innovators driving our culture."
+            colors={colors}
+          />
         </div>
 
-        {/* Members Grid */}
+        {/* Grid */}
         <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-12">
-          {members.map((member) => (
-            <div
-              key={member.name}
-              className="rounded-xl p-1 sm:p-2 flex flex-col items-center text-center transition-all duration-300 cursor-default border-2 border-transparent hover:border-[#3B5BDB] hover:scale-105 hover:shadow-lg hover:-translate-y-2 shadow-sm"
-              style={{ background: colors.bgCard }}
-            >
-              {/* Avatar */}
-              <div
-                className="w-full max-h-80 aspect-square rounded-lg mb-6"
-                style={{ background: colors.memberBg }}
-              />
-
-              {/* Info */}
-              <h3
-                className="text-xl sm:text-2xl font-medium mb-1 tracking-tight"
-                style={{ color: colors.text }}
-              >
-                {member.name}
-              </h3>
-              <p
-                className="text-xs sm:text-sm font-medium mb-5"
-                style={{ color: colors.text }}
-              >
-                {member.role}
-              </p>
-              <p className="text-sm italic px-2" style={{ color: colors.text }}>
-                {member.quote}
-              </p>
-            </div>
+          {DEMO_BUILDERS.map((member, i) => (
+            <MemberCard key={member.name} member={member} index={i} colors={colors} />
           ))}
         </div>
 
-        {/* View All Button */}
-        <div className="text-center mt-8">
-          <Link to="/members">
-            <button
-              className="px-6 py-2.5 rounded border text-sm sm:text-base font-medium transition-all duration-300 hover:scale-105 hover:shadow-md hover:-translate-y-1 active:scale-95 inline-flex items-center gap-2"
-              style={{
-                background: "transparent",
-                color: colors.text,
-                borderColor: colors.text,
-              }}
-            >
-              View All Members &rarr;
-            </button>
-          </Link>
-        </div>
+        {/* View All */}
+        <AnimatedCard index={0} delay={600} direction="up">
+          <div className="text-center">
+            <Link to="/members">
+              <button
+                className="px-8 py-3 rounded border text-sm font-bold transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg active:scale-95"
+                style={{
+                  background: 'transparent',
+                  color: colors.text,
+                  borderColor: colors.btnSecondaryBorder,
+                }}
+              >
+                View All Members →
+              </button>
+            </Link>
+          </div>
+        </AnimatedCard>
       </div>
     </section>
   );
