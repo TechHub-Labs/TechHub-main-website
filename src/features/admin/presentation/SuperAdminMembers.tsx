@@ -7,7 +7,7 @@ import { supabase } from '../../../core/supabase/client';
 import type { Member } from '../../../core/supabase/types';
 import {
   AdminInput, AdminTextarea, TagEditor,
-  AvatarUploader, AdminToggle, SaveBar,
+  AvatarUploader, AdminToggle, SaveBar, AdminMessagesPanel
 } from './AdminFormComponents';
 
 const CATEGORY_OPTIONS = ['Undergrad', 'Alumni', "'25", "'26", "'27"];
@@ -113,6 +113,9 @@ export function SuperAdminMembers() {
           </button>
         </div>
       </div>
+
+      {/* Messages */}
+      <AdminMessagesPanel role="member" />
 
       {/* Table */}
       {loading ? (

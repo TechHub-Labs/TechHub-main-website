@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../../core/supabase/client';
 import type { Executive } from '../../../core/supabase/types';
-import { AdminInput, AdminTextarea, AvatarUploader, AdminToggle, SaveBar } from './AdminFormComponents';
+import { AdminInput, AdminTextarea, AvatarUploader, AdminToggle, SaveBar, AdminMessagesPanel } from './AdminFormComponents';
 
 const CATEGORY_OPTIONS = ["Founding Council", "'27", "'28"];
 const EMPTY: Partial<Executive> = {
@@ -85,6 +85,8 @@ export function SuperAdminExecutives() {
           + Add Executive
         </button>
       </div>
+
+      <AdminMessagesPanel role="executive" />
 
       {loading ? <p style={{ color: '#64748b' }}>Loading…</p> : (
         <div style={{ overflowX: 'auto' }}>

@@ -1,7 +1,7 @@
 /**
  * Shared admin form utilities — inputs, tag editor, avatar uploader
  */
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { supabase } from '../../../core/supabase/client';
 
 // ─── Styled input ─────────────────────────────────────────────────────────────
@@ -266,6 +266,75 @@ export function SaveBar({ saving, saved, error }: { saving: boolean; saved: bool
       </button>
       {saved && !error && <span style={{ color: '#A3D045', fontSize: '13px' }}>✓ Saved successfully</span>}
       {error && <span style={{ color: '#f87171', fontSize: '13px' }}>{error}</span>}
+    </div>
+  );
+}
+
+// ─── Admin Messages Panel ─────────────────────────────────────────────────────
+export interface AdminMessage {
+  id: string;
+  sender_name: string;
+  message: string;
+  created_at: string;
+}
+
+export function AdminMessagesPanel({ role }: { role: 'member' | 'executive' }) {
+  const [messages, setMessages] = useState<AdminMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from('admin_messages')
+      .select('*')
+      .eq('role', role)
+      .eq('is_read', false)
+      .order('created_at', { ascending: true });
+    setMessages((data ?? []) as AdminMessage[]);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [role]);
+
+  const markRead = async (id: string) => {
+    setMessages(prev => prev.filter(m => m.id !== id));
+    await supabase.from('admin_messages').update({ is_read: true }).eq('id', id);
+  };
+
+  if (loading) return null;
+  if (messages.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: '24px' }}>
+      <h2 style={{ color: '#fbbf24', fontSize: '14px', fontWeight: 700, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        📬 New Edit Requests ({messages.length})
+      </h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {messages.map(m => (
+          <div key={m.id} style={{
+            background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.2)',
+            borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+            gap: '16px', animation: 'adminFadeIn 0.3s'
+          }}>
+            <div>
+              <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>
+                {m.sender_name} <span style={{ color: '#64748b', fontSize: '12px', fontWeight: 400 }}>· {new Date(m.created_at).toLocaleString()}</span>
+              </div>
+              <div style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5 }}>{m.message}</div>
+            </div>
+            <button onClick={() => markRead(m.id)} style={{
+              background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: 'none',
+              padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+              whiteSpace: 'nowrap', transition: 'background 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(251,191,36,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(251,191,36,0.1)'}
+            >
+              Mark Read
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
