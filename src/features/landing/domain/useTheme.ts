@@ -60,10 +60,10 @@ export function useTheme() {
       cardBorder:      'rgba(255,255,255,0.08)',
     } : {
       // ─── LIGHT MODE ──────────────────────────────────────────────────────
-      bg:              '#f4f5fa',
+      bg:              '#f2f5fb',
       bgCard:          '#ffffff',
       bgCardHover:     '#eef0ff',        // was #14363E (jarring dark teal!) — fixed
-      bgHero:          '#f4f5fa',
+      bgHero:          '#f2f5fb',
       nav:             '#ffffff',        // solid base colour
       navBorder:       'rgba(13,19,64,0.06)',
       text:            '#0d1340',

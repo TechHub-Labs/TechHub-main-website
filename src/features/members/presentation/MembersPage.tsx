@@ -12,7 +12,7 @@ import { CTASection } from "../../../shared/components/CTASection";
 import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
 import { PageMargin } from "../../../shared/components/PageMargin";
 import { SectionTitle } from "../../../shared/components/SectionTitle";
-import { DEMO_MEMBERS, DemoMember as Member } from "../../../core/data/demoData";
+import { DemoMember as Member } from "../../../core/data/demoData";
 import { supabase } from "../../../core/supabase/client";
 
 // Import modular subcomponents
@@ -29,7 +29,7 @@ export function MembersPage() {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [headerVisible, setHeaderVisible] = useState(false);
-  const [membersList, setMembersList] = useState<Member[]>(DEMO_MEMBERS);
+  const [membersList, setMembersList] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +44,9 @@ export function MembersPage() {
           .select('*')
           .eq('visible', true);
 
-        if (data && data.length > 0 && !error) {
+        if (error) {
+          console.warn("Failed to load members from Supabase:", error.message);
+        } else if (data) {
           const mapped: Member[] = data.map((m: any) => ({
             id: m.id,
             name: m.name,
@@ -61,7 +63,7 @@ export function MembersPage() {
           setMembersList(mapped);
         }
       } catch (err) {
-        console.warn("Failed to load members from Supabase, using fallback:", err);
+        console.warn("Failed to load members from Supabase:", err);
       } finally {
         setLoading(false);
       }

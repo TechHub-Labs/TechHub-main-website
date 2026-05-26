@@ -1,10 +1,6 @@
-/**
- * SuperAdminMessages — Full inbox for the super admin
- * Shows all messages from members and executives, with filters, read/unread state, and mark-all-read.
- */
-
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../../core/supabase/client';
+import { useTheme } from '../../landing/domain/useTheme';
 
 interface AdminMessage {
   id: string;
@@ -45,6 +41,8 @@ export function SuperAdminMessages() {
   const [loading,  setLoading]  = useState(true);
   const [filter,   setFilter]   = useState<FilterTab>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
+  
+  const { dark } = useTheme();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -98,13 +96,20 @@ export function SuperAdminMessages() {
     { key: 'executive', label: 'Executives', count: messages.filter(m => m.role === 'executive').length },
   ];
 
+  // Dynamic Theme Colors
+  const textColor = dark ? '#ffffff' : '#0d1340';
+  const textMuted = dark ? '#94a3b8' : '#4a5180';
+  const subtextColor = dark ? '#475569' : '#64748b';
+  const accent = dark ? '#A3D045' : '#4f46e5';
+  const borderCol = dark ? 'rgba(255,255,255,0.06)' : 'rgba(79,70,229,0.12)';
+
   return (
     <div style={{ padding: '32px' }}>
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <h1 style={{ color: textColor, fontSize: '22px', fontWeight: 700, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             📬 Messages Inbox
             {unreadCount > 0 && (
               <span style={{
@@ -113,13 +118,16 @@ export function SuperAdminMessages() {
               }}>{unreadCount} new</span>
             )}
           </h1>
-          <p style={{ color: '#64748b', fontSize: '13px' }}>Edit requests and messages from members & executives</p>
+          <p style={{ color: textMuted, fontSize: '13px' }}>Edit requests and messages from members & executives</p>
         </div>
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
             className="min-button"
-            style={{ padding: '10px 18px', borderRadius: '10px', border: 'none', color: '#A3D045', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
+            style={{ 
+              padding: '10px 18px', borderRadius: '10px', border: 'none', 
+              color: accent, fontWeight: 700, fontSize: '13px', cursor: 'pointer' 
+            }}
           >
             ✓ Mark all read
           </button>
@@ -128,31 +136,40 @@ export function SuperAdminMessages() {
 
       {/* Filter tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        {tabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setFilter(tab.key)}
-            className="min-button"
-            style={{
-              padding: '8px 16px', borderRadius: '10px', border: 'none', cursor: 'pointer',
-              fontSize: '13px', fontWeight: 600,
-              background: filter === tab.key ? 'rgba(163,208,69,0.15)' : 'transparent',
-              color: filter === tab.key ? '#A3D045' : '#64748b',
-              boxShadow: filter === tab.key ? 'inset 0 0 0 1px rgba(163,208,69,0.4)' : 'none',
-              transition: 'all 0.15s',
-            }}
-          >
-            {tab.label}
-            {tab.count !== undefined && (
-              <span style={{
-                marginLeft: '6px', fontSize: '11px', fontWeight: 700,
-                background: filter === tab.key ? 'rgba(163,208,69,0.25)' : 'rgba(255,255,255,0.07)',
-                borderRadius: '999px', padding: '1px 7px',
-                color: filter === tab.key ? '#A3D045' : '#475569',
-              }}>{tab.count}</span>
-            )}
-          </button>
-        ))}
+        {tabs.map(tab => {
+          const isSelected = filter === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setFilter(tab.key)}
+              className="min-button"
+              style={{
+                padding: '8px 16px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                fontSize: '13px', fontWeight: 600,
+                background: isSelected 
+                  ? (dark ? 'rgba(163,208,69,0.15)' : 'rgba(79,70,229,0.08)') 
+                  : 'transparent',
+                color: isSelected ? accent : textMuted,
+                boxShadow: isSelected 
+                  ? `inset 0 0 0 1px ${dark ? 'rgba(163,208,69,0.4)' : 'rgba(79,70,229,0.2)'}` 
+                  : 'none',
+                transition: 'all 0.15s',
+              }}
+            >
+              {tab.label}
+              {tab.count !== undefined && (
+                <span style={{
+                  marginLeft: '6px', fontSize: '11px', fontWeight: 700,
+                  background: isSelected 
+                    ? (dark ? 'rgba(163,208,69,0.25)' : 'rgba(79,70,229,0.15)') 
+                    : (dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)'),
+                  borderRadius: '999px', padding: '1px 7px',
+                  color: isSelected ? accent : (dark ? '#94a3b8' : '#4a5180'),
+                }}>{tab.count}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Messages list */}
@@ -163,7 +180,7 @@ export function SuperAdminMessages() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '64px 0', color: '#475569' }}>
+        <div style={{ textAlign: 'center', padding: '64px 0', color: subtextColor }}>
           <div style={{ fontSize: '40px', marginBottom: '12px' }}>📭</div>
           <p style={{ fontSize: '15px', fontWeight: 600 }}>No messages here</p>
           <p style={{ fontSize: '13px', marginTop: '4px' }}>
@@ -205,7 +222,7 @@ export function SuperAdminMessages() {
                   {/* Sender + role badge */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ fontWeight: 700, fontSize: '14px', color: '#f1f5f9' }}>{m.sender_name}</span>
+                      <span style={{ fontWeight: 700, fontSize: '14px', color: textColor }}>{m.sender_name}</span>
                       <span style={{
                         fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '999px',
                         background: `${ROLE_COLOR[m.role] ?? '#94a3b8'}20`,
@@ -219,7 +236,7 @@ export function SuperAdminMessages() {
                       }}>{m.request_type}</span>
                     </div>
                     <p style={{
-                      color: '#64748b', fontSize: '12px', marginTop: '3px',
+                      color: textMuted, fontSize: '12px', marginTop: '3px',
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isOpen ? 'normal' : 'nowrap',
                       maxWidth: '480px',
                     }}>
@@ -228,26 +245,26 @@ export function SuperAdminMessages() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                    <span style={{ color: '#475569', fontSize: '11px', whiteSpace: 'nowrap' }}>{timeAgo(m.created_at)}</span>
-                    <span style={{ color: '#475569', fontSize: '12px', transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
+                    <span style={{ color: subtextColor, fontSize: '11px', whiteSpace: 'nowrap' }}>{timeAgo(m.created_at)}</span>
+                    <span style={{ color: subtextColor, fontSize: '12px', transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
                   </div>
                 </div>
 
                 {/* Expanded body */}
                 {isOpen && (
-                  <div style={{ padding: '0 20px 20px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                    <p style={{ color: '#f1f5f9', fontSize: '14px', lineHeight: 1.8, paddingTop: '16px', marginBottom: '20px' }}>
+                  <div style={{ padding: '0 20px 20px', borderTop: `1px solid ${borderCol}` }}>
+                    <p style={{ color: textColor, fontSize: '14px', lineHeight: 1.8, paddingTop: '16px', marginBottom: '20px' }}>
                       {m.message}
                     </p>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                      <span style={{ color: '#475569', fontSize: '11px', flex: 1 }}>
+                      <span style={{ color: subtextColor, fontSize: '11px', flex: 1 }}>
                         Received: {new Date(m.created_at).toLocaleString()}
                       </span>
                       {m.is_read ? (
                         <button
                           onClick={() => markUnread(m.id)}
                           className="min-button"
-                          style={{ padding: '8px 14px', borderRadius: '8px', border: 'none', color: '#64748b', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                          style={{ padding: '8px 14px', borderRadius: '8px', border: 'none', color: textMuted, fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
                         >
                           Mark Unread
                         </button>
@@ -255,7 +272,7 @@ export function SuperAdminMessages() {
                         <button
                           onClick={() => markRead(m.id)}
                           className="min-button"
-                          style={{ padding: '8px 14px', borderRadius: '8px', border: 'none', color: '#A3D045', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+                          style={{ padding: '8px 14px', borderRadius: '8px', border: 'none', color: accent, fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
                         >
                           ✓ Mark Read
                         </button>

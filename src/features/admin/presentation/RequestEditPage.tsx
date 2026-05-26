@@ -3,10 +3,22 @@ import emailjs from '@emailjs/browser';
 import { supabase } from '../../../core/supabase/client';
 import { useAuth } from '../../../shared/hooks/useAuth';
 import { AdminTextarea } from './AdminFormComponents';
+import { useTheme } from '../../landing/domain/useTheme';
+import { toast } from '../../../shared/components/Toast';
 
 // Custom Select Component for fully styled options
-function CustomSelect({ value, options, onChange, placeholder }: { value: string; options: string[]; onChange: (val: string) => void; placeholder: string; required?: boolean }) {
+function CustomSelect({
+  value, options, onChange, placeholder, dark
+}: {
+  value: string;
+  options: string[];
+  onChange: (val: string) => void;
+  placeholder: string;
+  required?: boolean;
+  dark: boolean;
+}) {
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,43 +29,70 @@ function CustomSelect({ value, options, onChange, placeholder }: { value: string
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  const activeTextVal = dark ? '#ffffff' : '#0d1340';
+  const placeholderTextVal = dark ? '#94a3b8' : '#4a5180';
+  const openBorderVal = dark ? '#A3D045' : '#4f46e5';
+  
+  // closed state border
+  const borderVal = dark 
+    ? (hovered ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(255,255,255,0.15)')
+    : (hovered ? '1px solid rgba(79,70,229,0.5)' : '1px solid rgba(79,70,229,0.28)');
+    
+  // open/focus state
+  const openShadowVal = dark ? '0 0 12px rgba(163,208,69,0.2)' : '0 0 0 3px rgba(79, 70, 229, 0.18)';
+  const bgVal = dark 
+    ? (open ? 'rgba(13,19,64,0.4)' : 'rgba(13,19,64,0.2)') 
+    : '#ffffff';
+
   return (
     <div ref={ref} style={{ position: 'relative' }}>
       <div
         onClick={() => setOpen(!open)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
-          width: '100%', padding: '12px 16px', borderRadius: '0px', boxSizing: 'border-box',
-          background: 'transparent', border: '2px solid rgba(255,255,255,0.2)',
-          color: value ? '#f1f5f9' : '#94a3b8', fontSize: '14px', cursor: 'pointer',
+          width: '100%', padding: '12px 16px', borderRadius: '12px', boxSizing: 'border-box',
+          background: bgVal,
+          border: open ? `1px solid ${openBorderVal}` : borderVal,
+          color: value ? activeTextVal : placeholderTextVal, fontSize: '14px', cursor: 'pointer',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          transition: 'all 0.1s',
-          borderColor: open ? '#A3D045' : 'rgba(255,255,255,0.2)',
-          boxShadow: open ? '4px 4px 0px #A3D045' : 'none',
-          transform: open ? 'translate(-2px, -2px)' : 'none',
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+          boxShadow: open ? openShadowVal : 'none',
         }}
       >
-        {value || placeholder}
-        <span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▼</span>
+        <span>{value || placeholder}</span>
+        <span style={{ 
+          transform: open ? 'rotate(180deg)' : 'none', 
+          transition: 'transform 0.2s', 
+          color: value ? activeTextVal : placeholderTextVal,
+          fontSize: '11px',
+          opacity: 0.8
+        }}>▼</span>
       </div>
       
       {open && (
-        <div className="brutalist-card" style={{
+        <div className="min-card" style={{
           position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px',
           maxHeight: '240px', overflowY: 'auto', zIndex: 50,
-          background: '#0f172a', borderColor: '#A3D045', boxShadow: '4px 4px 0px #A3D045',
-          padding: '8px 0', display: 'flex', flexDirection: 'column'
+          background: dark ? '#0d1340' : '#ffffff',
+          borderColor: openBorderVal,
+          boxShadow: dark ? '0 12px 32px rgba(0,0,0,0.4)' : '0 12px 32px rgba(79,70,229,0.08)',
+          padding: '8px 0', display: 'flex', flexDirection: 'column',
+          borderRadius: '12px',
+          border: `1px solid ${openBorderVal}`,
         }}>
           {options.map(opt => (
             <div
               key={opt}
               onClick={() => { onChange(opt); setOpen(false); }}
               style={{
-                padding: '10px 16px', cursor: 'pointer', color: '#f1f5f9', fontSize: '14px',
-                background: value === opt ? 'rgba(163,208,69,0.1)' : 'transparent',
-                borderLeft: value === opt ? '4px solid #A3D045' : '4px solid transparent',
+                padding: '10px 16px', cursor: 'pointer', color: dark ? '#f1f5f9' : '#0d1340', fontSize: '14px',
+                background: value === opt ? (dark ? 'rgba(163,208,69,0.1)' : 'rgba(79,70,229,0.08)') : 'transparent',
+                borderLeft: value === opt ? `4px solid ${openBorderVal}` : '4px solid transparent',
+                transition: 'all 0.15s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-              onMouseLeave={e => e.currentTarget.style.background = value === opt ? 'rgba(163,208,69,0.1)' : 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(79,70,229,0.04)'}
+              onMouseLeave={e => e.currentTarget.style.background = value === opt ? (dark ? 'rgba(163,208,69,0.1)' : 'rgba(79,70,229,0.08)') : 'transparent'}
             >
               {opt}
             </div>
@@ -66,6 +105,7 @@ function CustomSelect({ value, options, onChange, placeholder }: { value: string
 
 export function RequestEditPage() {
   const { user, role } = useAuth();
+  const { dark } = useTheme();
   const [names, setNames] = useState<string[]>([]);
   const [loadingNames, setLoadingNames] = useState(true);
 
@@ -96,6 +136,7 @@ export function RequestEditPage() {
     e.preventDefault();
     if (!user) return;
     if (!senderName) {
+      toast.warning('Please select your name.');
       setMessageError('Please select your name.');
       return;
     }
@@ -137,8 +178,10 @@ export function RequestEditPage() {
 
     setSendingMessage(false);
     if (error) {
+      toast.error(`Failed to submit request: ${error.message}`);
       setMessageError(error.message);
     } else {
+      toast.success('Edit request submitted successfully!');
       setMessageSent(true);
       setSenderName('');
       setMessage('');
@@ -150,11 +193,16 @@ export function RequestEditPage() {
 
   return (
     <div style={{ padding: '32px', maxWidth: '680px' }} className="admin-fade-in">
-      <div className="brutalist-card" style={{
-        padding: '32px', animation: 'adminFadeIn 0.8s'
+      <div className="min-card" style={{
+        padding: '32px', animation: 'adminFadeIn 0.8s',
+        background: dark ? 'var(--min-surface-dark)' : 'rgba(255, 255, 255, 0.88)',
+        border: dark ? '1px solid var(--min-border)' : '1px solid rgba(79, 70, 229, 0.12)',
+        borderRadius: '16px',
+        boxShadow: dark ? '0 4px 24px rgba(0,0,0,0.2)' : '0 8px 32px rgba(79, 70, 229, 0.03)',
+        backdropFilter: 'blur(16px)',
       }}>
-        <h1 style={{ color: '#f1f5f9', fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Request an Edit</h1>
-        <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '32px', lineHeight: 1.6 }}>
+        <h1 style={{ color: dark ? '#f1f5f9' : '#0d1340', fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Request an Edit</h1>
+        <p style={{ color: dark ? '#94a3b8' : '#4a5180', fontSize: '14px', marginBottom: '32px', lineHeight: 1.6 }}>
           Select your name and the type of request. The Super Admin will review your message and make the changes.
         </p>
         
@@ -170,6 +218,7 @@ export function RequestEditPage() {
               onChange={setSenderName} 
               placeholder={loadingNames ? 'Loading names...' : 'Select your name'} 
               required 
+              dark={dark}
             />
           </div>
 
@@ -183,6 +232,7 @@ export function RequestEditPage() {
               onChange={setRequestType} 
               placeholder="Select Request Type" 
               required 
+              dark={dark}
             />
           </div>
 
@@ -191,17 +241,18 @@ export function RequestEditPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '12px' }}>
             <button
               type="submit" disabled={sendingMessage || messageSent}
-              className={sendingMessage || messageSent ? '' : 'brutalist-button'}
+              className={sendingMessage || messageSent ? '' : 'min-button'}
               style={{
-                padding: '14px 32px', borderRadius: '0px',
-                background: sendingMessage || messageSent ? '#334155' : '#A3D045',
-                color: sendingMessage || messageSent ? '#94a3b8' : '#0f172a', fontWeight: 800, fontSize: '15px', letterSpacing: '0.5px', textTransform: 'uppercase',
-                border: sendingMessage || messageSent ? '2px solid transparent' : undefined, cursor: (sendingMessage || messageSent) ? 'not-allowed' : 'pointer',
+                padding: '14px 32px', borderRadius: '12px',
+                background: sendingMessage || messageSent ? '#334155' : (dark ? '#A3D045' : '#4f46e5'),
+                color: sendingMessage || messageSent ? '#94a3b8' : (dark ? '#0f172a' : '#ffffff'),
+                fontWeight: 800, fontSize: '15px', letterSpacing: '0.5px', textTransform: 'uppercase',
+                border: 'none', cursor: (sendingMessage || messageSent) ? 'not-allowed' : 'pointer',
               }}
             >
               {sendingMessage ? 'Sending…' : messageSent ? 'Sent' : 'Send Request'}
             </button>
-            {messageSent && <span style={{ color: '#A3D045', fontSize: '14px', fontWeight: 600, animation: 'adminFadeIn 0.3s' }}>✓ Message delivered! We will process it shortly.</span>}
+            {messageSent && <span style={{ color: dark ? '#A3D045' : '#4f46e5', fontSize: '14px', fontWeight: 600, animation: 'adminFadeIn 0.3s' }}>✓ Message delivered! We will process it shortly.</span>}
             {messageError && <span style={{ color: '#f87171', fontSize: '14px' }}>{messageError}</span>}
           </div>
         </form>

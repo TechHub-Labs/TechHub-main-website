@@ -81,36 +81,6 @@ export function AdminDashboard() {
       {/* Stats — super_admin only */}
       {role === 'super_admin' && (
         <>
-          <div className="min-card" style={{ padding: '28px', marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Quick Actions</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px' }}>
-              <Link to="/admin/members" className="min-button" style={{
-                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                color: 'inherit', borderRadius: '12px', fontWeight: 600
-              }}>
-                <span style={{ fontSize: '20px' }}>👥</span> Add Member
-              </Link>
-              <Link to="/admin/executives" className="min-button" style={{
-                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                color: 'inherit', borderRadius: '12px', fontWeight: 600
-              }}>
-                <span style={{ fontSize: '20px' }}>🏛</span> Add Exec
-              </Link>
-              <Link to="/admin/projects" className="min-button" style={{
-                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                color: 'inherit', borderRadius: '12px', fontWeight: 600
-              }}>
-                <span style={{ fontSize: '20px' }}>🚀</span> New Project
-              </Link>
-              <Link to="/" className="min-button" style={{
-                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                color: 'inherit', borderRadius: '12px', fontWeight: 600
-              }}>
-                <span style={{ fontSize: '20px' }}>↗</span> View Site
-              </Link>
-            </div>
-          </div>
-          
           <h2 style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
             Overview
           </h2>
@@ -138,6 +108,7 @@ export function AdminDashboard() {
             <QuickLink to="/admin/members"    label="Manage Members"   description="Add, edit or remove member profiles" icon="👥" color="#38bdf8" />
             <QuickLink to="/admin/executives" label="Manage Executives" description="Add, edit or remove executive profiles" icon="🏛" color="#a78bfa" />
             <QuickLink to="/admin/projects"   label="Manage Projects"  description="Add, edit or remove projects" icon="🚀" color="#A3D045" />
+            <QuickLink to="/"                 label="Live Website"     description="Exit dashboard and view the Babcock TechHub public site" icon="↗" color="#f59e0b" />
           </>
         )}
       </div>

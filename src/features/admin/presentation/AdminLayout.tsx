@@ -4,11 +4,12 @@
  * - Main content area on the right
  * - Mobile: sidebar collapses to top bar
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/hooks/useAuth';
 import { useTheme } from '../../landing/domain/useTheme';
 import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
+import { supabase } from '../../../core/supabase/client';
 
 const NAV_ITEMS = [
   { path: '/admin',             label: 'Dashboard',   icon: '▣',  roles: ['member', 'executive', 'super_admin'] },
@@ -32,12 +33,45 @@ const ROLE_COLORS: Record<string, string> = {
   super_admin: '#A3D045',
 };
 
+import { ToastContainer } from '../../../shared/components/Toast';
+
 export function AdminLayout() {
   const { role, logout, user } = useAuth();
   const { dark, setDark, colors } = useTheme();
   const location  = useLocation();
   const navigate  = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  useEffect(() => {
+    if (role !== 'super_admin') return;
+
+    const fetchUnreadCount = async () => {
+      const { count } = await supabase
+        .from('admin_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false);
+      setUnreadMessages(count ?? 0);
+    };
+
+    fetchUnreadCount();
+
+    // Subscribe to real-time postgres changes for instant updates
+    const channel = supabase
+      .channel('admin_messages_sidebar')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'admin_messages' },
+        () => {
+          fetchUnreadCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [role]);
 
   const visibleNav = NAV_ITEMS.filter(item =>
     role !== null && (item.roles as readonly string[]).includes(role)
@@ -57,12 +91,28 @@ export function AdminLayout() {
         </Link>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '6px',
-          background: dark ? 'var(--min-bg-dark)' : 'var(--min-bg-light)', 
+          background: dark
+            ? 'var(--min-bg-dark)'
+            : role === 'super_admin'
+              ? 'rgba(163,208,69,0.18)'
+              : role === 'executive'
+                ? 'rgba(167,139,250,0.18)'
+                : 'rgba(56,189,248,0.18)', 
           borderRadius: '8px', padding: '6px 14px',
-          border: '1px solid var(--min-border)',
+          border: dark ? '1px solid var(--min-border)' : 'none',
         }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: ROLE_COLORS[role ?? 'member'], boxShadow: `0 0 8px ${ROLE_COLORS[role ?? 'member']}` }} />
-          <span style={{ color: ROLE_COLORS[role ?? 'member'], fontSize: '12px', fontWeight: 600 }}>
+          <span style={{
+            color: dark
+              ? ROLE_COLORS[role ?? 'member']
+              : role === 'super_admin'
+                ? '#4d7c0f'
+                : role === 'executive'
+                  ? '#6d28d9'
+                  : '#0284c7',
+            fontSize: '12px',
+            fontWeight: 700
+          }}>
             {ROLE_LABELS[role ?? 'member']}
           </span>
         </div>
@@ -84,9 +134,12 @@ export function AdminLayout() {
               onClick={() => setMobileOpen(false)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '10px 16px', borderRadius: '8px', marginBottom: '4px',
-                color: isActive ? '#A3D045' : colors.textMuted,
-                background: isActive ? (dark ? 'rgba(163,208,69,0.1)' : 'rgba(163,208,69,0.1)') : 'transparent',
+                padding: '10px 16px',
+                paddingLeft: isActive ? '13px' : '16px',
+                borderLeft: isActive ? (dark ? '3px solid #A3D045' : '3px solid #4f46e5') : '3px solid transparent',
+                borderRadius: '8px', marginBottom: '4px',
+                color: isActive ? (dark ? '#A3D045' : '#4f46e5') : colors.textMuted,
+                background: isActive ? (dark ? 'rgba(163,208,69,0.1)' : 'rgba(79,70,229,0.08)') : 'transparent',
                 textDecoration: 'none', fontSize: '14px', fontWeight: isActive ? 600 : 500,
                 transition: 'all 0.15s',
               }}
@@ -104,7 +157,21 @@ export function AdminLayout() {
               }}
             >
               <span style={{ fontSize: '16px' }}>{item.icon}</span>
-              {item.label}
+              <span style={{ flex: 1 }}>{item.label}</span>
+              {item.path === '/admin/messages' && unreadMessages > 0 && (
+                <span style={{
+                  background: '#fbbf24',
+                  color: '#0f172a',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  borderRadius: '999px',
+                  padding: '2px 8px',
+                  boxShadow: '0 0 8px rgba(251,191,36,0.35)',
+                  animation: 'adminFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}>
+                  {unreadMessages}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -151,6 +218,9 @@ export function AdminLayout() {
       background: 'transparent',
       transition: 'background 0.2s ease', position: 'relative'
     }} className="admin-layout-root">
+      
+      {/* Toast notifications */}
+      <ToastContainer />
       
       {/* Dynamic Animated Background */}
       <div style={{ position: 'absolute', inset: 0, zIndex: -1 }}>
@@ -225,32 +295,38 @@ export function AdminLayout() {
 
         ${!dark ? `
           :root {
-            --min-border: rgba(13,19,64,0.1);
-            --min-hover: rgba(13,19,64,0.04);
+            --min-border: rgba(79,70,229,0.12);
+            --min-hover: rgba(79,70,229,0.04);
+            --min-surface-light: #f3f6fc;
           }
           .admin-layout-root { color: #0d1340 !important; }
           .admin-layout-root h1, .admin-layout-root h2 { color: #0d1340 !important; }
           .admin-layout-root p { color: #4a5180 !important; }
           .admin-layout-root label { color: #4a5180 !important; }
-          .admin-layout-root img[src="/images/Logo.png"] { filter: invert(1) !important; }
-          .min-card { background: var(--min-surface-light); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.02); }
-          .min-button { background: var(--min-surface-light); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: none; transition: all 0.15s; }
+          .admin-layout-root img[src="/images/Logo.png"] { filter: none !important; }
+          .min-card { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(16px); border: 1px solid rgba(79, 70, 229, 0.12); border-radius: 12px; box-shadow: 0 8px 32px rgba(79, 70, 229, 0.03); }
+          .min-button { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(79, 70, 229, 0.12); border-radius: 8px; box-shadow: none; transition: all 0.15s; }
           .min-button:active { background: var(--min-hover); transform: scale(0.98); }
-          .min-button:hover { background: var(--min-hover); }
-          .min-input { background: rgba(255,255,255,0.6); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s; }
-          .min-input:focus { border-color: #A3D045; outline: none; box-shadow: 0 0 0 2px rgba(163,208,69,0.3); }
+          .min-button:hover { background: var(--min-hover); border-color: rgba(79, 70, 229, 0.2); }
+          .min-input { background: #ffffff; border: 1px solid rgba(79, 70, 229, 0.28); border-radius: 12px; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.03); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+          .min-input:hover { border-color: rgba(79, 70, 229, 0.45); }
+          .min-input:focus { border-color: #4f46e5; outline: none; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18); }
+          .min-input::placeholder { color: #4a5180; opacity: 0.6; }
         ` : `
           :root {
             --min-border: rgba(255,255,255,0.1);
             --min-hover: rgba(255,255,255,0.05);
+            --min-surface-dark: ${colors.nav};
           }
           .admin-layout-root { color: #ffffff !important; }
           .min-card { background: var(--min-surface-dark); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
           .min-button { background: rgba(255,255,255,0.05); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: none; transition: all 0.15s; }
           .min-button:active { background: var(--min-hover); transform: scale(0.98); }
           .min-button:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); box-shadow: 0 0 12px rgba(255,255,255,0.05); }
-          .min-input { background: rgba(0,0,0,0.2); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s; }
-          .min-input:focus { border-color: #A3D045; outline: none; box-shadow: 0 0 12px rgba(163,208,69,0.2), inset 0 0 4px rgba(163,208,69,0.1); }
+          .min-input { background: rgba(13, 19, 64, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+          .min-input:hover { border-color: rgba(163, 208, 69, 0.45); }
+          .min-input:focus { border-color: #A3D045; outline: none; box-shadow: 0 0 0 3px rgba(163, 208, 69, 0.25); }
+          .min-input::placeholder { color: #94a3b8; opacity: 0.5; }
         `}
         
         @keyframes adminFadeIn {

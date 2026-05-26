@@ -3,6 +3,7 @@
  */
 import { useRef, useState, useEffect } from 'react';
 import { supabase } from '../../../core/supabase/client';
+import { toast } from '../../../shared/components/Toast';
 
 // ─── Styled input ─────────────────────────────────────────────────────────────
 export function AdminInput({
@@ -133,8 +134,10 @@ export function AvatarUploader({
       const { data } = supabase.storage.from(bucketName).getPublicUrl(path);
       setPreview(data.publicUrl);
       onUploaded(data.publicUrl);
+      toast.success('Photo uploaded successfully!');
     } else {
       console.error('Upload error:', error);
+      toast.error(`Upload failed: ${error.message}`);
       alert(`Upload failed: ${error.message}.\n\nPlease ensure you have created a public bucket named '${bucketName}' in your Supabase Storage dashboard and enabled Row Level Security (RLS) policies for anonymous uploads/reads.`);
     }
     setUploading(false);
@@ -207,6 +210,18 @@ export function AdminToggle({
 
 // ─── Save button / status ─────────────────────────────────────────────────────
 export function SaveBar({ saving, saved, error }: { saving: boolean; saved: boolean; error: string }) {
+  useEffect(() => {
+    if (saved && !error) {
+      toast.success('Saved successfully!');
+    }
+  }, [saved, error]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '32px' }}>
       <button
