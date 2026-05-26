@@ -13,6 +13,7 @@ import { ThemeColors } from '../domain/types';
 import { DEMO_BUILDERS } from '../../../core/data/demoData';
 import { AnimatedCard } from '../../../shared/components/AnimatedCard';
 import { SectionTitle } from '../../../shared/components/SectionTitle';
+import { ThemeButton } from '../../../shared/components/ThemeButton';
 
 interface MembersSectionProps {
   colors: ThemeColors;
@@ -130,16 +131,12 @@ export function MembersSection({ colors }: MembersSectionProps) {
         <AnimatedCard index={0} delay={600} direction="up">
           <div className="text-center">
             <Link to="/members">
-              <button
-                className="px-8 py-3 rounded border text-sm font-bold transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg active:scale-95"
-                style={{
-                  background: 'transparent',
-                  color: colors.text,
-                  borderColor: colors.btnSecondaryBorder,
-                }}
+              <ThemeButton
+                variant="secondary"
+                colors={colors}
               >
                 View All Members →
-              </button>
+              </ThemeButton>
             </Link>
           </div>
         </AnimatedCard>

@@ -5,20 +5,17 @@
  */
 
 import { ThemeColors } from '../../features/landing/domain/types';
+import { ThemeButton } from './ThemeButton';
 
 interface CTASectionProps {
   dark: boolean;
-  colors?: ThemeColors;
+  colors: ThemeColors;
 }
 
-export function CTASection({ dark }: CTASectionProps) {
+export function CTASection({ dark, colors }: CTASectionProps) {
   const cardBg = dark ? '#ffffff' : '#1e2870';
   const textColor = dark ? '#0d1340' : '#ffffff';
   const textMuted = dark ? 'rgba(13,19,64,0.7)' : 'rgba(255,255,255,0.7)';
-  
-  const btnPrimaryBg = dark ? '#1e2870' : '#ffffff';
-  const btnPrimaryText = dark ? '#ffffff' : '#1e2870';
-  const btnSecondaryBorder = dark ? 'rgba(13,19,64,0.4)' : 'rgba(255,255,255,0.4)';
 
   return (
     <section className="relative py-40 overflow-hidden">
@@ -54,25 +51,22 @@ export function CTASection({ dark }: CTASectionProps) {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                className="w-full sm:w-auto px-8 py-3.5 rounded font-bold transition-transform hover:scale-[1.02] active:scale-95 shadow-sm text-sm sm:text-base"
-                style={{
-                  background: btnPrimaryBg,
-                  color: btnPrimaryText,
-                }}
+              {/* Modular buttons using ThemeButton */}
+              <ThemeButton
+                variant="primary"
+                colors={colors}
+                isDark={dark}
               >
                 Join TechHub
-              </button>
-              <button
-                className="w-full sm:w-auto px-8 py-3.5 rounded font-bold transition-transform hover:scale-[1.02] active:scale-95 text-sm sm:text-base border-2"
-                style={{
-                  background: 'transparent',
-                  color: textColor,
-                  borderColor: btnSecondaryBorder,
-                }}
+              </ThemeButton>
+              <ThemeButton
+                variant="secondary"
+                colors={colors}
+                isDark={dark}
+                style={{ color: textColor }} // keeps contrast on inverted card background
               >
                 Partner With Us
-              </button>
+              </ThemeButton>
             </div>
           </div>
         </div>

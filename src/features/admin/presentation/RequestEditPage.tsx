@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import { supabase } from '../../../core/supabase/client';
 import { useAuth } from '../../../shared/hooks/useAuth';
 import { AdminTextarea } from './AdminFormComponents';
@@ -108,6 +109,31 @@ export function RequestEditPage() {
       request_type: requestType,
       message
     });
+
+    if (!error) {
+      // Send email notification to super admin via EmailJS
+      try {
+        await emailjs.send(
+          import.meta.env.VITE_EMAILJS_SERVICE_ID as string,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string,
+          {
+            to_name:      'Super Admin',
+            from_name:    senderName,
+            name:         senderName, // matches {{name}} in user's From Name and body
+            from_role:    role ?? 'unknown',
+            request_type: requestType,
+            title:        requestType, // matches {{title}} in user's Subject
+            message:      message,
+            reply_to:     user.email ?? '',
+            email:        user.email ?? '', // matches {{email}} in user's Reply To
+          },
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string,
+        );
+      } catch (emailErr) {
+        // Email failure should not block the message submit
+        console.warn('Email notification failed:', emailErr);
+      }
+    }
 
     setSendingMessage(false);
     if (error) {

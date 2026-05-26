@@ -18,6 +18,7 @@ import { ExecutiveProfileEditor }   from "./features/admin/presentation/Executiv
 import { SuperAdminMembers }        from "./features/admin/presentation/SuperAdminMembers";
 import { SuperAdminExecutives }     from "./features/admin/presentation/SuperAdminExecutives";
 import { SuperAdminProjects }       from "./features/admin/presentation/SuperAdminProjects";
+import { SuperAdminMessages }      from "./features/admin/presentation/SuperAdminMessages";
 import { RequestEditPage }          from "./features/admin/presentation/RequestEditPage";
 import { ProtectedRoute }           from "./shared/components/ProtectedRoute";
 import { NotFoundPage }             from "./features/notfound/presentation/NotFoundPage";
@@ -51,6 +52,7 @@ function App() {
             <Route path="members"       element={<ProtectedRoute allowedRoles={['super_admin']}><SuperAdminMembers /></ProtectedRoute>} />
             <Route path="executives"    element={<ProtectedRoute allowedRoles={['super_admin']}><SuperAdminExecutives /></ProtectedRoute>} />
             <Route path="projects"      element={<ProtectedRoute allowedRoles={['super_admin']}><SuperAdminProjects /></ProtectedRoute>} />
+            <Route path="messages"      element={<ProtectedRoute allowedRoles={['super_admin']}><SuperAdminMessages /></ProtectedRoute>} />
             <Route path="request-edit"  element={<ProtectedRoute allowedRoles={['member', 'executive']}><RequestEditPage /></ProtectedRoute>} />
           </Route>
 

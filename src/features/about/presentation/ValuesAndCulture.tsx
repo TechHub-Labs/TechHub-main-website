@@ -225,12 +225,13 @@ export function ValuesAndCulture({
             transition: "opacity 0.6s ease 0.6s, transform 0.6s ease 0.6s",
           }}
         >
-          <h2
-            className="text-4xl sm:text-5xl font-bold text-white mb-5"
-          >
-            Leadership Through Execution.
-          </h2>
-          <div className="w-32 h-[3px] bg-[#A3D045] mb-6" />
+          <SectionTitle
+            title="Leadership Through Execution."
+            colors={{ ...colors, text: '#ffffff' }}
+            tag="h2"
+            align="left"
+            className="mb-6"
+          />
           <p className="text-base sm:text-2xl text-white leading-relaxed">
             At TechHub, leadership isn't a status it's a responsibility. We are
             built entirely on ownership and collaboration, expecting every

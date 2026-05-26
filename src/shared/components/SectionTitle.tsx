@@ -39,6 +39,8 @@ export function SectionTitle({
   const [lineWidth, setLineWidth] = useState('0px');
   const [subVisible, setSubVisible] = useState(false);
 
+  const [hovered, setHovered] = useState(false);
+
   const words = title.split(' ');
   const lastWordDelay = words.length * 80; // when last word finishes
 
@@ -69,7 +71,10 @@ export function SectionTitle({
   return (
     <div
       ref={containerRef}
-      className={`${align === 'center' ? 'text-center' : 'text-left'} ${className}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`${align === 'center' ? 'text-center' : 'text-left'} ${className} select-none`}
+      style={{ cursor: 'default' }}
     >
       {/* Words — each in overflow:hidden mask */}
       <Tag
@@ -78,8 +83,12 @@ export function SectionTitle({
           color: colors.text,
           fontSize: Tag === 'h1' ? 'clamp(2.5rem, 6vw, 5rem)' : 'clamp(2rem, 4vw, 3.5rem)',
           display: 'flex',
+          justifyContent: align === 'center' ? 'center' : 'flex-start',
           flexWrap: 'wrap',
           gap: '0 0.3em',
+          transform: revealed && hovered ? 'scale(1.015)' : 'scale(1)',
+          transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          transformOrigin: align === 'center' ? 'center center' : 'left center',
         }}
       >
         {words.map((word, i) => (
@@ -115,20 +124,22 @@ export function SectionTitle({
           borderRadius: '2px',
           background: '#A3D045',
           marginTop: '10px',
-          width: lineWidth,
-          transition: 'width 0.6s cubic-bezier(0.22,1,0.36,1)',
+          width: revealed ? (hovered ? '280px' : lineWidth) : '0px',
+          margin: align === 'center' ? '10px auto 0' : '10px 0 0',
+          boxShadow: revealed && hovered ? '0 0 14px #A3D045, 0 0 24px rgba(163,208,69,0.6)' : 'none',
+          transition: 'width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease',
         }}
       />
 
       {/* Subtitle */}
       {subtitle && (
         <p
-          className="mt-4 text-base sm:text-lg leading-relaxed max-w-2xl"
+          className={`mt-4 text-base sm:text-lg leading-relaxed max-w-2xl ${align === 'center' ? 'mx-auto' : ''}`}
           style={{
-            color: colors.textMuted,
+            color: hovered ? colors.text : colors.textMuted,
             opacity: subVisible ? 1 : 0,
             transform: subVisible ? 'translateY(0)' : 'translateY(10px)',
-            transition: 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1)',
+            transition: 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1), color 0.3s ease',
           }}
         >
           {subtitle}

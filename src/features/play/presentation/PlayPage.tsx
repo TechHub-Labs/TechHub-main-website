@@ -11,6 +11,7 @@ import { Footer } from '../../../shared/components/Footer';
 import { CTASection } from '../../../shared/components/CTASection';
 import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
 import { PageMargin } from '../../../shared/components/PageMargin';
+import { SectionTitle } from '../../../shared/components/SectionTitle';
 
 // Coherent sentences, developer quotes, and programming principles
 const SENTENCE_BANK = [
@@ -142,17 +143,17 @@ export function PlayPage() {
         <PageMargin>
           {/* HERO */}
           <div
-            className="pt-14 pb-8"
+            className="text-center pt-16 pb-12"
             style={{ opacity: headerVisible ? 1 : 0, transform: headerVisible ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3" style={{ color: colors.text }}>
-              Test Your Speed
-            </h1>
-            <div className="h-[3px] bg-[#A3D045] mb-5" style={{ width: headerVisible ? '56px' : '0px', transition: 'width 0.7s ease 0.3s' }} />
-            <p className="text-base sm:text-lg leading-relaxed" style={{ color: colors.textMuted }}>
-              Do you think you can type faster than a developer?<br />
-              Try Speed Code and find out.
-            </p>
+            <SectionTitle
+              title="Test Your Speed"
+              subtitle="Do you think you can type faster than a developer? Try Speed Code and find out."
+              tag="h1"
+              align="center"
+              colors={colors}
+              immediate={true}
+            />
           </div>
 
           {/* TERMINAL / TYPING TEST CONTAINER */}

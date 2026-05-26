@@ -1,10 +1,11 @@
 /**
  * SuperAdminProjects — Full CRUD for public projects
+ * Standardizes projects and handles dynamic developer member linking.
  */
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../../core/supabase/client';
 import type { Project } from '../../../core/supabase/types';
-import { AdminInput, AdminTextarea, TagEditor, AdminToggle, SaveBar } from './AdminFormComponents';
+import { AdminInput, AdminTextarea, TagEditor, AdminToggle, SaveBar, AvatarUploader } from './AdminFormComponents';
 
 const STATUS_OPTIONS = ['In Development', 'Completed', 'On Hold', 'Archived'];
 const EMPTY: Partial<Project> = {
@@ -23,17 +24,49 @@ export function SuperAdminProjects() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [search,   setSearch]   = useState('');
 
+  // Team members mapping states
+  const [allMembers, setAllMembers] = useState<any[]>([]);
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
-    setProjects((data ?? []) as Project[]);
+    // Load projects
+    const { data: pData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+    setProjects((pData ?? []) as Project[]);
+
+    // Load registered member profile listings
+    const { data: mData } = await supabase.from('members').select('id, name, projects').order('name');
+    setAllMembers(mData ?? []);
+
     setLoading(false);
   }, []);
 
   useEffect(() => { load(); }, [load]);
 
-  const openNew  = () => { setEditing({ ...EMPTY }); setIsNew(true); setSaved(false); setFormErr(''); };
-  const openEdit = (p: Project) => { setEditing({ ...p }); setIsNew(false); setSaved(false); setFormErr(''); };
+  const openNew  = () => { 
+    setEditing({ ...EMPTY }); 
+    setIsNew(true); 
+    setSaved(false); 
+    setFormErr(''); 
+    setSelectedMemberIds([]);
+  };
+
+  const openEdit = (p: Project) => { 
+    setEditing({ ...p }); 
+    setIsNew(false); 
+    setSaved(false); 
+    setFormErr(''); 
+    
+    // Auto-pull and match existing project builders by title/ID
+    const currentMemberIds = allMembers
+      .filter(m => {
+        const projs = Array.isArray(m.projects) ? m.projects : [];
+        return projs.includes(p.title) || projs.includes(p.id);
+      })
+      .map(m => m.id);
+    setSelectedMemberIds(currentMemberIds);
+  };
+
   const close    = () => { setEditing(null); setSaved(false); setFormErr(''); };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -47,18 +80,64 @@ export function SuperAdminProjects() {
       live_url: editing.live_url, image_url: editing.image_url, in_development: editing.in_development ?? true,
     };
 
-    const { error } = isNew
-      ? await (supabase.from('projects') as any).insert(payload)
-      : await (supabase.from('projects') as any).update(payload).eq('id', editing.id!);
+    // Save project record
+    const { data: savedProj, error } = isNew
+      ? await (supabase.from('projects') as any).insert(payload).select().single()
+      : await (supabase.from('projects') as any).update(payload).eq('id', editing.id!).select().single();
+
+    if (error) { 
+      setFormErr(error.message); 
+      setSaving(false); 
+      return; 
+    }
+
+    const projectObj = savedProj as Project;
+    const projectTitle = projectObj.title;
+    const projectId = projectObj.id;
+
+    // Loop through registered members to update their linked projects array in Supabase
+    try {
+      for (const member of allMembers) {
+        const isSelected = selectedMemberIds.includes(member.id);
+        const memberProjects = Array.isArray(member.projects) ? member.projects : [];
+  
+        const hasTitle = memberProjects.includes(projectTitle);
+        const hasId = memberProjects.includes(projectId);
+  
+        if (isSelected) {
+          // If selected but doesn't have reference, link it
+          if (!hasTitle && !hasId) {
+            const updated = [...memberProjects, projectTitle];
+            await supabase.from('members').update({ projects: updated }).eq('id', member.id);
+          }
+        } else {
+          // If unselected but contains reference, unlink it
+          if (hasTitle || hasId) {
+            const updated = memberProjects.filter((p: any) => p !== projectTitle && p !== projectId);
+            await supabase.from('members').update({ projects: updated }).eq('id', member.id);
+          }
+        }
+      }
+    } catch (dbErr: any) {
+      console.warn("Project linked member update error:", dbErr);
+    }
 
     setSaving(false);
-    if (error) { setFormErr(error.message); return; }
-    setSaved(true); load(); setTimeout(close, 1000);
+    setIsNew(false);
+    setSaved(true); 
+    load(); 
+    setTimeout(close, 1000);
   };
 
   const confirmDelete = async (id: string) => {
-    await (supabase.from('projects') as any).delete().eq('id', id);
-    setDeleting(null); load();
+    const { error } = await (supabase.from('projects') as any).delete().eq('id', id);
+    if (error) {
+      setFormErr(`Delete failed: ${error.message}`);
+      setDeleting(null);
+      return;
+    }
+    setDeleting(null);
+    load();
   };
 
   const set = (key: keyof Project) => (val: any) =>
@@ -149,13 +228,65 @@ export function SuperAdminProjects() {
               <button onClick={close} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '20px', cursor: 'pointer' }}>✕</button>
             </div>
             <form onSubmit={handleSave}>
+              {/* Project Icon Upload */}
+              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '16px' }}>
+                <AvatarUploader 
+                  currentUrl={editing.image_url ?? null} 
+                  onUploaded={(url: string | null) => setEditing(prev => prev ? { ...prev, image_url: url } : prev)} 
+                  bucketName="projects"
+                />
+              </div>
+
               <AdminInput label="Title"     value={editing.title ?? ''}    onChange={set('title')}    required />
               <AdminInput label="Category"  value={editing.category ?? ''} onChange={set('category')} placeholder="e.g. Web, Mobile, AI" />
               <AdminInput label="GitHub URL" value={editing.github_url ?? ''} onChange={set('github_url')} />
               <AdminInput label="Live URL"   value={editing.live_url ?? ''}  onChange={set('live_url')} />
-              <AdminInput label="Image URL"  value={editing.image_url ?? ''} onChange={set('image_url')} />
               <AdminTextarea label="Description" value={editing.description ?? ''} onChange={set('description')} rows={4} />
               <TagEditor label="Tech Stack" tags={editing.tech ?? []} onChange={set('tech')} placeholder="e.g. React, Node.js" />
+
+              {/* Project Builders Selection */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Project Builders / Team Members
+                </label>
+                <div style={{ 
+                  display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '150px', overflowY: 'auto', 
+                  padding: '12px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', background: '#0f172a',
+                  scrollbarWidth: 'thin'
+                }}>
+                  {allMembers.map(m => {
+                    const isChecked = selectedMemberIds.includes(m.id);
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedMemberIds(prev =>
+                            isChecked ? prev.filter(id => id !== m.id) : [...prev, m.id]
+                          );
+                        }}
+                        style={{
+                          padding: '6px 14px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          border: '1px solid',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s',
+                          borderColor: isChecked ? '#A3D045' : 'rgba(255,255,255,0.1)',
+                          background: isChecked ? 'rgba(163,208,69,0.15)' : 'transparent',
+                          color: isChecked ? '#A3D045' : '#64748b',
+                        }}
+                      >
+                        {m.name}
+                      </button>
+                    );
+                  })}
+                  {allMembers.length === 0 && (
+                    <p style={{ color: '#475569', fontSize: '12px', margin: 0 }}>No members found. Please have them create profiles first.</p>
+                  )}
+                </div>
+              </div>
 
               {/* Status */}
               <div style={{ marginBottom: '16px' }}>

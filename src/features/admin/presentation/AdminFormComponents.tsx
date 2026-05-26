@@ -116,9 +116,9 @@ export function TagEditor({
 
 // ─── Avatar uploader ──────────────────────────────────────────────────────────
 export function AvatarUploader({
-  currentUrl, onUploaded,
+  currentUrl, onUploaded, bucketName = 'avatars',
 }: {
-  currentUrl: string | null; onUploaded: (url: string) => void;
+  currentUrl: string | null; onUploaded: (url: string) => void; bucketName?: string;
 }) {
   const inputRef   = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -128,11 +128,14 @@ export function AvatarUploader({
     setUploading(true);
     const ext  = file.name.split('.').pop();
     const path = `uploads/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`; // random path
-    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    const { error } = await supabase.storage.from(bucketName).upload(path, file, { upsert: true });
     if (!error) {
-      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+      const { data } = supabase.storage.from(bucketName).getPublicUrl(path);
       setPreview(data.publicUrl);
       onUploaded(data.publicUrl);
+    } else {
+      console.error('Upload error:', error);
+      alert(`Upload failed: ${error.message}.\n\nPlease ensure you have created a public bucket named '${bucketName}' in your Supabase Storage dashboard and enabled Row Level Security (RLS) policies for anonymous uploads/reads.`);
     }
     setUploading(false);
   };

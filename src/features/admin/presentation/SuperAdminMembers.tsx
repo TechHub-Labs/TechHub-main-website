@@ -10,7 +10,7 @@ import {
   AvatarUploader, AdminToggle, SaveBar, AdminMessagesPanel
 } from './AdminFormComponents';
 
-const CATEGORY_OPTIONS = ['Undergrad', 'Alumni', "'25", "'26", "'27"];
+const CATEGORY_OPTIONS = ['Undergrad', 'Alumni'];
 const EMPTY: Partial<Member> = {
   name: '', role_title: '', year: '', quote: '', avatar_url: null,
   skills: [], projects: [], github: '', linkedin: '', twitter: '',
@@ -66,7 +66,12 @@ export function SuperAdminMembers() {
   };
 
   const confirmDelete = async (id: string) => {
-    await (supabase.from('members') as any).delete().eq('id', id);
+    const { error } = await (supabase.from('members') as any).delete().eq('id', id);
+    if (error) {
+      setFormErr(`Delete failed: ${error.message}`);
+      setDeleting(null);
+      return;
+    }
     setDeleting(null);
     load();
   };
@@ -188,13 +193,16 @@ export function SuperAdminMembers() {
 
       {/* Delete confirm */}
       {deleting && (
-        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
-          <div className="min-card" style={{ padding: '32px', maxWidth: '360px', width: '90%' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Delete member?</h3>
-            <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>This cannot be undone.</p>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
+          <div className="min-card" style={{ padding: '32px', maxWidth: '360px', width: '90%', border: '1px solid rgba(239,68,68,0.3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '24px' }}>⚠️</span>
+              <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Delete member?</h3>
+            </div>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '24px' }}>This action <strong style={{ color: '#ef4444' }}>cannot be undone</strong>. The member will be permanently removed.</p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setDeleting(null)} className="min-button" style={{ padding: '10px 16px', borderRadius: '12px', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Cancel</button>
-              <button onClick={() => confirmDelete(deleting)} className="min-button" style={{ padding: '10px 16px', borderRadius: '12px', border: 'none', color: '#ef4444', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Delete</button>
+              <button onClick={() => setDeleting(null)} className="min-button" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Cancel</button>
+              <button onClick={() => confirmDelete(deleting)} className="min-button" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: 'rgba(239,68,68,0.15)', color: '#ef4444', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Yes, Delete</button>
             </div>
           </div>
         </div>
@@ -213,7 +221,7 @@ export function SuperAdminMembers() {
               <div className="flex flex-col md:flex-row gap-8">
                 
                 <div className="md:w-1/3 flex flex-col gap-2">
-                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} />
+                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} bucketName="members" />
                   <div className="mt-2">
                     <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</label>
                     <div className="flex flex-wrap gap-2">
@@ -247,7 +255,6 @@ export function SuperAdminMembers() {
                   
                   <div className="flex flex-col sm:flex-row sm:gap-4">
                     <div className="flex-1"><TagEditor label="Skills"   tags={editing.skills   ?? []} onChange={set('skills')}   placeholder="e.g. React" /></div>
-                    <div className="flex-1"><TagEditor label="Projects" tags={editing.projects ?? []} onChange={set('projects')} placeholder="e.g. Project name" /></div>
                   </div>
                 </div>
               </div>

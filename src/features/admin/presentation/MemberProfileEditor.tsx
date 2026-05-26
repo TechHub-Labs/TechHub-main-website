@@ -10,7 +10,7 @@ import {
   AvatarUploader, SaveBar,
 } from './AdminFormComponents';
 
-const CATEGORY_OPTIONS = ['Undergrad', 'Alumni', "'25", "'26", "'27"];
+const CATEGORY_OPTIONS = ['Undergrad', 'Alumni'];
 
 export function MemberProfileEditor() {
   const { user } = useAuth();
@@ -20,7 +20,6 @@ export function MemberProfileEditor() {
   const [quote,    setQuote]    = useState('');
   const [avatarUrl,setAvatarUrl]= useState<string | null>(null);
   const [skills,   setSkills]   = useState<string[]>([]);
-  const [projects, setProjects] = useState<string[]>([]);
   const [portfolio,setPortfolio]= useState('');
   const [linkedin, setLinkedin] = useState('');
   const [twitter,  setTwitter]  = useState('');
@@ -41,12 +40,11 @@ export function MemberProfileEditor() {
     setSaving(true); setSaved(false); setError('');
 
     if (skills.length === 0) return setError('At least one skill is required.');
-    if (projects.length === 0) return setError('At least one project is required.');
     if (category.length === 0) return setError('Please select a category.');
 
     const { error } = await supabase.from('members').insert({
       user_id: user.id, name, role_title: roleTitle, quote,
-      avatar_url: avatarUrl, skills, projects, github: portfolio, linkedin, twitter,
+      avatar_url: avatarUrl, skills, projects: [], github: portfolio, linkedin, twitter,
       category, visible: false,
     });
 
@@ -57,7 +55,7 @@ export function MemberProfileEditor() {
       setSaved(true);
       // Clear form
       setName(''); setRoleTitle(''); setQuote('');
-      setAvatarUrl(null); setSkills([]); setProjects([]);
+      setAvatarUrl(null); setSkills([]);
       setPortfolio(''); setLinkedin(''); setTwitter(''); setCategory([]);
       setTimeout(() => setSaved(false), 3000); 
     }
@@ -67,13 +65,13 @@ export function MemberProfileEditor() {
 
   return (
     <div style={{ padding: '32px', maxWidth: '680px' }}>
-      <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '6px' }}>My Profile</h1>
+      <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '6px' }}>Create Profile</h1>
       <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '28px' }}>
         Your profile will appear on the Members page once an admin marks it visible.
       </p>
 
       <form onSubmit={handleSubmit}>
-        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} />
+        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} bucketName="members" />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
@@ -86,7 +84,6 @@ export function MemberProfileEditor() {
         <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="A short quote about your journey…" rows={3} />
 
         <TagEditor label="Skills" tags={skills} onChange={setSkills} required placeholder="e.g. React, Python…" />
-        <TagEditor label="Projects" tags={projects} onChange={setProjects} required placeholder="e.g. Project name" />
 
         {/* Category checkboxes */}
         <div style={{ marginBottom: '16px' }}>
@@ -125,7 +122,7 @@ export function MemberProfileEditor() {
               Pending admin approval
             </div>
             <div style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>
-              Submit your profile and notify your admin to publish it.
+              Submit your profile to notify your admin to publish it.
             </div>
           </div>
         </div>

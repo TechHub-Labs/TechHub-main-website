@@ -11,10 +11,11 @@ import { useTheme } from '../../landing/domain/useTheme';
 import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
 
 const NAV_ITEMS = [
-  { path: '/admin',             label: 'Dashboard',   icon: '▣', roles: ['member', 'executive', 'super_admin'] },
-  { path: '/admin/profile',     label: 'My Profile',  icon: '👤', roles: ['member'] },
-  { path: '/admin/exec-profile',label: 'My Profile',  icon: '👤', roles: ['executive'] },
+  { path: '/admin',             label: 'Dashboard',   icon: '▣',  roles: ['member', 'executive', 'super_admin'] },
+  { path: '/admin/profile',     label: 'Create Profile', icon: '👤', roles: ['member'] },
+  { path: '/admin/exec-profile',label: 'Create Profile', icon: '👤', roles: ['executive'] },
   { path: '/admin/request-edit',label: 'Request Edit',icon: '📝', roles: ['member', 'executive'] },
+  { path: '/admin/messages',    label: 'Messages',    icon: '📬', roles: ['super_admin'] },
   { path: '/admin/members',     label: 'Members',     icon: '👥', roles: ['super_admin'] },
   { path: '/admin/executives',  label: 'Executives',  icon: '🏛', roles: ['super_admin'] },
   { path: '/admin/projects',    label: 'Projects',    icon: '🚀', roles: ['super_admin'] },
@@ -207,7 +208,7 @@ export function AdminLayout() {
       {/* Main content */}
       <main 
         style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', paddingTop: 0, paddingBottom: '40px' }} 
-        className="lg:!pt-0 pt-16 admin-fade-in"
+        className="lg:!pt-0 pt-24 admin-fade-in"
       >
         <Outlet />
       </main>

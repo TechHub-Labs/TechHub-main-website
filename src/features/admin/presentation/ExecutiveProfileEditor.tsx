@@ -60,13 +60,13 @@ export function ExecutiveProfileEditor() {
 
   return (
     <div style={{ padding: '32px', maxWidth: '560px' }}>
-      <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '6px' }}>My Executive Profile</h1>
+      <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '6px' }}>Create Profile</h1>
       <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '28px' }}>
         Your profile will appear on the Executive Council page once marked visible.
       </p>
 
       <form onSubmit={handleSubmit}>
-        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} />
+        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} bucketName="executives" />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
@@ -117,7 +117,7 @@ export function ExecutiveProfileEditor() {
               Pending admin approval
             </div>
             <div style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>
-              Submit your profile and notify your admin to publish it.
+              Submit your profile to notify your admin to publish it.
             </div>
           </div>
         </div>

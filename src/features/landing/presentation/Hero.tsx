@@ -12,6 +12,8 @@ import { Link } from 'react-router-dom';
 import { ThemeColors } from '../domain/types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
 
+import { ThemeButton } from '../../../shared/components/ThemeButton';
+
 interface HeroProps {
   colors: ThemeColors;
   dark?: boolean;
@@ -136,20 +138,24 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/join" className="w-max">
-                <button
-                  className="fun-cursor px-8 py-3 rounded-md font-medium transition-all text-sm sm:text-base shadow-sm hover:scale-105 hover:shadow-lg active:scale-95"
-                  style={{ background: colors.btnPrimary, color: colors.btnPrimaryText }}
+                <ThemeButton
+                  variant="primary"
+                  colors={colors}
+                  isDark={isDark}
+                  className="fun-cursor"
                 >
                   Join TechHub
-                </button>
+                </ThemeButton>
               </Link>
               <Link to="/projects" className="w-max">
-                <button
-                  className="fun-cursor px-8 py-3 rounded-md font-medium transition-all text-sm sm:text-base border border-current hover:scale-105 active:scale-95"
-                  style={{ background: colors.btnSecondary, color: colors.text, borderColor: colors.btnSecondaryBorder }}
+                <ThemeButton
+                  variant="secondary"
+                  colors={colors}
+                  isDark={isDark}
+                  className="fun-cursor"
                 >
                   Explore Projects
-                </button>
+                </ThemeButton>
               </Link>
             </div>
           </div>

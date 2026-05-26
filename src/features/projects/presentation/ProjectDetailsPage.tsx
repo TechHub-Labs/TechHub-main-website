@@ -16,6 +16,7 @@ import { Footer } from '../../../shared/components/Footer';
 import { CTASection } from '../../../shared/components/CTASection';
 import { ProjectDetailsSidebar } from './components/ProjectDetailsSidebar';
 import { ProjectActiveBuilders } from './components/ProjectActiveBuilders';
+import { supabase } from '../../../core/supabase/client';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -31,16 +32,63 @@ const getStatusColor = (status: string) => {
 export function ProjectDetailsPage() {
   const { dark, setDark, colors } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [dbProject, setDbProject] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const { id }   = useParams();
 
-  useEffect(() => { requestAnimationFrame(() => setMounted(true)); window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+    window.scrollTo(0, 0);
 
-  const project = useMemo(() => allProjects.find(p => p.id === id), [id]);
+    const loadProject = async () => {
+      try {
+        const { data, error } = await supabase.from('projects').select('*').eq('id', id).single();
+        if (data && !error) {
+          setDbProject(data);
+        }
+      } catch (err) {
+        console.warn("Error fetching project:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProject();
+  }, [id]);
+
+  const project = useMemo(() => {
+    if (dbProject) {
+      return {
+        id: dbProject.id,
+        name: dbProject.title,
+        desc: dbProject.description || '',
+        about: dbProject.description || 'Detailed description coming soon.',
+        about2: '',
+        image: dbProject.image_url || undefined,
+        status: dbProject.status || (dbProject.in_development ? 'IN DEVELOPMENT' : 'LIVE'),
+        category: dbProject.category || 'Product',
+        teamSize: 'Dynamic',
+        tech: Array.isArray(dbProject.tech) ? dbProject.tech.join(', ') : (dbProject.tech || ''),
+        launchDate: 'Active',
+        website: dbProject.live_url || '',
+        tags: Array.isArray(dbProject.tech) ? dbProject.tech : (dbProject.tech ? dbProject.tech.split(',').map((t: string) => t.trim()) : []),
+        github_url: dbProject.github_url || '',
+      };
+    }
+    return allProjects.find(p => p.id === id);
+  }, [dbProject, id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.bg }}>
+        <h1 className="text-xl font-semibold animate-pulse" style={{ color: colors.textMuted }}>Loading Project Details...</h1>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.bg }}>
         <h1 className="text-4xl font-bold" style={{ color: colors.text }}>Project not found</h1>
       </div>
     );
@@ -100,7 +148,7 @@ export function ProjectDetailsPage() {
                       {project.desc}
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
-                      {project.tags.map(tag => (
+                      {project.tags.map((tag: string) => (
                         <span
                           key={tag}
                           className="px-4 py-2 rounded-full text-sm font-semibold"
@@ -138,11 +186,11 @@ export function ProjectDetailsPage() {
               </div>
 
               {/* Right — sidebar */}
-              <ProjectDetailsSidebar project={project} colors={colors} dark={dark} mounted={mounted} />
+              <ProjectDetailsSidebar project={project as any} colors={colors} dark={dark} mounted={mounted} />
             </div>
 
             {/* Active Builders */}
-            <ProjectActiveBuilders colors={colors} dark={dark} mounted={mounted} />
+            <ProjectActiveBuilders projectTitle={project.name} projectId={project.id} colors={colors} dark={dark} mounted={mounted} />
 
             {/* Footer socials */}
             <div className="flex items-center justify-end gap-5 mt-24">

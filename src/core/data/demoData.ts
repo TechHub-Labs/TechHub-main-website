@@ -359,6 +359,7 @@ export interface DemoMember {
   linkedin?: string;
   twitter?: string;
   portfolio?: string;
+  avatar_url?: string;
 }
 
 export const DEMO_MEMBERS: DemoMember[] = [
