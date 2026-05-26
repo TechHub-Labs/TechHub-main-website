@@ -62,11 +62,9 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
     : 0;
 
   // Opaque navbar — always thick, no transparent bleed-through
-  const navBg = dark
-    ? scrolled ? 'rgba(13,19,64,0.97)' : colors.nav
-    : scrolled ? 'rgba(255,255,255,0.97)' : colors.nav;
+  const navBg = colors.nav;
 
-  const navBlur   = scrolled ? 'blur(12px) saturate(1.4)' : 'none';
+  const navBlur   = 'none';
   const navShadow = scrolled
     ? dark
       ? '0 2px 32px rgba(0,0,0,0.4)'

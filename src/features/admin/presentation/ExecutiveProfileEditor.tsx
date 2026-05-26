@@ -25,12 +25,6 @@ export function ExecutiveProfileEditor() {
   const [saved,  setSaved]  = useState(false);
   const [error,  setError]  = useState('');
 
-  const [senderName, setSenderName] = useState('');
-  const [message, setMessage] = useState('');
-  const [sendingMessage, setSendingMessage] = useState(false);
-  const [messageSent, setMessageSent] = useState(false);
-  const [messageError, setMessageError] = useState('');
-
   // No longer fetching existing data since this is a shared login for submissions.
 
   const toggleCategory = (cat: string) => setCategory([cat]);
@@ -62,29 +56,6 @@ export function ExecutiveProfileEditor() {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    setSendingMessage(true); setMessageSent(false); setMessageError('');
-
-    const { error } = await supabase.from('admin_messages').insert({
-      user_id: user.id,
-      sender_name: senderName,
-      role: 'executive',
-      message
-    });
-
-    setSendingMessage(false);
-    if (error) {
-      setMessageError(error.message);
-    } else {
-      setMessageSent(true);
-      setSenderName('');
-      setMessage('');
-      setTimeout(() => setMessageSent(false), 3000);
-    }
-  };
-
   if (!user) return null;
 
   return (
@@ -95,7 +66,7 @@ export function ExecutiveProfileEditor() {
       </p>
 
       <form onSubmit={handleSubmit}>
-        {user && <AvatarUploader userId={user.id} currentUrl={avatarUrl} onUploaded={setAvatarUrl} />}
+        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
@@ -153,38 +124,6 @@ export function ExecutiveProfileEditor() {
 
         <SaveBar saving={saving} saved={saved} error={error} />
       </form>
-
-      {/* Contact Admin Section */}
-      <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <h2 style={{ color: '#f1f5f9', fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>Need an edit?</h2>
-        <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '24px' }}>
-          Send a quick message to the Super Admin to request changes to an existing profile.
-        </p>
-        <form onSubmit={handleSendMessage} style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0' }}>
-            <AdminInput label="Your Name" value={senderName} onChange={setSenderName} required placeholder="Who is requesting?" />
-          </div>
-          <AdminTextarea label="Message" value={message} onChange={setMessage} required placeholder="e.g. Please update my quote" rows={3} />
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
-            <button
-              type="submit" disabled={sendingMessage}
-              style={{
-                padding: '10px 24px', borderRadius: '10px',
-                background: sendingMessage ? '#334155' : 'rgba(255,255,255,0.05)',
-                color: '#f1f5f9', fontWeight: 600, fontSize: '13px', border: '1px solid rgba(255,255,255,0.1)',
-                cursor: sendingMessage ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => !sendingMessage && (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
-              onMouseLeave={e => !sendingMessage && (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
-            >
-              {sendingMessage ? 'Sending…' : 'Send Message'}
-            </button>
-            {messageSent && <span style={{ color: '#A3D045', fontSize: '13px' }}>✓ Sent!</span>}
-            {messageError && <span style={{ color: '#f87171', fontSize: '13px' }}>{messageError}</span>}
-          </div>
-        </form>
-      </div>
     </div>
   );
 }

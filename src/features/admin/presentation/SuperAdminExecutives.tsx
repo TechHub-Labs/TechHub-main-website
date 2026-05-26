@@ -78,9 +78,9 @@ export function SuperAdminExecutives() {
           <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '2px' }}>Executive Council</h1>
           <p style={{ color: '#64748b', fontSize: '13px' }}>{execs.length} total</p>
         </div>
-        <button onClick={openNew} style={{
-          padding: '8px 18px', borderRadius: '8px', background: '#a78bfa',
-          color: '#0f172a', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer',
+        <button onClick={openNew} className="min-button" style={{
+          padding: '10px 18px', borderRadius: '12px', border: 'none',
+          color: '#A3D045', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
         }}>
           + Add Executive
         </button>
@@ -104,32 +104,32 @@ export function SuperAdminExecutives() {
                   onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                 >
-                  <td style={{ padding: '10px 12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden', background: '#0f172a', flexShrink: 0 }}>
+                  <td style={{ padding: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div className="min-input" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, padding: ex.avatar_url ? '0' : '8px' }}>
                         {ex.avatar_url
-                          ? <img src={ex.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ? <img src={ex.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                           : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569' }}>👤</div>
                         }
                       </div>
-                      <span style={{ color: '#f1f5f9', fontWeight: 500 }}>{ex.name ?? '—'}</span>
+                      <span style={{ fontWeight: 600 }}>{ex.name ?? '—'}</span>
                     </div>
                   </td>
                   <td style={{ padding: '10px 12px', color: '#94a3b8' }}>{ex.role_title ?? '—'}</td>
                   <td style={{ padding: '10px 12px', color: '#94a3b8' }}>{(ex.category ?? []).join(', ') || '—'}</td>
-                  <td style={{ padding: '10px 12px' }}>
-                    <button onClick={() => toggleVisible(ex)} type="button" style={{
-                      width: '36px', height: '20px', borderRadius: '10px', border: 'none',
-                      background: ex.visible ? '#a78bfa' : '#334155', cursor: 'pointer',
-                      position: 'relative', transition: 'background 0.2s',
+                  <td style={{ padding: '12px' }}>
+                    <button onClick={() => toggleVisible(ex)} type="button" className="min-button" style={{
+                      width: '44px', height: '24px', borderRadius: '12px', border: 'none',
+                      color: ex.visible ? '#A3D045' : '#94a3b8', cursor: 'pointer',
+                      position: 'relative',
                     }}>
-                      <span style={{ position: 'absolute', top: '2px', left: ex.visible ? '18px' : '2px', width: '16px', height: '16px', borderRadius: '50%', background: '#fff', transition: 'left 0.2s' }} />
+                      <span style={{ position: 'absolute', top: '4px', left: ex.visible ? '24px' : '4px', width: '16px', height: '16px', borderRadius: '50%', background: ex.visible ? '#A3D045' : '#94a3b8', transition: 'left 0.2s' }} />
                     </button>
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td style={{ padding: '12px' }}>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => openEdit(ex)} style={{ padding: '4px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#94a3b8', fontSize: '12px', cursor: 'pointer' }}>Edit</button>
-                      <button onClick={() => setDeleting(ex.id)} style={{ padding: '4px 12px', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#f87171', fontSize: '12px', cursor: 'pointer' }}>Delete</button>
+                      <button onClick={() => openEdit(ex)} className="min-button" style={{ padding: '6px 14px', borderRadius: '8px', border: 'none', color: 'inherit', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>Edit</button>
+                      <button onClick={() => setDeleting(ex.id)} className="min-button" style={{ padding: '6px 14px', borderRadius: '8px', border: 'none', color: '#ef4444', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}>Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -142,13 +142,13 @@ export function SuperAdminExecutives() {
 
       {/* Delete confirm */}
       {deleting && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#1e293b', borderRadius: '12px', padding: '28px', maxWidth: '360px', width: '90%', border: '1px solid rgba(239,68,68,0.3)' }}>
-            <h3 style={{ color: '#f1f5f9', fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Delete executive?</h3>
-            <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>This cannot be undone.</p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setDeleting(null)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
-              <button onClick={() => confirmDelete(deleting)} style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: '#ef4444', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Delete</button>
+        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="min-card" style={{ padding: '32px', maxWidth: '360px', width: '90%' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Delete executive?</h3>
+            <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>This cannot be undone.</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setDeleting(null)} className="min-button" style={{ padding: '10px 16px', borderRadius: '12px', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Cancel</button>
+              <button onClick={() => confirmDelete(deleting)} className="min-button" style={{ padding: '10px 16px', borderRadius: '12px', border: 'none', color: '#ef4444', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Delete</button>
             </div>
           </div>
         </div>
@@ -156,35 +156,42 @@ export function SuperAdminExecutives() {
 
       {/* Edit/Add modal */}
       {editing && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', overflowY: 'auto' }}>
-          <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', width: '100%', maxWidth: '520px', border: '1px solid rgba(255,255,255,0.08)', maxHeight: '90vh', overflowY: 'auto', scrollbarWidth: 'none' }}>
+        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="min-card p-6 sm:p-8" style={{ width: '100%', maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ color: '#f1f5f9', fontSize: '18px', fontWeight: 700 }}>{isNew ? 'Add Executive' : 'Edit Executive'}</h2>
-              <button onClick={close} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+              <h2 style={{ fontSize: '18px', fontWeight: 700 }}>{isNew ? 'Add Executive' : 'Edit Executive'}</h2>
+              <button onClick={close} className="min-button" style={{ border: 'none', color: '#64748b', fontSize: '16px', cursor: 'pointer', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
             </div>
-            <form onSubmit={handleSave}>
-              {editing.user_id && (
-                <AvatarUploader userId={editing.user_id} currentUrl={editing.avatar_url ?? null}
-                  onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} />
-              )}
-              <AdminInput label="Full Name"  value={editing.name ?? ''}      onChange={set('name')}      required />
-              <AdminInput label="Role/Title" value={editing.role_title ?? ''} onChange={set('role_title')} required />
-              <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={2} />
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {CATEGORY_OPTIONS.map(opt => (
-                    <button key={opt} type="button" onClick={() => toggleCategory(opt)} style={{
-                      padding: '5px 14px', borderRadius: '20px', fontSize: '13px', border: '1px solid', cursor: 'pointer', transition: 'all 0.15s',
-                      borderColor: (editing.category ?? []).includes(opt) ? '#a78bfa' : 'rgba(255,255,255,0.1)',
-                      background: (editing.category ?? []).includes(opt) ? 'rgba(167,139,250,0.12)' : 'transparent',
-                      color: (editing.category ?? []).includes(opt) ? '#a78bfa' : '#64748b',
-                    }}>{opt}</button>
-                  ))}
+            <form onSubmit={handleSave} className="flex flex-col gap-6">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="md:w-1/3 flex flex-col gap-4">
+                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} />
+                  <div>
+                    <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</label>
+                    <div className="flex flex-wrap gap-2">
+                      {CATEGORY_OPTIONS.map(opt => (
+                        <button key={opt} type="button" onClick={() => toggleCategory(opt)} className={(editing.category ?? []).includes(opt) ? 'min-input' : 'min-button'} style={{
+                          padding: '8px 12px', borderRadius: '8px', fontSize: '12px', border: 'none', cursor: 'pointer',
+                          color: (editing.category ?? []).includes(opt) ? '#A3D045' : '#64748b', fontWeight: 600
+                        }}>{opt}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="md:w-2/3 flex flex-col">
+                  <AdminInput label="Full Name"  value={editing.name ?? ''}      onChange={set('name')}      required />
+                  <AdminInput label="Role/Title" value={editing.role_title ?? ''} onChange={set('role_title')} required />
+                  <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={3} />
+                  <div className="mt-2">
+                    <AdminToggle label="Visible" description="Show on Executive Council page" checked={editing.visible ?? false} onChange={set('visible')} />
+                  </div>
                 </div>
               </div>
-              <AdminToggle label="Visible" description="Show on Executive Council page" checked={editing.visible ?? false} onChange={set('visible')} />
-              <SaveBar saving={saving} saved={saved} error={formErr} />
+              
+              <div className="mt-2 border-t border-white/5 pt-4">
+                <SaveBar saving={saving} saved={saved} error={formErr} />
+              </div>
             </form>
           </div>
         </div>

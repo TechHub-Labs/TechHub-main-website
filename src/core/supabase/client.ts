@@ -9,7 +9,4 @@ if (!supabaseUrl || !supabaseKey) {
   );
 }
 
-// Note: we omit the Database generic because our lean type definition
-// doesn't include all fields Supabase's GenericSchema requires
-// (Views, Functions, Enums, Relationships). We cast data at call sites instead.
 export const supabase = createClient(supabaseUrl, supabaseKey);

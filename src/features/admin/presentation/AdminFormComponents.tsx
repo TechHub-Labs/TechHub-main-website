@@ -19,24 +19,11 @@ export function AdminInput({
       <input
         type={type} value={value} required={required} placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
+        className="min-input"
         style={{
           width: '100%', padding: '12px 16px', borderRadius: '12px', boxSizing: 'border-box',
-          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
-          color: '#f1f5f9', fontSize: '14px', outline: 'none',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
-        }}
-        onFocus={e => {
-          e.target.style.borderColor = '#A3D045';
-          e.target.style.background = 'rgba(255,255,255,0.05)';
-          e.target.style.boxShadow = '0 0 0 4px rgba(163,208,69,0.15), inset 0 2px 4px rgba(0,0,0,0.1)';
-          e.target.style.transform = 'translateY(-2px)';
-        }}
-        onBlur={e => {
-          e.target.style.borderColor = 'rgba(255,255,255,0.1)';
-          e.target.style.background = 'rgba(255,255,255,0.02)';
-          e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.1)';
-          e.target.style.transform = 'none';
+          color: 'inherit', fontSize: '14px', outline: 'none',
+          transition: 'all 0.2s',
         }}
       />
     </div>
@@ -57,24 +44,11 @@ export function AdminTextarea({
       <textarea
         value={value} rows={rows} placeholder={placeholder} required={required}
         onChange={e => onChange(e.target.value)}
+        className="min-input"
         style={{
           width: '100%', padding: '12px 16px', borderRadius: '12px', boxSizing: 'border-box',
-          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
-          color: '#f1f5f9', fontSize: '14px', outline: 'none', resize: 'vertical',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontFamily: 'inherit',
-          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
-        }}
-        onFocus={e => {
-          e.target.style.borderColor = '#A3D045';
-          e.target.style.background = 'rgba(255,255,255,0.05)';
-          e.target.style.boxShadow = '0 0 0 4px rgba(163,208,69,0.15), inset 0 2px 4px rgba(0,0,0,0.1)';
-          e.target.style.transform = 'translateY(-2px)';
-        }}
-        onBlur={e => {
-          e.target.style.borderColor = 'rgba(255,255,255,0.1)';
-          e.target.style.background = 'rgba(255,255,255,0.02)';
-          e.target.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.1)';
-          e.target.style.transform = 'none';
+          color: 'inherit', fontSize: '14px', outline: 'none', resize: 'vertical',
+          transition: 'all 0.2s', fontFamily: 'inherit',
         }}
       />
     </div>
@@ -98,34 +72,21 @@ export function TagEditor({
       <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
         {label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}
       </label>
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
         <input
           value={input} placeholder={placeholder ?? 'Add item…'}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), add())}
+          className="min-input"
           style={{
-            flex: 1, padding: '10px 14px', borderRadius: '10px', boxSizing: 'border-box',
-            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
-            color: '#f1f5f9', fontSize: '14px', outline: 'none',
-            transition: 'all 0.3s',
-          }}
-          onFocus={e => {
-            e.target.style.borderColor = '#A3D045';
-            e.target.style.boxShadow = '0 0 0 3px rgba(163,208,69,0.15)';
-          }}
-          onBlur={e => {
-            e.target.style.borderColor = 'rgba(255,255,255,0.1)';
-            e.target.style.boxShadow = 'none';
+            flex: 1, padding: '10px 14px', borderRadius: '12px', boxSizing: 'border-box',
+            color: 'inherit', fontSize: '14px', outline: 'none', transition: 'all 0.2s',
           }}
         />
-        <button onClick={add} type="button" style={{
-          padding: '10px 18px', borderRadius: '10px', background: 'linear-gradient(135deg, #A3D045, #8eb83d)',
-          color: '#0f172a', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer',
-          transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 4px 12px rgba(163,208,69,0.3)',
-        }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-        >
+        <button onClick={add} type="button" className="min-button" style={{
+          padding: '10px 18px', borderRadius: '12px', border: 'none',
+          color: '#A3D045', fontWeight: 700, fontSize: '13px', textTransform: 'uppercase', cursor: 'pointer',
+        }}>
           Add
         </button>
       </div>
@@ -155,9 +116,9 @@ export function TagEditor({
 
 // ─── Avatar uploader ──────────────────────────────────────────────────────────
 export function AvatarUploader({
-  userId, currentUrl, onUploaded,
+  currentUrl, onUploaded,
 }: {
-  userId: string; currentUrl: string | null; onUploaded: (url: string) => void;
+  currentUrl: string | null; onUploaded: (url: string) => void;
 }) {
   const inputRef   = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -166,7 +127,7 @@ export function AvatarUploader({
   const upload = async (file: File) => {
     setUploading(true);
     const ext  = file.name.split('.').pop();
-    const path = `${userId}/profile.${ext}`;           // scoped to user folder
+    const path = `uploads/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`; // random path
     const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
     if (!error) {
       const { data } = supabase.storage.from('avatars').getPublicUrl(path);
@@ -182,26 +143,23 @@ export function AvatarUploader({
         Profile Photo
       </label>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{
+        <div className="min-input" style={{
           width: '72px', height: '72px', borderRadius: '50%', overflow: 'hidden',
-          background: '#1e293b', border: '2px solid rgba(255,255,255,0.08)',
-          flexShrink: 0,
+          flexShrink: 0, padding: preview ? '0' : '16px'
         }}>
           {preview
-            ? <img src={preview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '24px' }}>👤</div>
+            ? <img src={preview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '24px' }}>👤</div>
           }
         </div>
         <div>
           <button
             type="button" onClick={() => inputRef.current?.click()} disabled={uploading}
+            className="min-button"
             style={{
-              padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)',
-              background: 'transparent', color: '#94a3b8', fontSize: '13px', cursor: 'pointer',
-              transition: 'border-color 0.2s',
+              padding: '8px 16px', borderRadius: '12px', border: 'none',
+              color: 'inherit', fontSize: '13px', cursor: 'pointer', fontWeight: 600
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.borderColor = '#A3D045'}
-            onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.1)'}
           >
             {uploading ? 'Uploading…' : 'Change photo'}
           </button>
@@ -247,20 +205,14 @@ export function AdminToggle({
 // ─── Save button / status ─────────────────────────────────────────────────────
 export function SaveBar({ saving, saved, error }: { saving: boolean; saved: boolean; error: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '24px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '32px' }}>
       <button
-        type="submit" disabled={saving}
+        type="submit" disabled={saving} className={saving ? '' : 'min-button'}
         style={{
-          padding: '12px 32px', borderRadius: '12px',
-          background: saving ? '#334155' : 'linear-gradient(135deg, #A3D045, #8eb83d)',
-          color: '#0f172a', fontWeight: 700, fontSize: '15px', letterSpacing: '0.5px',
-          border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: saving ? 'none' : '0 6px 16px rgba(163,208,69,0.3)',
-          transform: saving ? 'none' : 'translateY(0)',
+          padding: '14px 32px', borderRadius: '12px', border: 'none',
+          color: saving ? '#94a3b8' : '#A3D045', fontWeight: 700, fontSize: '15px', letterSpacing: '0.5px',
+          cursor: saving ? 'not-allowed' : 'pointer', background: saving ? 'transparent' : undefined,
         }}
-        onMouseEnter={e => !saving && (e.currentTarget.style.transform = 'translateY(-2px)')}
-        onMouseLeave={e => !saving && (e.currentTarget.style.transform = 'translateY(0)')}
       >
         {saving ? 'Saving…' : 'Save Changes'}
       </button>
@@ -274,6 +226,8 @@ export function SaveBar({ saving, saved, error }: { saving: boolean; saved: bool
 export interface AdminMessage {
   id: string;
   sender_name: string;
+  role: string;
+  request_type: string;
   message: string;
   created_at: string;
 }
@@ -309,26 +263,26 @@ export function AdminMessagesPanel({ role }: { role: 'member' | 'executive' }) {
       <h2 style={{ color: '#fbbf24', fontSize: '14px', fontWeight: 700, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>
         📬 New Edit Requests ({messages.length})
       </h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {messages.map(m => (
-          <div key={m.id} style={{
-            background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.2)',
-            borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+          <div key={m.id} className="min-card" style={{
+            padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
             gap: '16px', animation: 'adminFadeIn 0.3s'
           }}>
             <div>
-              <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>
-                {m.sender_name} <span style={{ color: '#64748b', fontSize: '12px', fontWeight: 400 }}>· {new Date(m.created_at).toLocaleString()}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <div style={{ fontWeight: 700, fontSize: '16px' }}>{m.sender_name}</div>
+                <div className="min-input" style={{ color: '#fbbf24', padding: '4px 10px', fontSize: '11px', fontWeight: 700, borderRadius: '8px' }}>
+                  {m.request_type || 'Update'}
+                </div>
+                <div style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600 }}>· {new Date(m.created_at).toLocaleString()}</div>
               </div>
-              <div style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5 }}>{m.message}</div>
+              <div style={{ fontSize: '15px', lineHeight: 1.6, fontWeight: 500 }}>{m.message}</div>
             </div>
-            <button onClick={() => markRead(m.id)} style={{
-              background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: 'none',
-              padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
-              whiteSpace: 'nowrap', transition: 'background 0.2s'
+            <button onClick={() => markRead(m.id)} className="min-button" style={{
+              color: '#fbbf24', padding: '10px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+              whiteSpace: 'nowrap', border: 'none'
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(251,191,36,0.2)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(251,191,36,0.1)'}
             >
               Mark Read
             </button>

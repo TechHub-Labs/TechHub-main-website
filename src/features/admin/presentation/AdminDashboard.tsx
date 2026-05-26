@@ -9,32 +9,37 @@ import { useAuth } from '../../../shared/hooks/useAuth';
 
 interface Stats { members: number; executives: number; projects: number; }
 
-function StatBox({ label, value, color }: { label: string; value: number | string; color: string }) {
-  return (
-    <div style={{
-      background: '#1e293b', borderRadius: '12px', padding: '24px',
-      border: '1px solid rgba(255,255,255,0.06)',
+const StatBox = ({ title, count, icon, color }: { title: string, count: number | string, icon: string, color: string }) => (
+  <div className="min-card" style={{
+    padding: '24px', display: 'flex', alignItems: 'center', gap: '20px',
+    animation: 'adminFadeIn 0.5s'
+  }}>
+    <div className="min-card" style={{
+      width: '56px', height: '56px', borderRadius: '16px', flexShrink: 0,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color
     }}>
-      <div style={{ fontSize: '32px', fontWeight: 700, color, marginBottom: '4px' }}>{value}</div>
-      <div style={{ color: '#64748b', fontSize: '13px' }}>{label}</div>
+      {icon}
     </div>
-  );
-}
+    <div>
+      <div style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{title}</div>
+      <div style={{ fontSize: '28px', fontWeight: 700, marginTop: '4px', color: 'inherit' }}>{count}</div>
+    </div>
+  </div>
+);
 
-function QuickLink({ to, label, description, color }: { to: string; label: string; description: string; color: string }) {
+function QuickLink({ to, label, description, icon, color }: { to: string; label: string; description: string; icon: string, color: string }) {
   return (
-    <Link to={to} style={{ textDecoration: 'none' }}>
-      <div style={{
-        background: '#1e293b', borderRadius: '12px', padding: '20px',
-        border: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer',
-        transition: 'border-color 0.2s, transform 0.2s',
+    <Link to={to} className="min-button"
+      style={{
+        padding: '20px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '12px',
+        animation: 'adminFadeIn 0.8s', textDecoration: 'none', color: 'inherit'
       }}
-        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = color; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
-      >
-        <div style={{ color, fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>{label} →</div>
-        <div style={{ color: '#64748b', fontSize: '12px' }}>{description}</div>
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ fontSize: '24px' }}>{icon}</div>
+        <div style={{ fontWeight: 700, fontSize: '15px', color }}>{label}</div>
       </div>
+      <div style={{ color: '#94a3b8', fontSize: '13px', lineHeight: 1.5, fontWeight: 500 }}>{description}</div>
     </Link>
   );
 }
@@ -42,7 +47,6 @@ function QuickLink({ to, label, description, color }: { to: string; label: strin
 export function AdminDashboard() {
   const { role, user } = useAuth();
   const [stats, setStats]   = useState<Stats>({ members: 0, executives: 0, projects: 0 });
-  const roleSql = `UPDATE auth.users SET raw_user_meta_data = jsonb_set(COALESCE(raw_user_meta_data,'{}'), '{role}', '"super_admin"') WHERE email = '${user?.email ?? 'your@email.com'}';`;
 
   useEffect(() => {
     const load = async () => {
@@ -63,68 +67,77 @@ export function AdminDashboard() {
   };
 
   return (
-    <div style={{ padding: '32px', maxWidth: '900px' }}>
+    <div style={{ padding: '40px', maxWidth: '1000px' }} className="admin-fade-in">
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ color: '#f1f5f9', fontSize: '24px', fontWeight: 700, marginBottom: '6px' }}>
+      <div style={{ marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.5px' }}>
           Welcome back 👋
         </h1>
-        <p style={{ color: '#64748b', fontSize: '14px' }}>
-          {user?.email} · {role ? roleGreeting[role] : 'Determining your access level…'}
+        <p style={{ color: '#94a3b8', fontSize: '15px' }}>
+          {user?.email} <span style={{ opacity: 0.5 }}>·</span> {role ? roleGreeting[role] : 'Determining your access level…'}
         </p>
       </div>
-
-      {/* Role not set warning */}
-      {!role && (
-        <div style={{
-          background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)',
-          borderRadius: '10px', padding: '16px 20px', marginBottom: '24px',
-          display: 'flex', gap: '12px', alignItems: 'flex-start',
-        }}>
-          <span style={{ fontSize: '20px' }}>⚠️</span>
-          <div>
-            <div style={{ color: '#fbbf24', fontWeight: 600, fontSize: '14px', marginBottom: '4px' }}>Role not assigned yet</div>
-            <div style={{ color: '#94a3b8', fontSize: '13px', lineHeight: 1.6 }}>
-              Run the role SQL in Supabase → SQL Editor, then refresh this page.
-              <br />
-              <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px' }}>
-                {roleSql}
-              </code>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Stats — super_admin only */}
       {role === 'super_admin' && (
         <>
-          <h2 style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+          <div className="min-card" style={{ padding: '28px', marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Quick Actions</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px' }}>
+              <Link to="/admin/members" className="min-button" style={{
+                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                color: 'inherit', borderRadius: '12px', fontWeight: 600
+              }}>
+                <span style={{ fontSize: '20px' }}>👥</span> Add Member
+              </Link>
+              <Link to="/admin/executives" className="min-button" style={{
+                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                color: 'inherit', borderRadius: '12px', fontWeight: 600
+              }}>
+                <span style={{ fontSize: '20px' }}>🏛</span> Add Exec
+              </Link>
+              <Link to="/admin/projects" className="min-button" style={{
+                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                color: 'inherit', borderRadius: '12px', fontWeight: 600
+              }}>
+                <span style={{ fontSize: '20px' }}>🚀</span> New Project
+              </Link>
+              <Link to="/" className="min-button" style={{
+                padding: '16px', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                color: 'inherit', borderRadius: '12px', fontWeight: 600
+              }}>
+                <span style={{ fontSize: '20px' }}>↗</span> View Site
+              </Link>
+            </div>
+          </div>
+          
+          <h2 style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
             Overview
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px', marginBottom: '32px' }}>
-            <StatBox label="Total Members"   value={stats.members}    color="#38bdf8" />
-            <StatBox label="Executives"      value={stats.executives} color="#a78bfa" />
-            <StatBox label="Projects"        value={stats.projects}   color="#A3D045" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+            <StatBox title="Total Members"   count={stats.members}    icon="👥" color="#38bdf8" />
+            <StatBox title="Executives"      count={stats.executives} icon="🏛" color="#a78bfa" />
+            <StatBox title="Projects"        count={stats.projects}   icon="🚀" color="#A3D045" />
           </div>
         </>
       )}
 
-      {/* Quick Actions */}
-      <h2 style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
-        Quick Actions
+      {/* Quick Links */}
+      <h2 style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
+        Resources
       </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
         {role === 'member' && (
-          <QuickLink to="/admin/profile"      label="Add your profile"  description="Update your photo, bio, skills and socials" color="#38bdf8" />
+          <QuickLink to="/admin/profile"      label="Add your profile"  description="Update your photo, bio, skills and socials" icon="👤" color="#38bdf8" />
         )}
         {role === 'executive' && (
-          <QuickLink to="/admin/exec-profile" label="Add your profile"  description="Update your photo, role and quote" color="#a78bfa" />
+          <QuickLink to="/admin/exec-profile" label="Add your profile"  description="Update your photo, role and quote" icon="👤" color="#a78bfa" />
         )}
         {role === 'super_admin' && (
           <>
-            <QuickLink to="/admin/members"    label="Manage Members"   description="Add, edit or remove member profiles" color="#38bdf8" />
-            <QuickLink to="/admin/executives" label="Manage Executives" description="Add, edit or remove executive profiles" color="#a78bfa" />
-            <QuickLink to="/admin/projects"   label="Manage Projects"  description="Add, edit or remove projects" color="#A3D045" />
+            <QuickLink to="/admin/members"    label="Manage Members"   description="Add, edit or remove member profiles" icon="👥" color="#38bdf8" />
+            <QuickLink to="/admin/executives" label="Manage Executives" description="Add, edit or remove executive profiles" icon="🏛" color="#a78bfa" />
+            <QuickLink to="/admin/projects"   label="Manage Projects"  description="Add, edit or remove projects" icon="🚀" color="#A3D045" />
           </>
         )}
       </div>

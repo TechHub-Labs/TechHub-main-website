@@ -8,11 +8,13 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/hooks/useAuth';
 import { useTheme } from '../../landing/domain/useTheme';
+import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
 
 const NAV_ITEMS = [
   { path: '/admin',             label: 'Dashboard',   icon: '▣', roles: ['member', 'executive', 'super_admin'] },
   { path: '/admin/profile',     label: 'My Profile',  icon: '👤', roles: ['member'] },
   { path: '/admin/exec-profile',label: 'My Profile',  icon: '👤', roles: ['executive'] },
+  { path: '/admin/request-edit',label: 'Request Edit',icon: '📝', roles: ['member', 'executive'] },
   { path: '/admin/members',     label: 'Members',     icon: '👥', roles: ['super_admin'] },
   { path: '/admin/executives',  label: 'Executives',  icon: '🏛', roles: ['super_admin'] },
   { path: '/admin/projects',    label: 'Projects',    icon: '🚀', roles: ['super_admin'] },
@@ -37,7 +39,7 @@ export function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const visibleNav = NAV_ITEMS.filter(item =>
-    role === 'super_admin' || (role !== null && (item.roles as readonly string[]).includes(role))
+    role !== null && (item.roles as readonly string[]).includes(role)
   );
 
   const handleLogout = async () => {
@@ -52,13 +54,13 @@ export function AdminLayout() {
         <Link to="/" style={{ display: 'block', marginBottom: '16px' }}>
           <img src="/images/Logo.png" alt="TechHub" style={{ height: '40px' }} />
         </Link>
-        {/* Role badge */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '6px',
-          background: 'rgba(255,255,255,0.05)', borderRadius: '20px',
-          padding: '4px 12px',
+          background: dark ? 'var(--min-bg-dark)' : 'var(--min-bg-light)', 
+          borderRadius: '8px', padding: '6px 14px',
+          border: '1px solid var(--min-border)',
         }}>
-          <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: ROLE_COLORS[role ?? 'member'] }} />
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: ROLE_COLORS[role ?? 'member'], boxShadow: `0 0 8px ${ROLE_COLORS[role ?? 'member']}` }} />
           <span style={{ color: ROLE_COLORS[role ?? 'member'], fontSize: '12px', fontWeight: 600 }}>
             {ROLE_LABELS[role ?? 'member']}
           </span>
@@ -80,15 +82,25 @@ export function AdminLayout() {
               to={item.path}
               onClick={() => setMobileOpen(false)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '10px 12px', borderRadius: '8px', marginBottom: '2px',
-                color: isActive ? '#A3D045' : '#94a3b8',
-                background: isActive ? 'rgba(163,208,69,0.08)' : 'transparent',
-                textDecoration: 'none', fontSize: '14px', fontWeight: isActive ? 600 : 400,
-                transition: 'background 0.15s, color 0.15s',
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '10px 16px', borderRadius: '8px', marginBottom: '4px',
+                color: isActive ? '#A3D045' : colors.textMuted,
+                background: isActive ? (dark ? 'rgba(163,208,69,0.1)' : 'rgba(163,208,69,0.1)') : 'transparent',
+                textDecoration: 'none', fontSize: '14px', fontWeight: isActive ? 600 : 500,
+                transition: 'all 0.15s',
               }}
-              onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.04)'; }}
-              onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
+              onMouseEnter={e => { 
+                if (!isActive) {
+                  (e.currentTarget as HTMLAnchorElement).style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)';
+                  (e.currentTarget as HTMLAnchorElement).style.color = dark ? '#f1f5f9' : '#111827';
+                }
+              }}
+              onMouseLeave={e => { 
+                if (!isActive) {
+                  (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; 
+                  (e.currentTarget as HTMLAnchorElement).style.color = colors.textMuted;
+                }
+              }}
             >
               <span style={{ fontSize: '16px' }}>{item.icon}</span>
               {item.label}
@@ -98,31 +110,33 @@ export function AdminLayout() {
       </nav>
 
       {/* Theme toggle & Logout */}
-      <div style={{ padding: '16px 12px', borderTop: `1px solid ${colors.divider}`, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '32px' }}>
         <button
           onClick={() => setDark(!dark)}
+          className="min-button"
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '10px 12px', borderRadius: '8px', border: 'none',
-            background: 'transparent', color: colors.textSubtle, fontSize: '14px',
-            cursor: 'pointer', transition: 'color 0.15s, background 0.15s',
+            padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--min-border)', background: 'transparent',
+            color: dark ? '#f1f5f9' : '#111827', fontSize: '13px', fontWeight: 500,
+            cursor: 'pointer', transition: 'all 0.15s',
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = colors.text; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(163,208,69,0.08)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = colors.textSubtle; (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+          onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = 'var(--min-hover)'}
+          onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'transparent'}
         >
           <span>{dark ? '☀️' : '🌙'}</span> {dark ? 'Light Mode' : 'Dark Mode'}
         </button>
 
         <button
           onClick={handleLogout}
+          className="min-button"
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '10px 12px', borderRadius: '8px', border: 'none',
-            background: 'transparent', color: colors.textSubtle, fontSize: '14px',
-            cursor: 'pointer', transition: 'color 0.15s, background 0.15s',
+            padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--min-border)', background: 'transparent',
+            color: '#ef4444', fontSize: '13px', fontWeight: 500,
+            cursor: 'pointer', transition: 'all 0.15s',
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#ef4444'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.08)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = colors.textSubtle; (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+          onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.1)'}
+          onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'transparent'}
         >
           <span>⎋</span> Sign out
         </button>
@@ -131,12 +145,23 @@ export function AdminLayout() {
   );
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: colors.bg, color: colors.text, display: 'flex', fontFamily: "'Inter', sans-serif" }} className="admin-layout-root">
+    <div style={{ 
+      height: '100vh', overflow: 'hidden', display: 'flex', fontFamily: "'Inter', 'Geist', sans-serif",
+      background: 'transparent',
+      transition: 'background 0.2s ease', position: 'relative'
+    }} className="admin-layout-root">
+      
+      {/* Dynamic Animated Background */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: -1 }}>
+        <WebsiteBackground isDark={dark} bgColor={colors.bg} opacity={0.6} />
+      </div>
 
       <aside style={{
-        width: '240px', flexShrink: 0, background: colors.bgCard,
-        borderRight: `1px solid ${colors.divider}`,
+        width: '260px', flexShrink: 0, 
+        background: dark ? 'var(--min-surface-dark)' : 'var(--min-surface-light)',
+        borderRight: '1px solid var(--min-border)',
         height: '100vh', display: 'none',
+        zIndex: 10
       }}
         className="lg:!block"
       >
@@ -145,10 +170,12 @@ export function AdminLayout() {
 
       {/* Mobile top bar */}
       <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, height: '56px', zIndex: 100,
-        background: colors.bgCard, borderBottom: `1px solid ${colors.divider}`,
+        position: 'fixed', top: 0, left: 0, right: 0, height: '64px', zIndex: 100,
+        background: colors.bg,
+
+        borderBottom: '1px solid var(--min-border)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 16px',
+        padding: '0 20px',
       }} className="lg:!hidden">
         <img src="/images/Logo.png" alt="TechHub" style={{ height: '32px', filter: !dark ? 'invert(1)' : 'none' }} />
         <button
@@ -167,8 +194,10 @@ export function AdminLayout() {
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 101 }}
           />
           <aside style={{
-            position: 'fixed', top: 0, left: 0, width: '240px', height: '100vh',
-            background: colors.bgCard, zIndex: 102, overflowY: 'auto',
+            position: 'fixed', top: 0, left: 0, width: '260px', height: '100vh',
+            background: dark ? 'var(--min-surface-dark)' : 'var(--min-surface-light)',
+            borderRight: '1px solid var(--min-border)',
+            zIndex: 102, overflowY: 'auto',
           }}>
             <SidebarContent />
           </aside>
@@ -178,34 +207,63 @@ export function AdminLayout() {
       {/* Main content */}
       <main 
         style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', paddingTop: 0, paddingBottom: '40px' }} 
-        className="lg:!pt-0 pt-14 admin-fade-in"
+        className="lg:!pt-0 pt-16 admin-fade-in"
       >
         <Outlet />
       </main>
 
       {/* Global Admin Styles */}
       <style>{`
+        :root {
+          --min-bg-light: ${colors.bg};
+          --min-surface-light: rgba(255, 255, 255, 0.7);
+          
+          --min-bg-dark: ${colors.bg};
+          --min-surface-dark: ${colors.nav};
+        }
+
         ${!dark ? `
-          /* Light Mode Overrides for Admin Portal */
-          .admin-layout-root h1, .admin-layout-root h2 { color: #0f172a !important; }
-          .admin-layout-root p { color: #475569 !important; }
-          .admin-layout-root input, .admin-layout-root textarea { background: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
-          .admin-layout-root label { color: #64748b !important; }
-          .admin-layout-root .card { background: #ffffff !important; border-color: #e2e8f0 !important; }
+          :root {
+            --min-border: rgba(13,19,64,0.1);
+            --min-hover: rgba(13,19,64,0.04);
+          }
+          .admin-layout-root { color: #0d1340 !important; }
+          .admin-layout-root h1, .admin-layout-root h2 { color: #0d1340 !important; }
+          .admin-layout-root p { color: #4a5180 !important; }
+          .admin-layout-root label { color: #4a5180 !important; }
           .admin-layout-root img[src="/images/Logo.png"] { filter: invert(1) !important; }
-        ` : ''}
+          .min-card { background: var(--min-surface-light); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.02); }
+          .min-button { background: var(--min-surface-light); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: none; transition: all 0.15s; }
+          .min-button:active { background: var(--min-hover); transform: scale(0.98); }
+          .min-button:hover { background: var(--min-hover); }
+          .min-input { background: rgba(255,255,255,0.6); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s; }
+          .min-input:focus { border-color: #A3D045; outline: none; box-shadow: 0 0 0 2px rgba(163,208,69,0.3); }
+        ` : `
+          :root {
+            --min-border: rgba(255,255,255,0.1);
+            --min-hover: rgba(255,255,255,0.05);
+          }
+          .admin-layout-root { color: #ffffff !important; }
+          .min-card { background: var(--min-surface-dark); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+          .min-button { background: rgba(255,255,255,0.05); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: none; transition: all 0.15s; }
+          .min-button:active { background: var(--min-hover); transform: scale(0.98); }
+          .min-button:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); box-shadow: 0 0 12px rgba(255,255,255,0.05); }
+          .min-input { background: rgba(0,0,0,0.2); backdrop-filter: blur(16px); border: 1px solid var(--min-border); border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s; }
+          .min-input:focus { border-color: #A3D045; outline: none; box-shadow: 0 0 12px rgba(163,208,69,0.2), inset 0 0 4px rgba(163,208,69,0.1); }
+        `}
+        
         @keyframes adminFadeIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
         .admin-fade-in {
-          animation: adminFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: adminFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         /* Make scrollbars look nice in admin panel */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(163,208,69,0.5); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(163,208,69,0.8); }
+        ::-webkit-scrollbar-thumb { background: rgba(163,208,69,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(163,208,69,0.7); }
       `}</style>
     </div>
   );

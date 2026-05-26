@@ -29,7 +29,7 @@ export function useTheme() {
       bgCard:          '#1c2461',        // slightly lighter — cards pop on dark bg
       bgCardHover:     '#232d78',        // visible hover state
       bgHero:          '#0d1340',
-      nav:             'rgba(13,19,64,0.75)', // frosted base colour
+      nav:             '#0d1340',        // solid base colour
       navBorder:       'rgba(255,255,255,0.07)',
       text:            '#ffffff',
       textMuted:       '#9BA3C2',        // was #7F7F7F — invisible on dark navy
@@ -64,7 +64,7 @@ export function useTheme() {
       bgCard:          '#ffffff',
       bgCardHover:     '#eef0ff',        // was #14363E (jarring dark teal!) — fixed
       bgHero:          '#f4f5fa',
-      nav:             'rgba(255,255,255,0.8)', // frosted base colour
+      nav:             '#ffffff',        // solid base colour
       navBorder:       'rgba(13,19,64,0.06)',
       text:            '#0d1340',
       textMuted:       '#4a5180',        // was rgba(13,19,64,0.7) — now more readable
