@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../../core/supabase/client';
 import type { Executive } from '../../../core/supabase/types';
-import { AdminInput, AdminTextarea, AvatarUploader, AdminToggle, SaveBar, AdminMessagesPanel } from './AdminFormComponents';
+import { AdminInput, AdminTextarea, AvatarUploader, AdminToggle, SaveBar, AdminMessagesPanel, TagEditor } from './AdminFormComponents';
 
 const CATEGORY_OPTIONS = ["Founding Council", "'27", "'28"];
 const EMPTY: Partial<Executive> = {
@@ -39,6 +39,12 @@ export function SuperAdminExecutives() {
     e.preventDefault();
     if (!editing) return;
     setSaving(true); setSaved(false); setFormErr('');
+
+    if (!editing.avatar_url) { setSaving(false); return setFormErr('Please upload a profile picture.'); }
+    if (!editing.category || editing.category.length === 0) { setSaving(false); return setFormErr('Please select a category.'); }
+    if (!editing.quote?.trim()) { setSaving(false); return setFormErr('Please provide a quote.'); }
+    if (!editing.skills || editing.skills.length === 0) { setSaving(false); return setFormErr('At least one skill is required.'); }
+    if (!editing.github?.trim()) { setSaving(false); return setFormErr('Please provide a GitHub/Portfolio link.'); }
 
     const payload = {
       name: editing.name, role_title: editing.role_title, quote: editing.quote,
@@ -198,7 +204,11 @@ export function SuperAdminExecutives() {
                     <AdminInput label="Twitter/X" value={editing.twitter ?? ''} onChange={set('twitter')} />
                   </div>
                   <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={3} />
-                  <div className="mt-2">
+                  <div className="flex flex-col sm:flex-row sm:gap-4 mt-2">
+                    <div className="flex-1"><TagEditor label="Skills"   tags={editing.skills   ?? []} onChange={set('skills')}   placeholder="e.g. Leadership" /></div>
+                  </div>
+
+                  <div className="mt-4">
                     <AdminToggle label="Visible" description="Show on Executive Council page" checked={editing.visible ?? false} onChange={set('visible')} />
                   </div>
                 </div>

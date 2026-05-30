@@ -46,6 +46,12 @@ export function SuperAdminMembers() {
     if (!editing) return;
     setSaving(true); setSaved(false); setFormErr('');
 
+    if (!editing.avatar_url) { setSaving(false); return setFormErr('Please upload a profile picture.'); }
+    if (!editing.category || editing.category.length === 0) { setSaving(false); return setFormErr('Please select a category.'); }
+    if (!editing.quote?.trim()) { setSaving(false); return setFormErr('Please provide a quote.'); }
+    if (!editing.skills || editing.skills.length === 0) { setSaving(false); return setFormErr('At least one skill is required.'); }
+    if (!editing.github?.trim()) { setSaving(false); return setFormErr('Please provide a GitHub/Portfolio link.'); }
+
     const payload = {
       name: editing.name, role_title: editing.role_title, year: editing.year,
       quote: editing.quote, avatar_url: editing.avatar_url,

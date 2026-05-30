@@ -14,6 +14,7 @@ export function ExecutiveProfileEditor() {
   const [name,      setName]      = useState('');
   const [roleTitle, setRoleTitle] = useState('');
   const [quote,     setQuote]     = useState('');
+  const [skills,    setSkills]    = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [github,    setGithub]    = useState('');
   const [linkedin,  setLinkedin]  = useState('');
@@ -33,11 +34,16 @@ export function ExecutiveProfileEditor() {
     if (!user) return;
     setSaving(true); setSaved(false); setError('');
 
-    if (category.length === 0) return setError('Please select a category.');
+    if (!avatarUrl) { setSaving(false); return setError('Please upload a profile picture.'); }
+    if (category.length === 0) { setSaving(false); return setError('Please select a category.'); }
+    if (!quote.trim()) { setSaving(false); return setError('Please provide a quote.'); }
+    if (skills.length === 0) { setSaving(false); return setError('At least one skill is required.'); }
+    if (!github.trim()) { setSaving(false); return setError('Please provide a GitHub/Portfolio link.'); }
 
     const { error } = await supabase.from('executives').insert({
       user_id: user.id, name, role_title: roleTitle, quote,
       avatar_url: avatarUrl, github, linkedin, twitter,
+      skills, projects: [],
       category, visible: false,
     });
 
@@ -48,7 +54,7 @@ export function ExecutiveProfileEditor() {
       setSaved(true);
       // Clear form
       setName(''); setRoleTitle(''); setQuote('');
-      setAvatarUrl(null); setGithub('');
+      setAvatarUrl(null); setGithub(''); setSkills([]);
       setLinkedin(''); setTwitter(''); setCategory([]);
       setTimeout(() => setSaved(false), 3000); 
     }
@@ -75,6 +81,10 @@ export function ExecutiveProfileEditor() {
         </div>
 
         <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="Your vision in one sentence…" rows={3} />
+        
+        <div style={{ marginBottom: '16px' }}>
+          <TagEditor label="Skills" tags={skills} onChange={setSkills} placeholder="e.g. Leadership, Node.js" />
+        </div>
 
         {/* Category */}
         <div style={{ marginBottom: '16px' }}>

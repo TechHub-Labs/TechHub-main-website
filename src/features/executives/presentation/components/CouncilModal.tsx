@@ -137,6 +137,32 @@ export function CouncilModal({
                 </div>
               </div>
             )}
+
+            {/* Projects */}
+            {member.projects && member.projects.filter(p => p && p.trim() !== '').length > 0 && (
+              <div>
+                <h4
+                  className="text-xs font-bold uppercase tracking-wider mb-2.5"
+                  style={{ color: colors.textSubtle }}
+                >
+                  Featured Projects
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {member.projects.filter(p => p && p.trim() !== '').map((project) => (
+                    <span
+                      key={project}
+                      className="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                      style={{
+                        background: tagBg,
+                        color: colors.text,
+                      }}
+                    >
+                      {project}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Social Links Block */}

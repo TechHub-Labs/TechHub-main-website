@@ -40,8 +40,11 @@ export function MemberProfileEditor() {
     if (!user) return;
     setSaving(true); setSaved(false); setError('');
 
-    if (skills.length === 0) return setError('At least one skill is required.');
-    if (category.length === 0) return setError('Please select a category.');
+    if (!avatarUrl) { setSaving(false); return setError('Please upload a profile picture.'); }
+    if (category.length === 0) { setSaving(false); return setError('Please select a category.'); }
+    if (!quote.trim()) { setSaving(false); return setError('Please provide a quote.'); }
+    if (skills.length === 0) { setSaving(false); return setError('At least one skill is required.'); }
+    if (!github.trim()) { setSaving(false); return setError('Please provide a GitHub/Portfolio link.'); }
 
     const { error } = await supabase.from('members').insert({
       user_id: user.id, name, role_title: roleTitle, year, quote,
@@ -85,7 +88,9 @@ export function MemberProfileEditor() {
 
         <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="A short quote about your journey…" rows={3} />
 
-        <TagEditor label="Skills" tags={skills} onChange={setSkills} required placeholder="e.g. React, Python…" />
+        <div style={{ marginBottom: '16px' }}>
+          <TagEditor label="Skills" tags={skills} onChange={setSkills} required placeholder="e.g. React, Python…" />
+        </div>
 
         {/* Category checkboxes */}
         <div style={{ marginBottom: '16px' }}>

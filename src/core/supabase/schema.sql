@@ -160,8 +160,8 @@ CREATE POLICY "Super admin all projects" ON projects USING (is_super_admin());
 -- can touch the table at all. Both are required.
 
 GRANT SELECT ON profiles TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON members    TO authenticated;
-GRANT SELECT, INSERT, UPDATE ON executives TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON members    TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON executives TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON projects TO authenticated;
 
 -- Public (unauthenticated) site reads

@@ -10,6 +10,7 @@ export interface CouncilMember {
   avatar_url?: string;
   category: string[];
   skills: string[];
+  projects: string[];
   portfolio?: string;
   linkedin?: string;
   twitter?: string;

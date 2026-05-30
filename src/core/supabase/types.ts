@@ -39,6 +39,8 @@ export interface Executive {
   github: string | null;
   linkedin: string | null;
   twitter: string | null;
+  skills: string[];
+  projects: string[];
   visible: boolean;
   created_at: string;
   updated_at: string;
