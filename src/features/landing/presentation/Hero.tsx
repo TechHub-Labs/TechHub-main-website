@@ -129,7 +129,7 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
           {/* ── LEFT ── */}
           <div className="max-w-xl">
             <h1
-              className="text-5xl sm:text-6xl lg:text-[5.5rem] font-bold mb-5 leading-[0.9] tracking-tight min-h-[3.15em]"
+              className="text-4xl sm:text-5xl lg:text-[5.5rem] font-bold mb-5 leading-[0.9] tracking-tight min-h-[3.15em]"
               style={{ color: colors.text }}
             >
               Build.<br />
@@ -172,13 +172,13 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
           </div>
 
           {/* ── RIGHT — exact original grid, float + count-up added ── */}
-          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[400px] sm:h-[460px]">
+          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[500px] sm:h-[460px]">
 
             {/* Members */}
             <div
               onMouseEnter={() => setHoveredCard('members')}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-3 rounded-sm p-6 sm:p-8 flex flex-col justify-between cursor-default shadow-sm"
+              className="row-span-3 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-between cursor-default shadow-sm"
               style={cardStyle('members', f1, normalCardBg, colors.text)}
             >
               <div className="flex -space-x-3">
@@ -190,7 +190,7 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
                 ))}
               </div>
               <div className="mt-8">
-                <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('members') }}>{members}</div>
+                <div className="text-3xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('members') }}>{members}</div>
                 <div className="text-sm sm:text-base font-medium"                                  style={{ color: textCol('members') }}>Active members</div>
               </div>
             </div>
@@ -199,10 +199,10 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
             <div
               onMouseEnter={() => setHoveredCard('stacks')}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-2 rounded-sm p-6 sm:p-8 flex flex-col justify-end cursor-default shadow-sm"
+              className="row-span-2 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle('stacks', f2, normalCardBg, colors.text)}
             >
-              <div className="text-3xl sm:text-4xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('stacks') }}>{stacks}</div>
+              <div className="text-2xl sm:text-4xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('stacks') }}>{stacks}</div>
               <div className="text-xs sm:text-sm font-medium"                                    style={{ color: textCol('stacks') }}>Tech Stacks Used</div>
             </div>
 
@@ -210,10 +210,10 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
             <div
               onMouseEnter={() => setHoveredCard('projects')}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-2 rounded-sm p-6 sm:p-8 flex flex-col justify-center cursor-default shadow-sm"
+              className="row-span-2 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-center cursor-default shadow-sm"
               style={cardStyle('projects', f3, normalCardBg, colors.text)}
             >
-              <div className="text-3xl sm:text-4xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('projects') }}>{projects}</div>
+              <div className="text-2xl sm:text-4xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('projects') }}>{projects}</div>
               <div className="text-xs sm:text-sm font-medium"                                    style={{ color: textCol('projects') }}>Projects Built</div>
             </div>
 
@@ -221,10 +221,10 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
             <div
               onMouseEnter={() => setHoveredCard('teams')}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-3 rounded-sm p-6 sm:p-8 flex flex-col justify-end cursor-default shadow-sm"
+              className="row-span-3 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle('teams', f4, normalCardBg, colors.text)}
             >
-              <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('teams') }}>{teams}</div>
+              <div className="text-3xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums" style={{ color: textCol('teams') }}>{teams}</div>
               <div className="text-sm sm:text-base font-medium"                                  style={{ color: textCol('teams') }}>Active Teams</div>
             </div>
 

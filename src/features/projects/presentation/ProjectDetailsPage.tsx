@@ -147,7 +147,7 @@ export function ProjectDetailsPage() {
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-4 mb-3">
-                      <h1 className="text-5xl lg:text-6xl font-bold tracking-tight" style={{ color: colors.text }}>
+                      <h1 className="text-4xl lg:text-6xl font-bold tracking-tight" style={{ color: colors.text }}>
                         {project.name}
                       </h1>
                       <div className="flex items-center gap-2">

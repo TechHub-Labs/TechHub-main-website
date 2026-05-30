@@ -120,7 +120,7 @@ function ProjectCard({
         />
 
         <h3
-          className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight relative z-10"
+          className="text-3xl sm:text-5xl font-bold mb-3 tracking-tight relative z-10"
           style={{ color: colors.text }}
         >
           {project.title}

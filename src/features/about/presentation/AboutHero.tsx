@@ -74,14 +74,14 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
     hovered === key ? colors.tealText : colors.text;
 
   return (
-    <section ref={heroRef} className="relative pt-3 overflow-hidden flex items-center min-h-[calc(100vh-80px)]">
+    <section ref={heroRef} className="relative pt-12 pb-24 lg:pt-3 lg:pb-0 overflow-hidden flex items-center min-h-[calc(100vh-80px)]">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
 
           {/* LEFT — identical to original */}
           <div className="max-w-xl">
             <h1
-              className="text-5xl sm:text-6xl lg:text-[4.5rem] font-semibold tracking-tight mb-8 leading-[1.05]"
+              className="text-4xl sm:text-5xl lg:text-[4.5rem] font-semibold tracking-tight mb-8 leading-[1.05]"
               style={{ color: colors.text }}
             >
               Builders Need
@@ -103,7 +103,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
           </div>
 
           {/* RIGHT — same grid structure as original, same color system as Hero */}
-          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[400px] sm:h-[460px]">
+          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[500px] sm:h-[460px]">
 
             {/* 1.8M */}
             <div
@@ -113,7 +113,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               style={cardStyle("a", f1)}
             >
               <div className="mt-8">
-                <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums"
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-1 tracking-tight tabular-nums"
                   style={{ color: textCol("a") }}>
                   {stat1}
                 </div>
@@ -131,7 +131,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle("b", f2)}
             >
-              <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums"
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-1 tracking-tight tabular-nums"
                 style={{ color: textCol("b") }}>
                 {stat2}
               </div>
@@ -148,7 +148,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-center cursor-default shadow-sm"
               style={cardStyle("c", f3)}
             >
-              <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight"
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-1 tracking-tight"
                 style={{ color: textCol("c") }}>
                 1 in 5
               </div>
@@ -165,7 +165,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle("d", f4)}
             >
-              <div className="text-4xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums"
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-1 tracking-tight tabular-nums"
                 style={{ color: textCol("d") }}>
                 {stat3}
               </div>

@@ -51,7 +51,7 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
           }}
         >
           <h2
-            className="w-full text-4xl font-semibold leading-tight tracking-tight sm:text-5xl"
+            className="w-full text-3xl font-semibold leading-tight tracking-tight sm:text-5xl"
             style={{ color: colors.text }}
           >
             The Trajectory of a Movement.

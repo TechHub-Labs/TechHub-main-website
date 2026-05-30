@@ -62,7 +62,7 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-15 sm:py-28 -mx-4 lg:-mx-[99px]">
+    <section ref={sectionRef} className="py-20 sm:py-28 -mx-4 lg:-mx-[99px]">
       <div className="px-4 lg:px-[99px]">
 
         {/* ── HEADER ── */}
@@ -75,7 +75,7 @@ export function TheSolution({ colors }: { colors: ThemeColors }) {
           }}
         >
           <h2
-            className="text-4xl sm:text-5xl font-bold mb-4 leading-tight"
+            className="text-3xl sm:text-5xl font-bold mb-4 leading-tight"
             style={{ color: colors.text }}
           >
             So a Few Builders Decided to Change That.

@@ -154,7 +154,7 @@ export function MembersPage() {
           {/* ── CATEGORY LABEL ── */}
           <div className="mb-6">
             <h2
-              className="text-4xl sm:text-5xl font-bold"
+              className="text-3xl sm:text-4xl font-bold"
               style={{ color: colors.text }}
             >
               {activeFilter}

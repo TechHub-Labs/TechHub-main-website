@@ -41,7 +41,7 @@ export function Footer({ colors }: FooterProps) {
             {/* Brand Column */}
             <div className="lg:col-span-2">
               <h3
-                className="font-bold text-2xl sm:text-5xl mb-3 tracking-tight"
+                className="font-bold text-4xl sm:text-5xl mb-3 tracking-tight"
                 style={{ color: colors.text }}
               >
                 NH TechHub

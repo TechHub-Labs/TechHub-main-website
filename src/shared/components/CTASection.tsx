@@ -19,7 +19,7 @@ export function CTASection({ dark, colors }: CTASectionProps) {
 
   return (
     <section className="relative py-40 overflow-hidden">
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 py-12 sm:py-0">
         <div 
           className="rounded-2xl relative overflow-hidden px-6 py-16 sm:py-24 text-center shadow-xl transition-colors duration-300"
           style={{ background: cardBg }}
@@ -37,7 +37,7 @@ export function CTASection({ dark, colors }: CTASectionProps) {
           {/* Content */}
           <div className="relative z-10 flex flex-col items-center">
             <h2
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight"
+              className="text-3xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight"
               style={{ color: textColor }}
             >
               Ready to build<br />Something real?

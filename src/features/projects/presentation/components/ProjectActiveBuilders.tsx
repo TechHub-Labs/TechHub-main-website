@@ -82,7 +82,7 @@ export function ProjectActiveBuilders({
   return (
     <div className="mt-28">
       <h2
-        className="text-5xl lg:text-6xl font-bold mb-14 tracking-tight"
+        className="text-4xl lg:text-6xl font-bold mb-14 tracking-tight"
         style={{ color: colors.text }}
       >
         Active Builders
