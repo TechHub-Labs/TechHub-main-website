@@ -194,7 +194,7 @@ export function SuperAdminProjects() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Title', 'Category', 'Status', 'Tech', 'Actions'].map(h => (
+                {['Project', 'Category', 'Status', 'Tech', 'Actions'].map(h => (
                   <th key={h} style={{ color: '#64748b', fontWeight: 600, textAlign: 'left', padding: '8px 12px' }}>{h}</th>
                 ))}
               </tr>
@@ -205,7 +205,17 @@ export function SuperAdminProjects() {
                   onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                 >
-                  <td style={{ padding: '10px 12px', color: '#f1f5f9', fontWeight: 500 }}>{p.title}</td>
+                  <td style={{ padding: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div className="min-input" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, padding: p.image_url ? '0' : '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: p.image_url ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+                        {p.image_url
+                          ? <img src={p.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                          : <span style={{ color: '#94a3b8', fontSize: '18px', fontWeight: 700 }}>{p.title ? p.title.charAt(0).toUpperCase() : 'P'}</span>
+                        }
+                      </div>
+                      <span style={{ color: '#f1f5f9', fontWeight: 600 }}>{p.title ?? '—'}</span>
+                    </div>
+                  </td>
                   <td style={{ padding: '10px 12px', color: '#94a3b8' }}>{p.category ?? '—'}</td>
                   <td style={{ padding: '10px 12px' }}>
                     <span style={{

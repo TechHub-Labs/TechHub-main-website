@@ -77,6 +77,7 @@ export function ProjectDetailsPage() {
         linkedin_url: dbProject.linkedin_url || '',
         twitter_url: dbProject.twitter_url || '',
       };
+    }
     return null;
   }, [dbProject, id]);
 
