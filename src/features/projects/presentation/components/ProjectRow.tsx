@@ -69,11 +69,21 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
           (e.currentTarget as HTMLDivElement).style.background = colors.bgCard;
         }}
       >
-        {/* Icon placeholder */}
+        {/* Icon placeholder or Image */}
         <div
-          className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
+          className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 flex items-center justify-center overflow-hidden"
           style={{ background: colors.memberBg }}
-        />
+        >
+          {/* @ts-ignore */}
+          {project.image ? (
+            /* @ts-ignore */
+            <img src={project.image} alt={project.name} className="w-full h-full object-cover" />
+          ) : (
+            <span style={{ fontSize: '24px', fontWeight: 700, color: colors.text }}>
+              {project.name.charAt(0).toUpperCase()}
+            </span>
+          )}
+        </div>
 
         {/* Content */}
         <div className="min-w-0 flex-1">

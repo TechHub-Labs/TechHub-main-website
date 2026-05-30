@@ -48,9 +48,19 @@ export function ProjectDetailsSidebar({ project, colors, dark, mounted }: Projec
     >
       {/* Avatar placeholder */}
       <div
-        className="w-24 h-24 rounded-full mx-auto mb-8"
+        className="w-24 h-24 rounded-full mx-auto mb-8 flex items-center justify-center overflow-hidden"
         style={{ background: dark ? '#202868' : '#ECEFF7' }}
-      />
+      >
+        {/* @ts-ignore */}
+        {project.image ? (
+          /* @ts-ignore */
+          <img src={project.image} alt={project.name} className="w-full h-full object-cover" />
+        ) : (
+          <span style={{ fontSize: '36px', fontWeight: 700, color: colors.text }}>
+            {project.name.charAt(0).toUpperCase()}
+          </span>
+        )}
+      </div>
 
       {/* Metadata rows */}
       <div className="space-y-5 mb-10">
@@ -69,15 +79,27 @@ export function ProjectDetailsSidebar({ project, colors, dark, mounted }: Projec
 
       {/* Social links */}
       <div className="flex items-center justify-center gap-5">
-        {[FaTiktok, FaLinkedinIn, FaXTwitter].map((Icon, i) => (
-          <button
-            key={i}
-            className="text-2xl transition-all duration-300 hover:scale-110"
-            style={{ color: colors.text }}
-          >
-            <Icon />
-          </button>
-        ))}
+        {/* @ts-ignore */}
+        {project.tiktok_url && (
+          /* @ts-ignore */
+          <a href={project.tiktok_url} target="_blank" rel="noreferrer" className="text-2xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}>
+            <FaTiktok />
+          </a>
+        )}
+        {/* @ts-ignore */}
+        {project.linkedin_url && (
+          /* @ts-ignore */
+          <a href={project.linkedin_url} target="_blank" rel="noreferrer" className="text-2xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}>
+            <FaLinkedinIn />
+          </a>
+        )}
+        {/* @ts-ignore */}
+        {project.twitter_url && (
+          /* @ts-ignore */
+          <a href={project.twitter_url} target="_blank" rel="noreferrer" className="text-2xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}>
+            <FaXTwitter />
+          </a>
+        )}
       </div>
     </div>
   );

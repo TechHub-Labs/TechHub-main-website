@@ -54,6 +54,7 @@ export interface Project {
   tech: string[];
   status: string | null;
   category: string | null;
+  team_size: string | null;
   github_url: string | null;
   live_url: string | null;
   image_url: string | null;

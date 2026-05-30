@@ -67,12 +67,15 @@ export function ProjectDetailsPage() {
         image: dbProject.image_url || undefined,
         status: dbProject.status || (dbProject.in_development ? 'IN DEVELOPMENT' : 'LIVE'),
         category: dbProject.category || 'Product',
-        teamSize: 'Dynamic',
+        teamSize: dbProject.team_size || 'Nil',
         tech: Array.isArray(dbProject.tech) ? dbProject.tech.join(', ') : (dbProject.tech || ''),
-        launchDate: 'Active',
+        launchDate: dbProject.launch_date || 'TBA',
         website: dbProject.live_url || '',
         tags: Array.isArray(dbProject.tech) ? dbProject.tech : (dbProject.tech ? dbProject.tech.split(',').map((t: string) => t.trim()) : []),
         github_url: dbProject.github_url || '',
+        tiktok_url: dbProject.tiktok_url || '',
+        linkedin_url: dbProject.linkedin_url || '',
+        twitter_url: dbProject.twitter_url || '',
       };
     }
     return allProjects.find(p => p.id === id);
@@ -133,7 +136,15 @@ export function ProjectDetailsPage() {
               <div className={`transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start gap-7 mb-8">
-                  <div className="w-24 h-24 rounded-full shrink-0" style={{ background: dark ? colors.bgCard : '#ECEFF7' }} />
+                  <div className="w-24 h-24 rounded-full shrink-0 flex items-center justify-center overflow-hidden" style={{ background: dark ? colors.bgCard : '#ECEFF7' }}>
+                    {project.image ? (
+                      <img src={project.image} alt={project.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span style={{ fontSize: '36px', fontWeight: 700, color: colors.text }}>
+                        {project.name.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-4 mb-3">
                       <h1 className="text-5xl lg:text-6xl font-bold tracking-tight" style={{ color: colors.text }}>

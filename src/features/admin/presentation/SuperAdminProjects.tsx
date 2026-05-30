@@ -10,7 +10,7 @@ import { AdminInput, AdminTextarea, TagEditor, AdminToggle, SaveBar, AvatarUploa
 const STATUS_OPTIONS = ['In Development', 'Completed', 'On Hold', 'Archived'];
 const EMPTY: Partial<Project> = {
   title: '', description: '', short_description: '', tech: [], status: 'In Development',
-  category: '', github_url: '', live_url: '', image_url: '', tiktok_url: '', linkedin_url: '', twitter_url: '', launch_date: '', in_development: true,
+  category: '', team_size: '', github_url: '', live_url: '', image_url: '', tiktok_url: '', linkedin_url: '', twitter_url: '', launch_date: '', in_development: true,
 };
 
 export function SuperAdminProjects() {
@@ -35,9 +35,16 @@ export function SuperAdminProjects() {
     const { data: pData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
     setProjects((pData ?? []) as Project[]);
 
-    // Load registered member profile listings
-    const { data: mData } = await supabase.from('members').select('id, name, projects').order('name');
-    setAllMembers(mData ?? []);
+    // Load registered member and executive profile listings
+    const { data: mData } = await supabase.from('members').select('id, name, projects');
+    const { data: eData } = await supabase.from('executives').select('id, name, projects');
+    
+    const combined = [
+      ...(mData ?? []).map((m: any) => ({ ...m, table: 'members' })),
+      ...(eData ?? []).map((e: any) => ({ ...e, table: 'executives' }))
+    ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    setAllMembers(combined);
 
     setLoading(false);
   }, []);
@@ -77,11 +84,20 @@ export function SuperAdminProjects() {
     if (!editing) return;
     setSaving(true); setSaved(false); setFormErr('');
 
+    if (!editing.title?.trim()) { setSaving(false); return setFormErr('Title is required.'); }
+    if (!editing.category?.trim()) { setSaving(false); return setFormErr('Category is required.'); }
+    if (!editing.short_description?.trim()) { setSaving(false); return setFormErr('Short Description is required.'); }
+    if (!editing.description?.trim()) { setSaving(false); return setFormErr('Long Description is required.'); }
+    if (!editing.launch_date?.trim()) { setSaving(false); return setFormErr('Launch Date is required.'); }
+    if (!editing.team_size?.trim()) { setSaving(false); return setFormErr('Team Size is required.'); }
+    if (!editing.tech || editing.tech.length === 0) { setSaving(false); return setFormErr('At least one technology is required in the Tech Stack.'); }
+
     const payload = {
-      title: editing.title!, description: editing.description, short_description: editing.short_description, tech: editing.tech ?? [],
+      title: editing.title, description: editing.description, short_description: editing.short_description, tech: editing.tech ?? [],
       status: editing.status, category: editing.category, github_url: editing.github_url,
       live_url: editing.live_url, image_url: editing.image_url, 
       tiktok_url: editing.tiktok_url, linkedin_url: editing.linkedin_url, twitter_url: editing.twitter_url, launch_date: editing.launch_date,
+      team_size: editing.team_size,
       in_development: editing.in_development ?? true,
     };
 
@@ -113,13 +129,13 @@ export function SuperAdminProjects() {
           // If selected but doesn't have reference, link it
           if (!hasTitle && !hasId) {
             const updated = [...memberProjects, projectTitle];
-            await supabase.from('members').update({ projects: updated }).eq('id', member.id);
+            await supabase.from(member.table).update({ projects: updated }).eq('id', member.id);
           }
         } else {
           // If unselected but contains reference, unlink it
           if (hasTitle || hasId) {
             const updated = memberProjects.filter((p: any) => p !== projectTitle && p !== projectId);
-            await supabase.from('members').update({ projects: updated }).eq('id', member.id);
+            await supabase.from(member.table).update({ projects: updated }).eq('id', member.id);
           }
         }
       }
@@ -147,6 +163,10 @@ export function SuperAdminProjects() {
 
   const set = (key: keyof Project) => (val: any) =>
     setEditing(prev => prev ? { ...prev, [key]: val } : prev);
+
+  const toggleMember = (id: string) => {
+    setSelectedMemberIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
 
   const filtered = projects.filter(p =>
     !search || p.title.toLowerCase().includes(search.toLowerCase())
@@ -247,7 +267,10 @@ export function SuperAdminProjects() {
               </div>
 
               <AdminInput label="Title"     value={editing.title ?? ''}    onChange={set('title')}    required />
-              <AdminInput label="Category"  value={editing.category ?? ''} onChange={set('category')} placeholder="e.g. Web, Mobile, AI" />
+              <div className="grid grid-cols-2 gap-4">
+                <AdminInput label="Category"  value={editing.category ?? ''} onChange={set('category')} placeholder="e.g. Web, Mobile, AI" />
+                <AdminInput label="Team Size"  value={editing.team_size ?? ''} onChange={set('team_size')} placeholder="e.g. 5 or Nil" />
+              </div>
               <AdminInput label="Short Description" value={editing.short_description ?? ''} onChange={set('short_description')} placeholder="e.g. Discover events and hangout spots around you" />
               <div className="grid grid-cols-2 gap-4">
                 <AdminInput label="Launch Date" value={editing.launch_date ?? ''} onChange={set('launch_date')} placeholder="e.g. May 15, 2026" />
