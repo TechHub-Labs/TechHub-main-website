@@ -24,7 +24,7 @@ export function SuperAdminExecutives() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from('executives').select('*').order('name');
+    const { data } = await supabase.from('executives').select('*').order('sort_order', { ascending: true });
     setExecs((data ?? []) as Executive[]);
     setLoading(false);
   }, []);
@@ -40,6 +40,8 @@ export function SuperAdminExecutives() {
     if (!editing) return;
     setSaving(true); setSaved(false); setFormErr('');
 
+    if (!editing.name?.trim()) { setSaving(false); return setFormErr('Please provide a name.'); }
+    if (!editing.role_title?.trim()) { setSaving(false); return setFormErr('Please provide a role/title.'); }
     if (!editing.avatar_url) { setSaving(false); return setFormErr('Please upload a profile picture.'); }
     if (!editing.category || editing.category.length === 0) { setSaving(false); return setFormErr('Please select a category.'); }
     if (!editing.quote?.trim()) { setSaving(false); return setFormErr('Please provide a quote.'); }
@@ -76,6 +78,32 @@ export function SuperAdminExecutives() {
     load();
   };
 
+  const moveRow = async (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === execs.length - 1) return;
+
+    const newExecs = [...execs];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    // Swap positions
+    const temp = newExecs[index];
+    newExecs[index] = newExecs[targetIndex];
+    newExecs[targetIndex] = temp;
+
+    // Assign clean sequential order
+    const updates = newExecs.map((e, i) => ({ ...e, sort_order: i }));
+    setExecs(updates); // Optimistic UI
+
+    // Update DB
+    try {
+      await Promise.all(updates.map(e => 
+        supabase.from('executives').update({ sort_order: e.sort_order }).eq('id', e.id)
+      ));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const set = (key: keyof Executive) => (val: any) =>
     setEditing(prev => prev ? { ...prev, [key]: val } : prev);
 
@@ -106,17 +134,35 @@ export function SuperAdminExecutives() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Executive', 'Role', 'Category', 'Visible', 'Actions'].map(h => (
+                {['Order', 'Executive', 'Role', 'Category', 'Visible', 'Actions'].map(h => (
                   <th key={h} style={{ color: '#64748b', fontWeight: 600, textAlign: 'left', padding: '8px 12px' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {execs.map(ex => (
+              {execs.map((ex, idx) => (
                 <tr key={ex.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                   onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                 >
+                  <td style={{ padding: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <button 
+                        onClick={() => moveRow(idx, 'up')} 
+                        disabled={idx === 0}
+                        style={{ background: 'none', border: 'none', color: idx === 0 ? '#334155' : '#94a3b8', cursor: idx === 0 ? 'default' : 'pointer' }}
+                      >
+                        ▲
+                      </button>
+                      <button 
+                        onClick={() => moveRow(idx, 'down')} 
+                        disabled={idx === execs.length - 1}
+                        style={{ background: 'none', border: 'none', color: idx === execs.length - 1 ? '#334155' : '#94a3b8', cursor: idx === execs.length - 1 ? 'default' : 'pointer' }}
+                      >
+                        ▼
+                      </button>
+                    </div>
+                  </td>
                   <td style={{ padding: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div className="min-input" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, padding: ex.avatar_url ? '0' : '8px' }}>
@@ -181,9 +227,9 @@ export function SuperAdminExecutives() {
             <form onSubmit={handleSave} className="flex flex-col gap-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="md:w-1/3 flex flex-col gap-4">
-                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} bucketName="executives" />
+                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} bucketName="executives" required />
                   <div>
-                    <label className="admin-label">Category</label>
+                    <label className="admin-label">Category <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></label>
                     <div className="flex flex-wrap gap-2">
                       {CATEGORY_OPTIONS.map(opt => (
                         <button key={opt} type="button" onClick={() => toggleCategory(opt)} className={(editing.category ?? []).includes(opt) ? 'min-input' : 'min-button'} style={{
@@ -199,13 +245,13 @@ export function SuperAdminExecutives() {
                   <AdminInput label="Full Name"  value={editing.name ?? ''}      onChange={set('name')}      required />
                   <AdminInput label="Role/Title" value={editing.role_title ?? ''} onChange={set('role_title')} required />
                   <div className="grid grid-cols-3 gap-4">
-                    <AdminInput label="GitHub" value={editing.github ?? ''} onChange={set('github')} />
+                    <AdminInput label="GitHub/Portfolio" value={editing.github ?? ''} onChange={set('github')} required />
                     <AdminInput label="LinkedIn" value={editing.linkedin ?? ''} onChange={set('linkedin')} />
                     <AdminInput label="Twitter/X" value={editing.twitter ?? ''} onChange={set('twitter')} />
                   </div>
-                  <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={3} />
+                  <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={3} required />
                   <div className="flex flex-col sm:flex-row sm:gap-4 mt-2">
-                    <div className="flex-1"><TagEditor label="Skills"   tags={editing.skills   ?? []} onChange={set('skills')}   placeholder="e.g. Leadership" /></div>
+                    <div className="flex-1"><TagEditor label="Skills"   tags={editing.skills   ?? []} onChange={set('skills')}   placeholder="e.g. Leadership" required /></div>
                   </div>
 
                   <div className="mt-4">

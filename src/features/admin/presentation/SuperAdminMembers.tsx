@@ -30,7 +30,7 @@ export function SuperAdminMembers() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from('members').select('*').order('name');
+    const { data } = await supabase.from('members').select('*').order('sort_order', { ascending: true });
     setMembers((data ?? []) as Member[]);
     setLoading(false);
   }, []);
@@ -46,6 +46,9 @@ export function SuperAdminMembers() {
     if (!editing) return;
     setSaving(true); setSaved(false); setFormErr('');
 
+    if (!editing.name?.trim()) { setSaving(false); return setFormErr('Please provide a name.'); }
+    if (!editing.role_title?.trim()) { setSaving(false); return setFormErr('Please provide a role/title.'); }
+    if (!editing.year?.trim()) { setSaving(false); return setFormErr('Please provide a year.'); }
     if (!editing.avatar_url) { setSaving(false); return setFormErr('Please upload a profile picture.'); }
     if (!editing.category || editing.category.length === 0) { setSaving(false); return setFormErr('Please select a category.'); }
     if (!editing.quote?.trim()) { setSaving(false); return setFormErr('Please provide a quote.'); }
@@ -85,6 +88,32 @@ export function SuperAdminMembers() {
   const toggleVisible = async (m: Member) => {
     await (supabase.from('members') as any).update({ visible: !m.visible }).eq('id', m.id);
     load();
+  };
+
+  const moveRow = async (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === members.length - 1) return;
+
+    const newMembers = [...members];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    // Swap positions
+    const temp = newMembers[index];
+    newMembers[index] = newMembers[targetIndex];
+    newMembers[targetIndex] = temp;
+
+    // Assign clean sequential order to all to fix any zeroes
+    const updates = newMembers.map((m, i) => ({ ...m, sort_order: i }));
+    setMembers(updates); // Optimistic UI
+
+    // Update DB
+    try {
+      await Promise.all(updates.map(m => 
+        supabase.from('members').update({ sort_order: m.sort_order }).eq('id', m.id)
+      ));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const filtered = members.filter(m =>
@@ -136,17 +165,35 @@ export function SuperAdminMembers() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Member', 'Role', 'Year', 'Category', 'Visible', 'Actions'].map(h => (
+                {['Order', 'Member', 'Role', 'Year', 'Category', 'Visible', 'Actions'].map(h => (
                   <th key={h} style={{ color: '#64748b', fontWeight: 600, textAlign: 'left', padding: '8px 12px', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {filtered.map(m => (
+              {filtered.map((m, idx) => (
                 <tr key={m.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                   onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                 >
+                  <td style={{ padding: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <button 
+                        onClick={() => moveRow(idx, 'up')} 
+                        disabled={idx === 0}
+                        style={{ background: 'none', border: 'none', color: idx === 0 ? '#334155' : '#94a3b8', cursor: idx === 0 ? 'default' : 'pointer' }}
+                      >
+                        ▲
+                      </button>
+                      <button 
+                        onClick={() => moveRow(idx, 'down')} 
+                        disabled={idx === members.length - 1}
+                        style={{ background: 'none', border: 'none', color: idx === members.length - 1 ? '#334155' : '#94a3b8', cursor: idx === members.length - 1 ? 'default' : 'pointer' }}
+                      >
+                        ▼
+                      </button>
+                    </div>
+                  </td>
                   <td style={{ padding: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div className="min-input" style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, padding: m.avatar_url ? '0' : '8px' }}>
@@ -227,9 +274,9 @@ export function SuperAdminMembers() {
               <div className="flex flex-col md:flex-row gap-8">
                 
                 <div className="md:w-1/3 flex flex-col gap-2">
-                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} bucketName="members" />
+                  <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} bucketName="members" required />
                   <div className="mt-2">
-                    <label className="admin-label">Category</label>
+                    <label className="admin-label">Category <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span></label>
                     <div className="flex flex-wrap gap-2">
                       {CATEGORY_OPTIONS.map(opt => (
                         <button key={opt} type="button" onClick={() => toggleCategory(opt)} className={(editing.category ?? []).includes(opt) ? 'min-input' : 'min-button'} style={{
@@ -247,20 +294,20 @@ export function SuperAdminMembers() {
                 <div className="md:w-2/3 flex flex-col">
                   <div className="flex flex-col sm:flex-row sm:gap-4">
                     <div className="flex-1"><AdminInput label="Full Name"  value={editing.name ?? ''}      onChange={set('name')}      required /></div>
-                    <div className="flex-1"><AdminInput label="Role/Title" value={editing.role_title ?? ''} onChange={set('role_title')} /></div>
-                    <div className="sm:w-24"><AdminInput label="Year" value={editing.year ?? ''}       onChange={set('year')} /></div>
+                    <div className="flex-1"><AdminInput label="Role/Title" value={editing.role_title ?? ''} onChange={set('role_title')} required /></div>
+                    <div className="sm:w-24"><AdminInput label="Year" value={editing.year ?? ''}       onChange={set('year')} required /></div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:gap-4">
-                    <div className="flex-1"><AdminInput label="GitHub"     value={editing.github ?? ''}     onChange={set('github')} /></div>
+                    <div className="flex-1"><AdminInput label="GitHub/Portfolio"     value={editing.github ?? ''}     onChange={set('github')} required /></div>
                     <div className="flex-1"><AdminInput label="LinkedIn"   value={editing.linkedin ?? ''}   onChange={set('linkedin')} /></div>
                     <div className="flex-1"><AdminInput label="Twitter/X"  value={editing.twitter ?? ''}    onChange={set('twitter')} /></div>
                   </div>
 
-                  <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={2} />
+                  <AdminTextarea label="Quote" value={editing.quote ?? ''} onChange={set('quote')} rows={2} required />
                   
                   <div className="flex flex-col sm:flex-row sm:gap-4">
-                    <div className="flex-1"><TagEditor label="Skills"   tags={editing.skills   ?? []} onChange={set('skills')}   placeholder="e.g. React" /></div>
+                    <div className="flex-1"><TagEditor label="Skills"   tags={editing.skills   ?? []} onChange={set('skills')}   placeholder="e.g. React" required /></div>
                   </div>
                 </div>
               </div>

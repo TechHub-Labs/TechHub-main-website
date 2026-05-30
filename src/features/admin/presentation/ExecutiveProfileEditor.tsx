@@ -70,12 +70,12 @@ export function ExecutiveProfileEditor() {
       </p>
 
       <form onSubmit={handleSubmit}>
-        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} bucketName="executives" />
+        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} bucketName="executives" required />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
           <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} required placeholder="President" />
-          <AdminInput label="GitHub"     value={github}    onChange={setGithub}    placeholder="https://github.com/..." />
+          <AdminInput label="GitHub/Portfolio" value={github} onChange={setGithub} required placeholder="https://github.com/..." />
           <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  placeholder="https://linkedin.com/in/..." />
           <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   placeholder="https://twitter.com/..." />
         </div>
@@ -83,13 +83,13 @@ export function ExecutiveProfileEditor() {
         <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="Your vision in one sentence…" rows={3} />
         
         <div style={{ marginBottom: '16px' }}>
-          <TagEditor label="Skills" tags={skills} onChange={setSkills} placeholder="e.g. Leadership, Node.js" />
+          <TagEditor label="Skills" tags={skills} onChange={setSkills} placeholder="e.g. Leadership, Node.js" required />
         </div>
 
         {/* Category */}
         <div style={{ marginBottom: '16px' }}>
           <label className="admin-label">
-            Category
+            Category <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {CATEGORY_OPTIONS.map(opt => (

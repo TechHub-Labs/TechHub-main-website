@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS members (
   linkedin    TEXT,
   twitter     TEXT,
   projects    TEXT[]      NOT NULL DEFAULT '{}',
+  sort_order  INTEGER     NOT NULL DEFAULT 0,
   visible     BOOLEAN     NOT NULL DEFAULT false,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -60,6 +61,12 @@ CREATE TABLE IF NOT EXISTS executives (
   category    TEXT[]      NOT NULL DEFAULT '{}',
   quote       TEXT,
   avatar_url  TEXT,
+  skills      TEXT[]      NOT NULL DEFAULT '{}',
+  projects    TEXT[]      NOT NULL DEFAULT '{}',
+  github      TEXT,
+  linkedin    TEXT,
+  twitter     TEXT,
+  sort_order  INTEGER     NOT NULL DEFAULT 0,
   visible     BOOLEAN     NOT NULL DEFAULT false,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()

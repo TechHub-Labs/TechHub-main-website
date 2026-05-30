@@ -213,10 +213,12 @@ export function AvatarUploader({
   currentUrl,
   onUploaded,
   bucketName = "avatars",
+  required = false,
 }: {
   currentUrl: string | null;
   onUploaded: (url: string) => void;
   bucketName?: string;
+  required?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -246,7 +248,12 @@ export function AvatarUploader({
 
   return (
     <div style={{ marginBottom: "24px" }}>
-      <label className="admin-label">Profile Photo</label>
+      <label className="admin-label">
+        Profile Photo
+        {required && (
+          <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+        )}
+      </label>
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <div
           className="min-input"

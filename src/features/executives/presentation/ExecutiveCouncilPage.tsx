@@ -36,7 +36,7 @@ export function ExecutiveCouncilPage() {
     setTimeout(() => setHeaderVisible(true), 80);
 
     const loadData = async () => {
-      const { data } = await supabase.from('executives').select('*').eq('visible', true);
+      const { data } = await supabase.from('executives').select('*').eq('visible', true).order('sort_order', { ascending: true });
       if (data) {
         const mapped: CouncilMember[] = data.map((exec: any) => ({
           id: exec.id,

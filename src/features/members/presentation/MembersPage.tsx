@@ -42,7 +42,8 @@ export function MembersPage() {
         const { data, error } = await supabase
           .from('members')
           .select('*')
-          .eq('visible', true);
+          .eq('visible', true)
+          .order('sort_order', { ascending: true });
 
         if (error) {
           console.warn("Failed to load members from Supabase:", error.message);

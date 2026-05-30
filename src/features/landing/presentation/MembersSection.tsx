@@ -124,6 +124,7 @@ export function MembersSection({ colors }: MembersSectionProps) {
           .from('members')
           .select('*')
           .eq('visible', true)
+          .order('sort_order', { ascending: true })
           .limit(4);
 
         if (!error && data) {

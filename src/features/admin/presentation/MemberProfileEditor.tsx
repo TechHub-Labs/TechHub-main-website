@@ -41,6 +41,7 @@ export function MemberProfileEditor() {
     setSaving(true); setSaved(false); setError('');
 
     if (!avatarUrl) { setSaving(false); return setError('Please upload a profile picture.'); }
+    if (!year.trim()) { setSaving(false); return setError('Please provide your year.'); }
     if (category.length === 0) { setSaving(false); return setError('Please select a category.'); }
     if (!quote.trim()) { setSaving(false); return setError('Please provide a quote.'); }
     if (skills.length === 0) { setSaving(false); return setError('At least one skill is required.'); }
@@ -75,13 +76,13 @@ export function MemberProfileEditor() {
       </p>
 
       <form onSubmit={handleSubmit}>
-        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} bucketName="members" />
+        <AvatarUploader currentUrl={avatarUrl} onUploaded={setAvatarUrl} bucketName="members" required />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
           <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} required placeholder="Frontend Developer" />
-          <AdminInput label="Year"       value={year}      onChange={setYear}      placeholder="'26" />
-          <AdminInput label="GitHub"     value={github}    onChange={setGithub}    placeholder="https://github.com/..." />
+          <AdminInput label="Year"       value={year}      onChange={setYear}      required placeholder="'26" />
+          <AdminInput label="GitHub/Portfolio" value={github} onChange={setGithub} required placeholder="https://github.com/..." />
           <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  placeholder="https://linkedin.com/in/..." />
           <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   placeholder="https://twitter.com/..." />
         </div>
@@ -95,7 +96,7 @@ export function MemberProfileEditor() {
         {/* Category checkboxes */}
         <div style={{ marginBottom: '16px' }}>
           <label className="admin-label">
-            Category
+            Category <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
           </label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {CATEGORY_OPTIONS.map(opt => (
