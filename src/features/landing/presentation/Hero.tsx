@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeColors } from '../domain/types';
 import { useCountUp } from '../../../shared/hooks/useCountUp';
+import { supabase } from '../../../core/supabase/client';
 
 import { ThemeButton } from '../../../shared/components/ThemeButton';
 
@@ -85,13 +86,23 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
 
   const normalCardBg = isDark ? colors.bgCardHover : colors.bgCard;
 
-  const avatars = [
+  const [avatars, setAvatars] = useState<string[]>([
     "https://i.pravatar.cc/100?img=33",
     "https://i.pravatar.cc/100?img=47",
     "https://i.pravatar.cc/100?img=12",
     "https://i.pravatar.cc/100?img=32",
     "https://i.pravatar.cc/100?img=57",
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchAvatars = async () => {
+      const { data } = await supabase.from('members').select('avatar_url').order('sort_order', { ascending: true }).limit(5);
+      if (data && data.length > 0) {
+        setAvatars(data.map((m, i) => m.avatar_url || `https://i.pravatar.cc/100?img=${i + 10}`));
+      }
+    };
+    fetchAvatars();
+  }, []);
 
   // Per-card float offsets — different periods & phase so they never sync
   const f1 = Math.sin(ft * (2 * Math.PI / 4.0)) * 5;

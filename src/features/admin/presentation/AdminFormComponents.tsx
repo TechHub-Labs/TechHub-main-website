@@ -114,8 +114,15 @@ export function TagEditor({
 }) {
   const [input, setInput] = useState("");
   const add = () => {
-    const val = input.trim();
-    if (val && !tags.includes(val)) onChange([...tags, val]);
+    if (!input.trim()) return;
+    const newTags = input
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t && !tags.includes(t));
+      
+    if (newTags.length > 0) {
+      onChange([...tags, ...newTags]);
+    }
     setInput("");
   };
   return (

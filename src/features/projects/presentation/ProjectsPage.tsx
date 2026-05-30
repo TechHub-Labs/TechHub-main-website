@@ -7,11 +7,8 @@ import { useEffect, useState } from 'react';
 import { useTheme } from '../../landing/domain/useTheme';
 import { Navigation } from '../../../shared/components/Navigation';
 import { Footer } from '../../../shared/components/Footer';
-import { CTASection } from '../../../shared/components/CTASection';
-import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
-import { PageMargin } from '../../../shared/components/PageMargin';
 import { SectionTitle } from '../../../shared/components/SectionTitle';
-import { DEMO_ALL_PROJECTS } from '../../../core/data/demoData';
+import { supabase } from '../../../core/supabase/client';
 import { ProjectRow } from './components/ProjectRow';
 
 export interface Project {
@@ -29,7 +26,7 @@ export interface Project {
   about2: string;
 }
 
-export const allProjects: Project[] = DEMO_ALL_PROJECTS as Project[];
+
 
 const PAGE_SIZE = 9;
 
@@ -53,16 +50,24 @@ export function ProjectsPage() {
   const [page, setPage]               = useState(1);
   const [mounted, setMounted]         = useState(false);
 
+  const [allProjects, setAllProjects]   = useState<any[]>([]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     requestAnimationFrame(() => setMounted(true));
+    
+    const fetchProjects = async () => {
+      const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+      if (data) setAllProjects(data);
+    };
+    fetchProjects();
   }, []);
 
   const categories: string[] = ['All', ...Array.from(new Set(allProjects.map(p => p.category)))];
   const statuses: (Project['status'] | 'All')[] = ['All', 'LIVE', 'BETA', 'PAUSED', 'IN DEVELOPMENT', 'UPCOMING'];
 
   const filtered = allProjects.filter(p => {
-    const matchesSearch   = p.name.toLowerCase().includes(search.toLowerCase()) || p.desc.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch   = (p.title || '').toLowerCase().includes(search.toLowerCase()) || (p.short_description || '').toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === 'Category' || category === 'All' || p.category === category;
     const matchesStatus   = statusFilter === 'Filter by Status' || statusFilter === 'All' || p.status === statusFilter;
     return matchesSearch && matchesCategory && matchesStatus;

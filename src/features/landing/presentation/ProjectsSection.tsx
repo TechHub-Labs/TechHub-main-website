@@ -7,11 +7,11 @@
  * - Staggered AnimatedCard entries
  */
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeColors } from '../domain/types';
-import { DEMO_LANDING_PROJECTS } from '../../../core/data/demoData';
 import { AnimatedCard } from '../../../shared/components/AnimatedCard';
+import { supabase } from '../../../core/supabase/client';
 import { SectionTitle } from '../../../shared/components/SectionTitle';
 
 interface ProjectsSectionProps {
@@ -23,7 +23,7 @@ function ProjectCard({
   index,
   colors,
 }: {
-  project: (typeof DEMO_LANDING_PROJECTS)[0];
+  project: any;
   index: number;
   colors: ThemeColors;
 }) {
@@ -123,15 +123,15 @@ function ProjectCard({
           className="text-4xl sm:text-5xl font-bold mb-3 tracking-tight relative z-10"
           style={{ color: colors.text }}
         >
-          {project.name}
+          {project.title}
         </h3>
         <p className="text-base leading-relaxed mb-8 px-2 relative z-10" style={{ color: colors.textMuted }}>
-          {project.desc}
+          {project.short_description}
         </p>
 
         {/* Tags */}
         <div className="flex gap-2.5 justify-center mt-auto flex-wrap relative z-10">
-          {project.tags.map(tag => (
+          {(project.tech || []).map((tag: string) => (
             <span
               key={tag}
               className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 hover:scale-105"
@@ -147,6 +147,16 @@ function ProjectCard({
 }
 
 export function ProjectsSection({ colors }: ProjectsSectionProps) {
+  const [projects, setProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false }).limit(3);
+      if (data) setProjects(data);
+    };
+    fetchProjects();
+  }, []);
+
   return (
     <section className="pt-40 overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -169,8 +179,8 @@ export function ProjectsSection({ colors }: ProjectsSectionProps) {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {DEMO_LANDING_PROJECTS.map((project, i) => (
-            <ProjectCard key={project.name} project={project} index={i} colors={colors} />
+          {projects.map((project, i) => (
+            <ProjectCard key={project.id} project={project} index={i} colors={colors} />
           ))}
         </div>
       </div>

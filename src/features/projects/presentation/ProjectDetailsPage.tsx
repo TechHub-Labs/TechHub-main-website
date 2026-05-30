@@ -8,7 +8,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { FaGithub, FaLinkedinIn, FaTiktok, FaXTwitter } from 'react-icons/fa6';
 
 import { useTheme } from '../../landing/domain/useTheme';
-import { allProjects } from '../../../core/data/mockData';
+
 import { Navigation } from '../../../shared/components/Navigation';
 import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
 import { PageMargin } from '../../../shared/components/PageMargin';
@@ -77,8 +77,7 @@ export function ProjectDetailsPage() {
         linkedin_url: dbProject.linkedin_url || '',
         twitter_url: dbProject.twitter_url || '',
       };
-    }
-    return allProjects.find(p => p.id === id);
+    return null;
   }, [dbProject, id]);
 
   if (loading) {
