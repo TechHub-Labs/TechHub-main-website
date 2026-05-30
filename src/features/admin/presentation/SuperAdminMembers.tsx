@@ -90,16 +90,18 @@ export function SuperAdminMembers() {
     load();
   };
 
-  const moveRow = async (index: number, direction: 'up' | 'down') => {
-    if (direction === 'up' && index === 0) return;
-    if (direction === 'down' && index === members.length - 1) return;
+  const moveRow = async (id: string, direction: 'up' | 'down') => {
+    const idx = members.findIndex(m => m.id === id);
+    if (idx === -1) return;
+    if (direction === 'up' && idx === 0) return;
+    if (direction === 'down' && idx === members.length - 1) return;
 
     const newMembers = [...members];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const targetIndex = direction === 'up' ? idx - 1 : idx + 1;
     
     // Swap positions
-    const temp = newMembers[index];
-    newMembers[index] = newMembers[targetIndex];
+    const temp = newMembers[idx];
+    newMembers[idx] = newMembers[targetIndex];
     newMembers[targetIndex] = temp;
 
     // Assign clean sequential order to all to fix any zeroes
@@ -113,6 +115,36 @@ export function SuperAdminMembers() {
       ));
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    e.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text/plain');
+    if (!draggedId || draggedId === targetId) return;
+
+    const newItems = [...members];
+    const draggedIdx = newItems.findIndex(m => m.id === draggedId);
+    const targetIdx = newItems.findIndex(m => m.id === targetId);
+    if (draggedIdx === -1 || targetIdx === -1) return;
+
+    // Remove dragged item and insert at target index
+    const [draggedItem] = newItems.splice(draggedIdx, 1);
+    newItems.splice(targetIdx, 0, draggedItem);
+
+    const updates = newItems.map((m, i) => ({ ...m, sort_order: i }));
+    setMembers(updates);
+
+    try {
+      await Promise.all(updates.map(m => 
+        supabase.from('members').update({ sort_order: m.sort_order }).eq('id', m.id)
+      ));
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -172,23 +204,28 @@ export function SuperAdminMembers() {
             </thead>
             <tbody>
               {filtered.map((m, idx) => (
-                <tr key={m.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                <tr key={m.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: search ? 'default' : 'grab' }}
+                  draggable={!search}
+                  onDragStart={(e) => handleDragStart(e, m.id!)}
+                  onDragOver={(e) => { if (!search) e.preventDefault(); }}
+                  onDrop={(e) => { if (!search) handleDrop(e, m.id!); }}
                   onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                 >
-                  <td style={{ padding: '12px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <td style={{ padding: '12px', width: '60px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center' }}>
+                      {!search && <div style={{ color: '#475569', fontSize: '10px', marginBottom: '2px' }}>⋮⋮</div>}
                       <button 
-                        onClick={() => moveRow(idx, 'up')} 
-                        disabled={idx === 0}
-                        style={{ background: 'none', border: 'none', color: idx === 0 ? '#334155' : '#94a3b8', cursor: idx === 0 ? 'default' : 'pointer' }}
+                        onClick={() => moveRow(m.id!, 'up')} 
+                        disabled={idx === 0 || search !== ''}
+                        style={{ background: 'none', border: 'none', color: idx === 0 || search !== '' ? '#334155' : '#94a3b8', cursor: idx === 0 || search !== '' ? 'default' : 'pointer' }}
                       >
                         ▲
                       </button>
                       <button 
-                        onClick={() => moveRow(idx, 'down')} 
-                        disabled={idx === members.length - 1}
-                        style={{ background: 'none', border: 'none', color: idx === members.length - 1 ? '#334155' : '#94a3b8', cursor: idx === members.length - 1 ? 'default' : 'pointer' }}
+                        onClick={() => moveRow(m.id!, 'down')} 
+                        disabled={idx === filtered.length - 1 || search !== ''}
+                        style={{ background: 'none', border: 'none', color: idx === filtered.length - 1 || search !== '' ? '#334155' : '#94a3b8', cursor: idx === filtered.length - 1 || search !== '' ? 'default' : 'pointer' }}
                       >
                         ▼
                       </button>

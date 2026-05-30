@@ -35,13 +35,11 @@ export function SuperAdminProjects() {
     const { data: pData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
     setProjects((pData ?? []) as Project[]);
 
-    // Load registered member and executive profile listings
+    // Load registered member profile listings
     const { data: mData } = await supabase.from('members').select('id, name, projects');
-    const { data: eData } = await supabase.from('executives').select('id, name, projects');
     
     const combined = [
-      ...(mData ?? []).map((m: any) => ({ ...m, table: 'members' })),
-      ...(eData ?? []).map((e: any) => ({ ...e, table: 'executives' }))
+      ...(mData ?? []).map((m: any) => ({ ...m, table: 'members' }))
     ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
     setAllMembers(combined);
@@ -268,13 +266,13 @@ export function SuperAdminProjects() {
 
               <AdminInput label="Title"     value={editing.title ?? ''}    onChange={set('title')}    required />
               <div className="grid grid-cols-2 gap-4">
-                <AdminInput label="Category"  value={editing.category ?? ''} onChange={set('category')} placeholder="e.g. Web, Mobile, AI" />
-                <AdminInput label="Team Size"  value={editing.team_size ?? ''} onChange={set('team_size')} placeholder="e.g. 5 or Nil" />
+                <AdminInput label="Category"  value={editing.category ?? ''} onChange={set('category')} placeholder="e.g. Web, Mobile, AI" required />
+                <AdminInput label="Team Size"  value={editing.team_size ?? ''} onChange={set('team_size')} placeholder="e.g. 5 or Nil" required />
               </div>
-              <AdminInput label="Short Description" value={editing.short_description ?? ''} onChange={set('short_description')} placeholder="e.g. Discover events and hangout spots around you" />
+              <AdminInput label="Short Description" value={editing.short_description ?? ''} onChange={set('short_description')} placeholder="e.g. Discover events and hangout spots around you" required />
               <div className="grid grid-cols-2 gap-4">
-                <AdminInput label="Launch Date" value={editing.launch_date ?? ''} onChange={set('launch_date')} placeholder="e.g. May 15, 2026" />
-                <AdminInput label="Live URL (Website)"   value={editing.live_url ?? ''}  onChange={set('live_url')} />
+                <AdminInput label="Launch Date" value={editing.launch_date ?? ''} onChange={set('launch_date')} placeholder="e.g. May 15, 2026" required />
+                <AdminInput label="Live URL (Website)"   value={editing.live_url ?? ''}  onChange={set('live_url')} required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <AdminInput label="GitHub URL" value={editing.github_url ?? ''} onChange={set('github_url')} />
@@ -284,13 +282,13 @@ export function SuperAdminProjects() {
                 <AdminInput label="Twitter/X URL" value={editing.twitter_url ?? ''} onChange={set('twitter_url')} />
                 <AdminInput label="TikTok URL" value={editing.tiktok_url ?? ''} onChange={set('tiktok_url')} />
               </div>
-              <AdminTextarea label="Long Description" value={editing.description ?? ''} onChange={set('description')} rows={4} />
-              <TagEditor label="Tech Stack" tags={editing.tech ?? []} onChange={set('tech')} placeholder="e.g. React, Node.js" />
+              <AdminTextarea label="Long Description" value={editing.description ?? ''} onChange={set('description')} rows={4} required />
+              <TagEditor label="Tech Stack" tags={editing.tech ?? []} onChange={set('tech')} placeholder="e.g. React, Node.js" required />
 
               {/* Project Builders Selection */}
               <div style={{ marginBottom: '24px' }}>
                 <label className="admin-label">
-                  Project Builders / Team Members
+                  Project Builders / Team Members <span style={{ color: "#ef4444", marginLeft: "3px", fontWeight: "normal", fontSize: "12px", textTransform: "none" }}>(Shows Members Only)</span>
                 </label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                   {allMembers.filter(m => selectedMemberIds.includes(m.id)).map(m => (

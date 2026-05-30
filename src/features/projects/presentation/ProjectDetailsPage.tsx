@@ -5,7 +5,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { FaInstagram, FaLinkedinIn, FaTiktok, FaXTwitter } from 'react-icons/fa6';
+import { FaGithub, FaLinkedinIn, FaTiktok, FaXTwitter } from 'react-icons/fa6';
 
 import { useTheme } from '../../landing/domain/useTheme';
 import { allProjects } from '../../../core/data/mockData';
@@ -205,11 +205,14 @@ export function ProjectDetailsPage() {
 
             {/* Footer socials */}
             <div className="flex items-center justify-end gap-5 mt-24">
-              {[FaInstagram, FaLinkedinIn, FaTiktok, FaXTwitter].map((Icon, i) => (
-                <button key={i} className="text-xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}>
-                  <Icon />
-                </button>
-              ))}
+              {/* @ts-ignore */}
+              {project.github_url && <a href={project.github_url} target="_blank" rel="noreferrer" className="text-xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}><FaGithub /></a>}
+              {/* @ts-ignore */}
+              {project.linkedin_url && <a href={project.linkedin_url} target="_blank" rel="noreferrer" className="text-xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}><FaLinkedinIn /></a>}
+              {/* @ts-ignore */}
+              {project.tiktok_url && <a href={project.tiktok_url} target="_blank" rel="noreferrer" className="text-xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}><FaTiktok /></a>}
+              {/* @ts-ignore */}
+              {project.twitter_url && <a href={project.twitter_url} target="_blank" rel="noreferrer" className="text-xl transition-all duration-300 hover:scale-110" style={{ color: colors.text }}><FaXTwitter /></a>}
             </div>
           </div>
 

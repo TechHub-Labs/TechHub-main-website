@@ -21,6 +21,7 @@ export function SuperAdminExecutives() {
   const [saved,    setSaved]   = useState(false);
   const [formErr,  setFormErr] = useState('');
   const [deleting, setDeleting]= useState<string | null>(null);
+  const [search,   setSearch]  = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -51,6 +52,7 @@ export function SuperAdminExecutives() {
     const payload = {
       name: editing.name, role_title: editing.role_title, quote: editing.quote,
       avatar_url: editing.avatar_url, category: editing.category ?? [], visible: editing.visible ?? false,
+      skills: editing.skills ?? [], projects: editing.projects ?? [],
       github: editing.github, linkedin: editing.linkedin, twitter: editing.twitter
     };
 
@@ -78,16 +80,18 @@ export function SuperAdminExecutives() {
     load();
   };
 
-  const moveRow = async (index: number, direction: 'up' | 'down') => {
-    if (direction === 'up' && index === 0) return;
-    if (direction === 'down' && index === execs.length - 1) return;
+  const moveRow = async (id: string, direction: 'up' | 'down') => {
+    const idx = execs.findIndex(e => e.id === id);
+    if (idx === -1) return;
+    if (direction === 'up' && idx === 0) return;
+    if (direction === 'down' && idx === execs.length - 1) return;
 
     const newExecs = [...execs];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const targetIndex = direction === 'up' ? idx - 1 : idx + 1;
     
     // Swap positions
-    const temp = newExecs[index];
-    newExecs[index] = newExecs[targetIndex];
+    const temp = newExecs[idx];
+    newExecs[idx] = newExecs[targetIndex];
     newExecs[targetIndex] = temp;
 
     // Assign clean sequential order
@@ -99,8 +103,38 @@ export function SuperAdminExecutives() {
       await Promise.all(updates.map(e => 
         supabase.from('executives').update({ sort_order: e.sort_order }).eq('id', e.id)
       ));
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    e.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text/plain');
+    if (!draggedId || draggedId === targetId) return;
+
+    const newItems = [...execs];
+    const draggedIdx = newItems.findIndex(e => e.id === draggedId);
+    const targetIdx = newItems.findIndex(e => e.id === targetId);
+    if (draggedIdx === -1 || targetIdx === -1) return;
+
+    // Remove dragged item and insert at target index
+    const [draggedItem] = newItems.splice(draggedIdx, 1);
+    newItems.splice(targetIdx, 0, draggedItem);
+
+    const updates = newItems.map((e, i) => ({ ...e, sort_order: i }));
+    setExecs(updates);
+
+    try {
+      await Promise.all(updates.map(e => 
+        supabase.from('executives').update({ sort_order: e.sort_order }).eq('id', e.id)
+      ));
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -112,6 +146,10 @@ export function SuperAdminExecutives() {
       ? (editing?.category ?? []).filter((c: string) => c !== cat)
       : [...(editing?.category ?? []), cat]);
 
+  const filtered = execs.filter(e =>
+    !search || (e.name ?? '').toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div style={{ padding: '32px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
@@ -119,12 +157,22 @@ export function SuperAdminExecutives() {
           <h1 style={{ color: '#f1f5f9', fontSize: '22px', fontWeight: 700, marginBottom: '2px' }}>Executive Council</h1>
           <p style={{ color: '#64748b', fontSize: '13px' }}>{execs.length} total</p>
         </div>
-        <button onClick={openNew} className="min-button" style={{
-          padding: '10px 18px', borderRadius: '12px', border: 'none',
-          color: '#A3D045', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
-        }}>
-          + Add Executive
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <input
+            placeholder="Search…" value={search} onChange={e => setSearch(e.target.value)}
+            className="min-input"
+            style={{
+              padding: '10px 16px', borderRadius: '12px', color: 'inherit', fontSize: '13px',
+              outline: 'none', width: '200px', transition: 'all 0.2s', border: 'none'
+            }}
+          />
+          <button onClick={openNew} className="min-button" style={{
+            padding: '10px 18px', borderRadius: '12px', border: 'none',
+            color: '#A3D045', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
+          }}>
+            + Add Executive
+          </button>
+        </div>
       </div>
 
       <AdminMessagesPanel role="executive" />
@@ -140,24 +188,29 @@ export function SuperAdminExecutives() {
               </tr>
             </thead>
             <tbody>
-              {execs.map((ex, idx) => (
-                <tr key={ex.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+              {filtered.map((ex, idx) => (
+                <tr key={ex.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: search ? 'default' : 'grab' }}
+                  draggable={!search}
+                  onDragStart={(e) => handleDragStart(e, ex.id!)}
+                  onDragOver={(e) => { if (!search) e.preventDefault(); }}
+                  onDrop={(e) => { if (!search) handleDrop(e, ex.id!); }}
                   onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                 >
-                  <td style={{ padding: '12px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <td style={{ padding: '12px', width: '60px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center' }}>
+                      {!search && <div style={{ color: '#475569', fontSize: '10px', marginBottom: '2px' }}>⋮⋮</div>}
                       <button 
-                        onClick={() => moveRow(idx, 'up')} 
-                        disabled={idx === 0}
-                        style={{ background: 'none', border: 'none', color: idx === 0 ? '#334155' : '#94a3b8', cursor: idx === 0 ? 'default' : 'pointer' }}
+                        onClick={() => moveRow(ex.id!, 'up')} 
+                        disabled={idx === 0 || search !== ''}
+                        style={{ background: 'none', border: 'none', color: idx === 0 || search !== '' ? '#334155' : '#94a3b8', cursor: idx === 0 || search !== '' ? 'default' : 'pointer' }}
                       >
                         ▲
                       </button>
                       <button 
-                        onClick={() => moveRow(idx, 'down')} 
-                        disabled={idx === execs.length - 1}
-                        style={{ background: 'none', border: 'none', color: idx === execs.length - 1 ? '#334155' : '#94a3b8', cursor: idx === execs.length - 1 ? 'default' : 'pointer' }}
+                        onClick={() => moveRow(ex.id!, 'down')} 
+                        disabled={idx === filtered.length - 1 || search !== ''}
+                        style={{ background: 'none', border: 'none', color: idx === filtered.length - 1 || search !== '' ? '#334155' : '#94a3b8', cursor: idx === filtered.length - 1 || search !== '' ? 'default' : 'pointer' }}
                       >
                         ▼
                       </button>
