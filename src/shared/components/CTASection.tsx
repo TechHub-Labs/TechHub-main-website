@@ -55,14 +55,14 @@ export function CTASection({ dark, colors }: CTASectionProps) {
               <ThemeButton
                 variant="primary"
                 colors={colors}
-                isDark={dark}
+                isDark={!dark}
               >
                 Join TechHub
               </ThemeButton>
               <ThemeButton
                 variant="secondary"
                 colors={colors}
-                isDark={dark}
+                isDark={!dark}
                 style={{ color: textColor }} // keeps contrast on inverted card background
               >
                 Partner With Us

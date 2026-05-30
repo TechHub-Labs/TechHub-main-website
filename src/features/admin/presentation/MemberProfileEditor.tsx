@@ -17,10 +17,11 @@ export function MemberProfileEditor() {
 
   const [name,     setName]     = useState('');
   const [roleTitle,setRoleTitle]= useState('');
+  const [year,     setYear]     = useState('');
   const [quote,    setQuote]    = useState('');
   const [avatarUrl,setAvatarUrl]= useState<string | null>(null);
   const [skills,   setSkills]   = useState<string[]>([]);
-  const [portfolio,setPortfolio]= useState('');
+  const [github,   setGithub]   = useState('');
   const [linkedin, setLinkedin] = useState('');
   const [twitter,  setTwitter]  = useState('');
   const [category, setCategory] = useState<string[]>([]);
@@ -43,8 +44,8 @@ export function MemberProfileEditor() {
     if (category.length === 0) return setError('Please select a category.');
 
     const { error } = await supabase.from('members').insert({
-      user_id: user.id, name, role_title: roleTitle, quote,
-      avatar_url: avatarUrl, skills, projects: [], github: portfolio, linkedin, twitter,
+      user_id: user.id, name, role_title: roleTitle, year, quote,
+      avatar_url: avatarUrl, skills, projects: [], github, linkedin, twitter,
       category, visible: false,
     });
 
@@ -54,9 +55,9 @@ export function MemberProfileEditor() {
     } else { 
       setSaved(true);
       // Clear form
-      setName(''); setRoleTitle(''); setQuote('');
+      setName(''); setRoleTitle(''); setYear(''); setQuote('');
       setAvatarUrl(null); setSkills([]);
-      setPortfolio(''); setLinkedin(''); setTwitter(''); setCategory([]);
+      setGithub(''); setLinkedin(''); setTwitter(''); setCategory([]);
       setTimeout(() => setSaved(false), 3000); 
     }
   };
@@ -76,9 +77,10 @@ export function MemberProfileEditor() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
           <AdminInput label="Full Name"  value={name}      onChange={setName}      required placeholder="Ada Lovelace" />
           <AdminInput label="Role/Title" value={roleTitle} onChange={setRoleTitle} required placeholder="Frontend Developer" />
-          <AdminInput label="Portfolio / Website" value={portfolio} onChange={setPortfolio} required placeholder="https://..." />
-          <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  required placeholder="https://linkedin.com/in/..." />
-          <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   required placeholder="https://twitter.com/..." />
+          <AdminInput label="Year"       value={year}      onChange={setYear}      placeholder="'26" />
+          <AdminInput label="GitHub"     value={github}    onChange={setGithub}    placeholder="https://github.com/..." />
+          <AdminInput label="LinkedIn"   value={linkedin}  onChange={setLinkedin}  placeholder="https://linkedin.com/in/..." />
+          <AdminInput label="Twitter/X"  value={twitter}   onChange={setTwitter}   placeholder="https://twitter.com/..." />
         </div>
 
         <AdminTextarea label="Quote" value={quote} onChange={setQuote} required placeholder="A short quote about your journey…" rows={3} />
@@ -87,7 +89,7 @@ export function MemberProfileEditor() {
 
         {/* Category checkboxes */}
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <label className="admin-label">
             Category
           </label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>

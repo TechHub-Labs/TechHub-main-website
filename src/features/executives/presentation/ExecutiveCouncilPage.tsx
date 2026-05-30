@@ -46,8 +46,7 @@ export function ExecutiveCouncilPage() {
           quote: exec.quote || '',
           avatar_url: exec.avatar_url,
           category: exec.category || [],
-          skills: exec.skills || [],
-          portfolio: exec.portfolio || '',
+          portfolio: exec.github || '',
           linkedin: exec.linkedin || '',
           twitter: exec.twitter || ''
         }));

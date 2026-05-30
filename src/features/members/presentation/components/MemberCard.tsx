@@ -54,8 +54,8 @@ export function MemberCard({
           <div
             className="w-full transition-transform duration-500 rounded-t-2xl"
             style={{
-              background: (member.avatar_url || member.portfolio) ? `url(${member.avatar_url || member.portfolio}) center / cover no-repeat` : imgBg, // Fallback placeholder if no avatar
-              aspectRatio: "1 / 1", // Perfect square aspect ratio for consistent profile alignment
+              background: (member.avatar_url || member.portfolio) ? `url(${member.avatar_url || member.portfolio}) top center / cover no-repeat` : imgBg, // Fallback placeholder if no avatar
+              aspectRatio: '1 / 1', // Perfect square ratio for natural facial framing
             }}
           />
 

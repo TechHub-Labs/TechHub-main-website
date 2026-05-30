@@ -106,7 +106,7 @@ export function ProjectActiveBuilders({
               className="w-full transition-transform duration-500 group-hover:scale-[1.03]"
               style={{
                 background: (builder.avatar_url || builder.portfolio)
-                  ? `url(${builder.avatar_url || builder.portfolio}) center / cover no-repeat`
+                  ? `url(${builder.avatar_url || builder.portfolio}) top center / cover no-repeat`
                   : imgBg,
                 aspectRatio: '1 / 1', // Unified card shape
               }}

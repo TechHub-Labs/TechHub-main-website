@@ -36,6 +36,9 @@ export interface Executive {
   category: string[];
   quote: string | null;
   avatar_url: string | null;
+  github: string | null;
+  linkedin: string | null;
+  twitter: string | null;
   visible: boolean;
   created_at: string;
   updated_at: string;
@@ -45,12 +48,17 @@ export interface Project {
   id: string;
   title: string;
   description: string | null;
+  short_description: string | null;
   tech: string[];
   status: string | null;
   category: string | null;
   github_url: string | null;
   live_url: string | null;
   image_url: string | null;
+  tiktok_url: string | null;
+  linkedin_url: string | null;
+  twitter_url: string | null;
+  launch_date: string | null;
   in_development: boolean;
   created_at: string;
   updated_at: string;

@@ -223,7 +223,7 @@ export function SuperAdminMembers() {
                 <div className="md:w-1/3 flex flex-col gap-2">
                   <AvatarUploader currentUrl={editing.avatar_url ?? null} onUploaded={url => setEditing(prev => prev ? { ...prev, avatar_url: url } : prev)} bucketName="members" />
                   <div className="mt-2">
-                    <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</label>
+                    <label className="admin-label">Category</label>
                     <div className="flex flex-wrap gap-2">
                       {CATEGORY_OPTIONS.map(opt => (
                         <button key={opt} type="button" onClick={() => toggleCategory(opt)} className={(editing.category ?? []).includes(opt) ? 'min-input' : 'min-button'} style={{

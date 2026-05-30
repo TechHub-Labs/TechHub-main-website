@@ -140,20 +140,22 @@ export function CouncilModal({
           </div>
 
           {/* Social Links Block */}
-          <div className="mt-8 pt-5 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>
-            <h4
-              className="text-xs font-bold uppercase tracking-wider mb-3"
-              style={{ color: colors.textSubtle }}
-            >
-              Connect
-            </h4>
-            <SocialLinks
-              portfolio={member.portfolio}
-              linkedin={member.linkedin}
-              twitter={member.twitter}
-              colors={colors}
-            />
-          </div>
+          {(member.portfolio?.trim() || member.linkedin?.trim() || member.twitter?.trim()) ? (
+            <div className="mt-8 pt-5 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>
+              <h4
+                className="text-xs font-bold uppercase tracking-wider mb-3"
+                style={{ color: colors.textSubtle }}
+              >
+                Connect
+              </h4>
+              <SocialLinks
+                portfolio={member.portfolio}
+                linkedin={member.linkedin}
+                twitter={member.twitter}
+                colors={colors}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

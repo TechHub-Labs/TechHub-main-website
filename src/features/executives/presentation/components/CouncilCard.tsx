@@ -63,7 +63,7 @@ export function CouncilCard({
             className="w-full transition-transform duration-500 rounded-t-2xl"
             style={{
               background: member.avatar_url
-                ? `url(${member.avatar_url}) center / cover no-repeat`
+                ? `url(${member.avatar_url}) top center / cover no-repeat`
                 : colors.bgCardHover,
               aspectRatio: '1 / 1', // Perfect square ratio for natural facial framing
             }}

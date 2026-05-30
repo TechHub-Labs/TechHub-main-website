@@ -9,8 +9,8 @@ import { AdminInput, AdminTextarea, TagEditor, AdminToggle, SaveBar, AvatarUploa
 
 const STATUS_OPTIONS = ['In Development', 'Completed', 'On Hold', 'Archived'];
 const EMPTY: Partial<Project> = {
-  title: '', description: '', tech: [], status: 'In Development',
-  category: '', github_url: '', live_url: '', image_url: '', in_development: true,
+  title: '', description: '', short_description: '', tech: [], status: 'In Development',
+  category: '', github_url: '', live_url: '', image_url: '', tiktok_url: '', linkedin_url: '', twitter_url: '', launch_date: '', in_development: true,
 };
 
 export function SuperAdminProjects() {
@@ -23,6 +23,7 @@ export function SuperAdminProjects() {
   const [formErr,  setFormErr]  = useState('');
   const [deleting, setDeleting] = useState<string | null>(null);
   const [search,   setSearch]   = useState('');
+  const [memberSearch, setMemberSearch] = useState('');
 
   // Team members mapping states
   const [allMembers, setAllMembers] = useState<any[]>([]);
@@ -49,6 +50,7 @@ export function SuperAdminProjects() {
     setSaved(false); 
     setFormErr(''); 
     setSelectedMemberIds([]);
+    setMemberSearch('');
   };
 
   const openEdit = (p: Project) => { 
@@ -56,6 +58,7 @@ export function SuperAdminProjects() {
     setIsNew(false); 
     setSaved(false); 
     setFormErr(''); 
+    setMemberSearch('');
     
     // Auto-pull and match existing project builders by title/ID
     const currentMemberIds = allMembers
@@ -75,9 +78,11 @@ export function SuperAdminProjects() {
     setSaving(true); setSaved(false); setFormErr('');
 
     const payload = {
-      title: editing.title!, description: editing.description, tech: editing.tech ?? [],
+      title: editing.title!, description: editing.description, short_description: editing.short_description, tech: editing.tech ?? [],
       status: editing.status, category: editing.category, github_url: editing.github_url,
-      live_url: editing.live_url, image_url: editing.image_url, in_development: editing.in_development ?? true,
+      live_url: editing.live_url, image_url: editing.image_url, 
+      tiktok_url: editing.tiktok_url, linkedin_url: editing.linkedin_url, twitter_url: editing.twitter_url, launch_date: editing.launch_date,
+      in_development: editing.in_development ?? true,
     };
 
     // Save project record
@@ -157,7 +162,8 @@ export function SuperAdminProjects() {
         <div style={{ display: 'flex', gap: '10px' }}>
           <input
             placeholder="Search…" value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: '8px 14px', borderRadius: '8px', background: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', color: '#f1f5f9', fontSize: '13px', outline: 'none', width: '180px' }}
+            className="min-input"
+            style={{ padding: '8px 14px', borderRadius: '8px', fontSize: '13px', width: '180px' }}
           />
           <button onClick={openNew} style={{ padding: '8px 18px', borderRadius: '8px', background: '#A3D045', color: '#0f172a', fontWeight: 700, fontSize: '13px', border: 'none', cursor: 'pointer' }}>
             + Add Project
@@ -207,13 +213,16 @@ export function SuperAdminProjects() {
 
       {/* Delete confirm */}
       {deleting && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#1e293b', borderRadius: '12px', padding: '28px', maxWidth: '360px', width: '90%', border: '1px solid rgba(239,68,68,0.3)' }}>
-            <h3 style={{ color: '#f1f5f9', fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Delete project?</h3>
-            <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>This cannot be undone.</p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setDeleting(null)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
-              <button onClick={() => confirmDelete(deleting)} style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: '#ef4444', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Delete</button>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
+          <div className="min-card" style={{ padding: '32px', maxWidth: '360px', width: '90%', border: '1px solid rgba(239,68,68,0.3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '24px' }}>⚠️</span>
+              <h3 style={{ fontSize: '18px', fontWeight: 700 }}>Delete project?</h3>
+            </div>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '24px' }}>This action <strong style={{ color: '#ef4444' }}>cannot be undone</strong>.</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setDeleting(null)} className="min-button" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Cancel</button>
+              <button onClick={() => confirmDelete(deleting)} className="min-button" style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: 'rgba(239,68,68,0.15)', color: '#ef4444', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Yes, Delete</button>
             </div>
           </div>
         </div>
@@ -221,11 +230,11 @@ export function SuperAdminProjects() {
 
       {/* Edit/Add modal */}
       {editing && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', overflowY: 'auto' }}>
-          <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', width: '100%', maxWidth: '560px', border: '1px solid rgba(255,255,255,0.08)', maxHeight: '90vh', overflowY: 'auto', scrollbarWidth: 'none' }}>
+        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="min-card p-6 sm:p-8" style={{ width: '100%', maxWidth: '560px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ color: '#f1f5f9', fontSize: '18px', fontWeight: 700 }}>{isNew ? 'Add Project' : 'Edit Project'}</h2>
-              <button onClick={close} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+              <h2 style={{ fontSize: '18px', fontWeight: 700 }}>{isNew ? 'Add Project' : 'Edit Project'}</h2>
+              <button onClick={close} className="min-button" style={{ border: 'none', color: '#64748b', fontSize: '16px', cursor: 'pointer', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
             </div>
             <form onSubmit={handleSave}>
               {/* Project Icon Upload */}
@@ -239,58 +248,70 @@ export function SuperAdminProjects() {
 
               <AdminInput label="Title"     value={editing.title ?? ''}    onChange={set('title')}    required />
               <AdminInput label="Category"  value={editing.category ?? ''} onChange={set('category')} placeholder="e.g. Web, Mobile, AI" />
-              <AdminInput label="GitHub URL" value={editing.github_url ?? ''} onChange={set('github_url')} />
-              <AdminInput label="Live URL"   value={editing.live_url ?? ''}  onChange={set('live_url')} />
-              <AdminTextarea label="Description" value={editing.description ?? ''} onChange={set('description')} rows={4} />
+              <AdminInput label="Short Description" value={editing.short_description ?? ''} onChange={set('short_description')} placeholder="e.g. Discover events and hangout spots around you" />
+              <div className="grid grid-cols-2 gap-4">
+                <AdminInput label="Launch Date" value={editing.launch_date ?? ''} onChange={set('launch_date')} placeholder="e.g. May 15, 2026" />
+                <AdminInput label="Live URL (Website)"   value={editing.live_url ?? ''}  onChange={set('live_url')} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <AdminInput label="GitHub URL" value={editing.github_url ?? ''} onChange={set('github_url')} />
+                <AdminInput label="LinkedIn URL" value={editing.linkedin_url ?? ''} onChange={set('linkedin_url')} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <AdminInput label="Twitter/X URL" value={editing.twitter_url ?? ''} onChange={set('twitter_url')} />
+                <AdminInput label="TikTok URL" value={editing.tiktok_url ?? ''} onChange={set('tiktok_url')} />
+              </div>
+              <AdminTextarea label="Long Description" value={editing.description ?? ''} onChange={set('description')} rows={4} />
               <TagEditor label="Tech Stack" tags={editing.tech ?? []} onChange={set('tech')} placeholder="e.g. React, Node.js" />
 
               {/* Project Builders Selection */}
               <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <label className="admin-label">
                   Project Builders / Team Members
                 </label>
-                <div style={{ 
-                  display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '150px', overflowY: 'auto', 
-                  padding: '12px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', background: '#0f172a',
-                  scrollbarWidth: 'thin'
-                }}>
-                  {allMembers.map(m => {
-                    const isChecked = selectedMemberIds.includes(m.id);
-                    return (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                  {allMembers.filter(m => selectedMemberIds.includes(m.id)).map(m => (
+                    <div key={m.id} className="min-input" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '6px', fontSize: '13px' }}>
+                      {m.name}
+                      <button type="button" onClick={() => toggleMember(m.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '16px', padding: '0 2px', lineHeight: 1 }}>&times;</button>
+                    </div>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search members to add..."
+                  className="min-input"
+                  style={{ width: '100%', padding: '10px 14px', marginBottom: '8px', boxSizing: 'border-box' }}
+                  value={memberSearch}
+                  onChange={e => setMemberSearch(e.target.value)}
+                />
+                {memberSearch.length > 0 && (
+                  <div className="min-input" style={{ 
+                    maxHeight: '150px', overflowY: 'auto', 
+                    padding: '8px', borderRadius: '8px',
+                    scrollbarWidth: 'thin'
+                  }}>
+                    {allMembers.filter(m => m.name.toLowerCase().includes(memberSearch.toLowerCase()) && !selectedMemberIds.includes(m.id)).map(m => (
                       <button
                         key={m.id}
                         type="button"
-                        onClick={() => {
-                          setSelectedMemberIds(prev =>
-                            isChecked ? prev.filter(id => id !== m.id) : [...prev, m.id]
-                          );
-                        }}
-                        style={{
-                          padding: '6px 14px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          border: '1px solid',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s',
-                          borderColor: isChecked ? '#A3D045' : 'rgba(255,255,255,0.1)',
-                          background: isChecked ? 'rgba(163,208,69,0.15)' : 'transparent',
-                          color: isChecked ? '#A3D045' : '#64748b',
-                        }}
+                        onClick={() => { toggleMember(m.id); setMemberSearch(''); }}
+                        className="min-button"
+                        style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', marginBottom: '4px', textAlign: 'left', display: 'block', width: '100%', boxSizing: 'border-box', border: 'none' }}
                       >
                         {m.name}
                       </button>
-                    );
-                  })}
-                  {allMembers.length === 0 && (
-                    <p style={{ color: '#475569', fontSize: '12px', margin: 0 }}>No members found. Please have them create profiles first.</p>
-                  )}
-                </div>
+                    ))}
+                    {allMembers.filter(m => m.name.toLowerCase().includes(memberSearch.toLowerCase()) && !selectedMemberIds.includes(m.id)).length === 0 && (
+                      <div style={{ padding: '8px 12px', fontSize: '13px', color: '#94a3b8' }}>No members found matching "{memberSearch}".</div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Status */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: 600, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</label>
+                <label className="admin-label">Status</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {STATUS_OPTIONS.map(s => (
                     <button key={s} type="button" onClick={() => set('status')(s)} style={{
