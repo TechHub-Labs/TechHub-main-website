@@ -5,10 +5,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../../landing/domain/useTheme';
-import { Project } from '../ProjectsPage';
 
 interface ProjectRowProps {
-  project: Project;
+  project: any;
   index: number;
   colors: ReturnType<typeof useTheme>['colors'];
 }
@@ -34,7 +33,8 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
   }, [index]);
 
   const getStatusColor = () => {
-    switch (project.status) {
+    const status = project.status || (project.in_development ? 'IN DEVELOPMENT' : 'LIVE');
+    switch (status) {
       case 'LIVE':         return colors.statusLive;
       case 'BETA':         return '#a8cf45';
       case 'PAUSED':       return colors.statusPaused;
@@ -48,7 +48,7 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
     <Link to={`/projects/${project.id}`} className="block no-underline">
       <div
         ref={ref}
-        className="group flex items-center gap-5 lg:gap-7 border-b px-5 sm:px-7 py-6"
+        className="group flex flex-col sm:flex-row sm:items-center justify-between border-b px-5 sm:px-7 py-6 gap-3 sm:gap-4 relative"
         style={{
           borderColor: colors.divider,
           background: colors.bgCard,
@@ -69,18 +69,17 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
           (e.currentTarget as HTMLDivElement).style.background = colors.bgCard;
         }}
       >
-        {/* Icon placeholder or Image */}
+        <div className="flex flex-1 items-start sm:items-center gap-4 sm:gap-5 lg:gap-7 min-w-0 w-full">
+          {/* Icon placeholder or Image */}
         <div
           className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 flex items-center justify-center overflow-hidden"
           style={{ background: colors.memberBg }}
         >
-          {/* @ts-ignore */}
-          {project.image ? (
-            /* @ts-ignore */
-            <img src={project.image} alt={project.name} className="w-full h-full object-cover" />
+          {project.image_url ? (
+            <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
           ) : (
             <span style={{ fontSize: '24px', fontWeight: 700, color: colors.text }}>
-              {project.name.charAt(0).toUpperCase()}
+              {project.title ? project.title.charAt(0).toUpperCase() : 'P'}
             </span>
           )}
         </div>
@@ -88,16 +87,16 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
         {/* Content */}
         <div className="min-w-0 flex-1">
           <h3
-            className="mb-2 text-2xl sm:text-[2rem] font-bold leading-none tracking-tight"
+            className="mb-1 sm:mb-2 text-xl sm:text-[2rem] font-bold leading-none tracking-tight"
             style={{ color: colors.text }}
           >
-            {project.name}
+            {project.title}
           </h3>
-          <p className="mb-3 text-sm sm:text-base leading-relaxed" style={{ color: colors.textMuted }}>
-            {project.desc}
+          <p className="mb-3 text-sm sm:text-base leading-relaxed line-clamp-2 sm:line-clamp-1" style={{ color: colors.textMuted }}>
+            {project.short_description}
           </p>
           <div className="flex flex-wrap gap-2">
-            {project.tags.map(tag => (
+            {(project.tech || []).map((tag: string) => (
               <span
                 key={tag}
                 className="rounded-full px-3 py-1 text-xs font-semibold sm:text-sm transition-transform duration-200 hover:scale-105"
@@ -107,10 +106,11 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
               </span>
             ))}
           </div>
+          </div>
         </div>
 
         {/* Status */}
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 self-start sm:self-center ml-[72px] sm:ml-4 mt-1 sm:mt-0">
           <span
             className="h-[10px] w-[10px] rounded-full"
             style={{
@@ -118,14 +118,17 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
               animation: project.status === 'LIVE' ? 'pulseGlow 2s ease-in-out infinite' : 'none',
             }}
           />
-          <span className="text-xs sm:text-sm font-bold tracking-wide" style={{ color: getStatusColor() }}>
-            {project.status}
-          </span>
+            <span
+              className="text-xs font-bold tracking-widest uppercase mt-0.5"
+              style={{ color: getStatusColor() }}
+            >
+              {project.status || (project.in_development ? 'IN DEVELOPMENT' : 'LIVE')}
+            </span>
         </div>
 
-        {/* Arrow */}
+        {/* Arrow (hidden on mobile to save space, appears on hover for desktop) */}
         <span
-          className="text-xl shrink-0 transition-transform duration-300 group-hover:translate-x-2 opacity-0 group-hover:opacity-100"
+          className="hidden sm:block text-xl shrink-0 transition-transform duration-300 group-hover:translate-x-2 opacity-0 group-hover:opacity-100 absolute right-6"
           style={{ color: colors.textMuted }}
         >
           →

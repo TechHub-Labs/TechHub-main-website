@@ -61,7 +61,7 @@ export function ProjectDetailsPage() {
       return {
         id: dbProject.id,
         name: dbProject.title,
-        desc: dbProject.description || '',
+        desc: dbProject.short_description || '',
         about: dbProject.description || 'Detailed description coming soon.',
         about2: '',
         image: dbProject.image_url || undefined,
@@ -155,7 +155,7 @@ export function ProjectDetailsPage() {
                         <span className="text-[15px] font-semibold" style={{ color: colors.text }}>{project.status}</span>
                       </div>
                     </div>
-                    <p className="text-lg lg:text-[20px] leading-relaxed mb-5 max-w-3xl" style={{ color: colors.textMuted }}>
+                    <p className="text-base sm:text-lg leading-relaxed mb-5 max-w-3xl" style={{ color: colors.textMuted }}>
                       {project.desc}
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
@@ -174,7 +174,7 @@ export function ProjectDetailsPage() {
                 <div className="flex items-center justify-between py-6 border-y mb-10" style={{ borderColor: colors.divider }}>
                   <span className="text-lg font-semibold" style={{ color: colors.text }}>Website</span>
                   {/* @ts-ignore */}
-                  <a href={`https://${project.website}`} target="_blank" rel="noreferrer"
+                  <a href={project.website} target="_blank" rel="noreferrer"
                     className="flex items-center gap-2 text-base transition-opacity hover:opacity-70"
                     style={{ color: '#3B5BDB' }}
                   >
@@ -190,9 +190,9 @@ export function ProjectDetailsPage() {
                 {/* Description */}
                 <div className="space-y-10 text-[17px] lg:text-[18px] leading-[2]" style={{ color: colors.textMuted }}>
                   {/* @ts-ignore */}
-                  <p>{project.about || 'Detailed description coming soon.'}</p>
+                  <p className="whitespace-pre-wrap">{project.about || 'Detailed description coming soon.'}</p>
                   {/* @ts-ignore */}
-                  {project.about2 && <p>{project.about2}</p>}
+                  {project.about2 && <p className="whitespace-pre-wrap">{project.about2}</p>}
                 </div>
               </div>
 
