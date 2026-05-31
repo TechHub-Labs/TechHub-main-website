@@ -1,18 +1,23 @@
-import { useEffect } from 'react';
-import { useTheme } from '../../landing/domain/useTheme';
-import { AboutHero } from './AboutHero';
-import { TheProblem } from './TheProblem';
-import { TheSolution } from './TheSolution';
-import { Trajectory } from './Trajectory';
-import { MoreThanCommunity } from './MoreThanCommunity';
-import { ValuesAndCulture } from './ValuesAndCulture';
+/**
+ * AboutPage.tsx
+ * 
+ * Core component/utility for the TechHub application.
+ */
 
-// Shared Components
-import { Navigation } from '../../../shared/components/Navigation';
-import { Footer } from '../../../shared/components/Footer';
-import { CTASection } from '../../../shared/components/CTASection';
-import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
-import { PageMargin } from '../../../shared/components/PageMargin';
+import { useEffect } from "react";
+import { useTheme } from "../../landing/domain/useTheme";
+import { AboutHero } from "./AboutHero";
+import { TheProblem } from "./TheProblem";
+import { TheSolution } from "./TheSolution";
+import { Trajectory } from "./Trajectory";
+import { MoreThanCommunity } from "./MoreThanCommunity";
+import { ValuesAndCulture } from "./ValuesAndCulture";
+
+import { Navigation } from "../../../shared/components/Navigation";
+import { Footer } from "../../../shared/components/Footer";
+import { CTASection } from "../../../shared/components/CTASection";
+import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
+import { PageMargin } from "../../../shared/components/PageMargin";
 
 export function AboutPage() {
   const { dark, setDark, colors } = useTheme();
@@ -23,10 +28,16 @@ export function AboutPage() {
   }, [colors]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
       <WebsiteBackground isDark={dark} bgColor={colors.bg} />
 
-      <Navigation colors={colors} dark={dark} onThemeToggle={() => setDark(!dark)} />
+      <Navigation
+        colors={colors}
+        dark={dark}
+        onThemeToggle={() => setDark(!dark)}
+      />
 
       <main className="flex-1 w-full">
         <PageMargin>

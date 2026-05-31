@@ -1,17 +1,18 @@
 /**
- * ProjectActiveBuilders — Grid of active builders shown on the project details page.
- * Fetches members dynamically from Supabase who are assigned to this project.
+ * ProjectActiveBuilders.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
 
-import { useEffect, useState } from 'react';
-import { useTheme } from '../../../landing/domain/useTheme';
-import { DEMO_PROJECT_BUILDERS as fallbackBuilders } from '../../../../core/data/demoData';
-import { supabase } from '../../../../core/supabase/client';
+import { useEffect, useState } from "react";
+import { useTheme } from "../../../landing/domain/useTheme";
+import { DEMO_PROJECT_BUILDERS as fallbackBuilders } from "../../../../core/data/demoData";
+import { supabase } from "../../../../core/supabase/client";
 
 interface ProjectActiveBuildersProps {
   projectTitle: string;
   projectId: string;
-  colors: ReturnType<typeof useTheme>['colors'];
+  colors: ReturnType<typeof useTheme>["colors"];
   dark: boolean;
   mounted: boolean;
 }
@@ -30,9 +31,9 @@ export function ProjectActiveBuilders({
     const fetchBuilders = async () => {
       try {
         const { data, error } = await supabase
-          .from('members')
-          .select('*')
-          .eq('visible', true);
+          .from("members")
+          .select("*")
+          .eq("visible", true);
 
         if (data && !error) {
           const filtered = data
@@ -42,10 +43,10 @@ export function ProjectActiveBuilders({
             })
             .map((m: any) => ({
               name: m.name,
-              role: m.role_title || 'Builder',
-              quote: m.quote || '',
+              role: m.role_title || "Builder",
+              quote: m.quote || "",
               avatar_url: m.avatar_url,
-              portfolio: m.github || '',
+              portfolio: m.github || "",
             }));
 
           if (filtered.length > 0) {
@@ -55,10 +56,9 @@ export function ProjectActiveBuilders({
           }
         }
       } catch (err) {
-        console.warn('Failed to load project builders from Supabase:', err);
+        console.warn("Failed to load project builders from Supabase:", err);
       }
 
-      // Fallback to static mock builders if none found
       setBuilders(fallbackBuilders);
       setLoading(false);
     };
@@ -66,13 +66,16 @@ export function ProjectActiveBuilders({
     fetchBuilders();
   }, [projectTitle, projectId]);
 
-  const cardBg = dark ? '#1a2160' : '#ffffff';
-  const imgBg = dark ? '#1f2768' : '#EEF0F8';
+  const cardBg = dark ? "#1a2160" : "#ffffff";
+  const imgBg = dark ? "#1f2768" : "#EEF0F8";
 
   if (loading) {
     return (
       <div className="mt-28 flex justify-center items-center py-12">
-        <p className="text-lg font-semibold animate-pulse" style={{ color: colors.textMuted }}>
+        <p
+          className="text-lg font-semibold animate-pulse"
+          style={{ color: colors.textMuted }}
+        >
           Loading builders...
         </p>
       </div>
@@ -91,9 +94,9 @@ export function ProjectActiveBuilders({
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         {builders.map((builder, i) => (
           <div
-            key={(builder.name || '') + i}
+            key={(builder.name || "") + i}
             className={`rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group ${
-              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
             }`}
             style={{
               transitionDelay: `${i * 120}ms`,
@@ -101,24 +104,34 @@ export function ProjectActiveBuilders({
               borderColor: colors.divider,
             }}
           >
-            {/* Portrait Square Photo */}
             <div
               className="w-full transition-transform duration-500 group-hover:scale-[1.03]"
               style={{
-                background: (builder.avatar_url || builder.portfolio)
-                  ? `url(${builder.avatar_url || builder.portfolio}) top center / cover no-repeat`
-                  : imgBg,
-                aspectRatio: '1 / 1', // Unified card shape
+                background:
+                  builder.avatar_url || builder.portfolio
+                    ? `url(${builder.avatar_url || builder.portfolio}) top center / cover no-repeat`
+                    : imgBg,
+                aspectRatio: "1 / 1", // Unified card shape
               }}
             />
 
             <div className="p-7 text-center">
-              <h3 className="text-3xl font-bold mb-2 tracking-tight" style={{ color: colors.text }}>
+              <h3
+                className="text-3xl font-bold mb-2 tracking-tight"
+                style={{ color: colors.text }}
+              >
                 {builder.name}
               </h3>
-              <p className="text-base mb-5" style={{ color: colors.textMuted }}>{builder.role}</p>
+              <p className="text-base mb-5" style={{ color: colors.textMuted }}>
+                {builder.role}
+              </p>
               {builder.quote && (
-                <p className="italic text-base" style={{ color: colors.textSubtle }}>{builder.quote}</p>
+                <p
+                  className="italic text-base"
+                  style={{ color: colors.textSubtle }}
+                >
+                  {builder.quote}
+                </p>
               )}
             </div>
           </div>

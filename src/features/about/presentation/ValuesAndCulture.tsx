@@ -1,7 +1,7 @@
 /**
- * VALUES & CULTURE SECTION — "What is TechHub's Foundation" + "A Culture Built Around Builders"
- * Design: 4 numbered pillars (Build, Collab, Learn, Launch) with dividers,
- * image grid with quote panel, environment encourages list.
+ * ValuesAndCulture.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -38,7 +38,9 @@ export function ValuesAndCulture({
 
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const [pillarsVisible, setPillarsVisible] = useState<boolean[]>(new Array(pillars.length).fill(false));
+  const [pillarsVisible, setPillarsVisible] = useState<boolean[]>(
+    new Array(pillars.length).fill(false),
+  );
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -46,13 +48,16 @@ export function ValuesAndCulture({
         if (entry.isIntersecting) {
           setVisible(true);
           pillars.forEach((_, i) => {
-            setTimeout(() => {
-              setPillarsVisible(prev => {
-                const next = [...prev];
-                next[i] = true;
-                return next;
-              });
-            }, 100 + i * 120);
+            setTimeout(
+              () => {
+                setPillarsVisible((prev) => {
+                  const next = [...prev];
+                  next[i] = true;
+                  return next;
+                });
+              },
+              100 + i * 120,
+            );
           });
           observer.disconnect();
         }
@@ -66,7 +71,6 @@ export function ValuesAndCulture({
   return (
     <section ref={sectionRef} className="py-12 sm:py-15 -mx-4 lg:-mx-[99px]">
       <div className="px-4 lg:px-[99px]">
-        {/* ── FOUNDATION HEADING ── */}
         <div
           className="mb-12"
           style={{
@@ -82,7 +86,6 @@ export function ValuesAndCulture({
           />
         </div>
 
-        {/* ── FOUR PILLARS ROW ── */}
         <div
           className="grid grid-cols-2 sm:grid-cols-4 mb-20 border rounded-sm overflow-hidden"
           style={{
@@ -91,15 +94,18 @@ export function ValuesAndCulture({
             transition: "opacity 0.6s ease 0.2s",
           }}
         >
-        {pillars.map((p, i) => (
+          {pillars.map((p, i) => (
             <div
               key={i}
               className={`py-6 px-5 sm:px-7 flex flex-col items-center sm:items-center gap-1 cursor-default sm:${i < pillars.length - 1 && i < pillars.length + 1 ? "border-r-2" : ""}`}
               style={{
                 borderColor: colors.text,
                 opacity: pillarsVisible[i] ? 1 : 0,
-                transform: pillarsVisible[i] ? 'scale(1) translateY(0)' : 'scale(0.7) translateY(20px)',
-                transition: 'opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+                transform: pillarsVisible[i]
+                  ? "scale(1) translateY(0)"
+                  : "scale(0.7) translateY(20px)",
+                transition:
+                  "opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.34,1.56,0.64,1)",
               }}
             >
               <span
@@ -118,7 +124,6 @@ export function ValuesAndCulture({
           ))}
         </div>
 
-        {/* ── CULTURE HEADING ── */}
         <div
           className="mb-10"
           style={{
@@ -134,8 +139,6 @@ export function ValuesAndCulture({
           />
         </div>
 
-        {/* ── IMAGE GRID ── */}
-        {/* Top row: 4 equal squares */}
         <div
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4"
           style={{
@@ -152,8 +155,6 @@ export function ValuesAndCulture({
           ))}
         </div>
 
-        {/* Bottom row: 3 squares + quote panel */}
-        {/* Layout: left large placeholder + right panel side by side */}
         <div
           className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-14"
           style={{
@@ -161,7 +162,6 @@ export function ValuesAndCulture({
             transition: "opacity 0.6s ease 0.5s",
           }}
         >
-          {/* Top sub-row of 3 smaller squares — stacked 2+1 on mobile, 3+panel on desktop */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 sm:col-span-2">
             {[0, 1, 2].map((i) => (
               <div
@@ -172,15 +172,12 @@ export function ValuesAndCulture({
             ))}
           </div>
 
-          {/* Wide left placeholder */}
           <div
             className="rounded-md h-48 sm:h-full transition-transform duration-300 hover:scale-[1.01]"
             style={{ background: imgBg }}
           />
 
-          {/* Quote panel — right side, matching design */}
           <div className="p-5 sm:p-6 rounded-md flex flex-col justify-between">
-            {/* "Our environment encourages" label */}
             <div>
               <p
                 className="text-base sm:text-xl font-semibold mb-3 underline decoration-[#A3D045] underline-offset-8 decoration-2"
@@ -201,7 +198,6 @@ export function ValuesAndCulture({
               </ul>
             </div>
 
-            {/* Bottom quote box */}
             <div
               className="mt-5 p-3 sm:p-4 rounded border text-base sm:text-xl italic leading-relaxed font-medium"
               style={{
@@ -214,8 +210,6 @@ export function ValuesAndCulture({
           </div>
         </div>
 
-        {/* ── LEADERSHIP THROUGH EXECUTION ── */}
-        {/* Dark navy full-bleed block matching design exactly */}
         <div
           className="px-4 lg:px-[99px] py-12 sm:py-16 -mx-4 lg:-mx-[99px]"
           style={{
@@ -227,7 +221,7 @@ export function ValuesAndCulture({
         >
           <SectionTitle
             title="Leadership Through Execution."
-            colors={{ ...colors, text: '#ffffff' }}
+            colors={{ ...colors, text: "#ffffff" }}
             tag="h2"
             align="left"
             className="mb-6"

@@ -1,6 +1,10 @@
-// ─── Database type definitions (mirrors Supabase schema) ─────────────────────
+/**
+ * types.ts
+ * 
+ * Core component/utility for the TechHub application.
+ */
 
-export type Role = 'member' | 'executive' | 'super_admin';
+export type Role = "member" | "executive" | "super_admin";
 
 export interface Profile {
   id: string;
@@ -67,7 +71,6 @@ export interface Project {
   updated_at: string;
 }
 
-// Supabase generated types shape
 export interface Database {
   public: {
     Tables: {

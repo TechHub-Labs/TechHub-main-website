@@ -1,10 +1,16 @@
+/**
+ * Trajectory.tsx
+ * 
+ * Core component/utility for the TechHub application.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { ThemeColors } from "../../landing/domain/types";
 import { DEMO_TIMELINE as timeline } from "../../../core/data/demoData";
+import { SectionTitle } from "../../../shared/components/SectionTitle";
 
 export function Trajectory({ colors }: { colors: ThemeColors }) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
   const [nodesVisible, setNodesVisible] = useState<boolean[]>(
     new Array(timeline.length).fill(false),
   );
@@ -13,7 +19,6 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
-        setVisible(true);
         timeline.forEach((_, index) => {
           setTimeout(
             () => {
@@ -41,40 +46,15 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
   return (
     <section ref={sectionRef} className="py-15 sm:py-28 -mx-4 lg:-mx-[99px]">
       <div className="px-4 lg:px-[99px]">
-        {/* HEADER */}
-        <div
-          className="mb-20 lg:mb-32 max-w-full"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(20px)",
-            transition: "all .7s ease",
-          }}
-        >
-          <h2
-            className="w-full text-3xl font-semibold leading-tight tracking-tight sm:text-5xl"
-            style={{ color: colors.text }}
-          >
-            The Trajectory of a Movement.
-          </h2>
-          <div
-            className="h-[3px] bg-[#A3D045] mb-5 mt-6"
-            style={{
-              width: visible ? "117px" : "0px",
-              transition: "width 0.7s ease 0.35s",
-            }}
+        <div className="mb-20 lg:mb-32 max-w-full">
+          <SectionTitle
+            title="The Trajectory of a Movement."
+            subtitle="Since 2024, TechHub has evolved from a small collective into a structured ecosystem for African builders."
+            colors={colors}
           />
-          <p
-            className="mt-6 text-base leading-relaxed sm:text-2xl font-medium w-full"
-            style={{ color: colors.textMuted }}
-          >
-            Since 2024, TechHub has evolved from a small collective into a
-            structured ecosystem for African builders.
-          </p>
         </div>
 
-        {/* TIMELINE CONTAINER */}
         <div className="relative flex flex-col w-full max-w-5xl mx-auto">
-          {/* CENTER VERTICAL LINE */}
           <div
             className="absolute left-[20px] top-0 h-full w-[4px] rounded-full md:left-1/2 md:-translate-x-1/2"
             style={{ background: colors.divider }}
@@ -88,7 +68,6 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
                 key={index}
                 className="relative grid grid-cols-[40px_1fr] gap-6 pb-20 md:grid-cols-[1fr_80px_1fr] w-full items-start"
               >
-                {/* --- DESKTOP LEFT SIDE --- */}
                 <div
                   className={`hidden md:flex w-full ${isLeft ? "justify-end pr-8" : ""}`}
                 >
@@ -102,9 +81,7 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
                   )}
                 </div>
 
-                {/* --- CENTER DIVIDER (NODE & ARROWS) --- */}
                 <div className="relative flex justify-center mt-2">
-                  {/* ARROW (Only visible on Desktop) */}
                   <div
                     className={`
                       absolute -top-0.5 hidden md:block
@@ -124,7 +101,6 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
                     </svg>
                   </div>
 
-                  {/* THE DOT NODE */}
                   <div
                     className="relative z-10 h-3.5 w-3.5 rounded-full"
                     style={{
@@ -137,9 +113,7 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
                   />
                 </div>
 
-                {/* --- RIGHT SIDE (MOBILE & DESKTOP) --- */}
                 <div className={`flex w-full ${!isLeft ? "md:pl-8" : ""}`}>
-                  {/* MOBILE ALWAYS SHOWS ON RIGHT */}
                   <div className="md:hidden w-full">
                     <TimelineCard
                       item={item}
@@ -149,7 +123,6 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
                     />
                   </div>
 
-                  {/* DESKTOP RIGHT CARD */}
                   {!isLeft && (
                     <div className="hidden md:block w-full">
                       <TimelineCard
@@ -170,9 +143,6 @@ export function Trajectory({ colors }: { colors: ThemeColors }) {
   );
 }
 
-// ----------------------
-// TIMELINE CARD SUB-COMPONENT
-// ----------------------
 function TimelineCard({
   item,
   visible,

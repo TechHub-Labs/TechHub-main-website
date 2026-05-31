@@ -1,8 +1,7 @@
 /**
- * EXECUTIVE COUNCIL PAGE
- * Design: "Executive Council" hero, 2 filter tabs (Founding Council / '27),
- * 2-column card grid, click-to-open modal identical to Members modal style.
- * Animations: spring card pop-in, hover tilt, modal scale-in
+ * ExecutiveCouncilPage.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -15,7 +14,6 @@ import { PageMargin } from "../../../shared/components/PageMargin";
 import { SectionTitle } from "../../../shared/components/SectionTitle";
 import { supabase } from "../../../core/supabase/client";
 
-// Import modular subcomponents
 import { CouncilCard, CouncilMember } from "./components/CouncilCard";
 import { CouncilModal } from "./components/CouncilModal";
 
@@ -36,21 +34,25 @@ export function ExecutiveCouncilPage() {
     setTimeout(() => setHeaderVisible(true), 80);
 
     const loadData = async () => {
-      const { data } = await supabase.from('executives').select('*').eq('visible', true).order('sort_order', { ascending: true });
+      const { data } = await supabase
+        .from("executives")
+        .select("*")
+        .eq("visible", true)
+        .order("sort_order", { ascending: true });
       if (data) {
         const mapped: CouncilMember[] = data.map((exec: any) => ({
           id: exec.id,
           name: exec.name,
-          role: exec.role_title || 'Executive',
-          description: exec.quote || '',
-          quote: exec.quote || '',
+          role: exec.role_title || "Executive",
+          description: exec.quote || "",
+          quote: exec.quote || "",
           avatar_url: exec.avatar_url,
           category: exec.category || [],
           skills: exec.skills || [],
           projects: exec.projects || [],
-          portfolio: exec.github || '',
-          linkedin: exec.linkedin || '',
-          twitter: exec.twitter || ''
+          portfolio: exec.github || "",
+          linkedin: exec.linkedin || "",
+          twitter: exec.twitter || "",
         }));
         setCouncilMembers(mapped);
       }
@@ -77,7 +79,6 @@ export function ExecutiveCouncilPage() {
       />
       <main className="flex-1 w-full">
         <PageMargin>
-          {/* HERO */}
           <div
             className="text-center pt-16 pb-10"
             style={{
@@ -86,7 +87,6 @@ export function ExecutiveCouncilPage() {
               transition: "opacity 0.6s ease, transform 0.6s ease",
             }}
           >
-            {/* Standardized and animated SectionTitle */}
             <SectionTitle
               title="Executive Council"
               subtitle="Vision. Strategy. Execution."
@@ -96,7 +96,7 @@ export function ExecutiveCouncilPage() {
               immediate={true}
             />
           </div>
-          {/* FILTERS */}
+
           <div
             className="flex gap-2 sm:gap-3 mb-10 justify-center border p-[6px] rounded-sm w-fit items-center mx-auto"
             style={{
@@ -124,7 +124,7 @@ export function ExecutiveCouncilPage() {
               </button>
             ))}
           </div>
-          {/* GRID */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-24 min-h-[40vh]">
             {loading ? (
               <div className="col-span-1 sm:col-span-2 flex justify-center items-center">
@@ -132,7 +132,9 @@ export function ExecutiveCouncilPage() {
               </div>
             ) : filtered.length === 0 ? (
               <div className="col-span-1 sm:col-span-2 flex justify-center items-center">
-                <p style={{ color: colors.textMuted }}>No executives found in this category.</p>
+                <p style={{ color: colors.textMuted }}>
+                  No executives found in this category.
+                </p>
               </div>
             ) : (
               filtered.map((m, i) => (

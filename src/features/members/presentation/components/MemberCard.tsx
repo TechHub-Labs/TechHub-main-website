@@ -1,12 +1,18 @@
-import { useTheme } from '../../../landing/domain/useTheme';
-import { AnimatedCard } from '../../../../shared/components/AnimatedCard';
-import { DemoMember as Member } from '../../../../core/data/demoData';
+/**
+ * MemberCard.tsx
+ * 
+ * Core component/utility for the TechHub application.
+ */
+
+import { useTheme } from "../../../landing/domain/useTheme";
+import { AnimatedCard } from "../../../../shared/components/AnimatedCard";
+import { DemoMember as Member } from "../../../../core/data/demoData";
 
 interface MemberCardProps {
   member: Member;
   index: number;
   onClick: (m: Member) => void;
-  colors: ReturnType<typeof useTheme>['colors'];
+  colors: ReturnType<typeof useTheme>["colors"];
   isDark: boolean;
 }
 
@@ -33,8 +39,8 @@ export function MemberCard({
         className="flex flex-col justify-between overflow-hidden cursor-pointer group border border-1 border-[#0F1B4D26] rounded-2xl transition-all duration-300 hover:scale-[1.01] active:scale-95"
         style={{
           background: cardBg,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-          height: '100%',
+          boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+          height: "100%",
         }}
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
@@ -50,16 +56,17 @@ export function MemberCard({
         }}
       >
         <div className="w-full flex flex-col">
-          {/* Portrait Square Photo */}
           <div
             className="w-full transition-transform duration-500 rounded-t-2xl"
             style={{
-              background: (member.avatar_url || member.portfolio) ? `url(${member.avatar_url || member.portfolio}) top center / cover no-repeat` : imgBg, // Fallback placeholder if no avatar
-              aspectRatio: '1 / 1', // Perfect square ratio for natural facial framing
+              background:
+                member.avatar_url || member.portfolio
+                  ? `url(${member.avatar_url || member.portfolio}) top center / cover no-repeat`
+                  : imgBg, // Fallback placeholder if no avatar
+              aspectRatio: "1 / 1", // Perfect square ratio for natural facial framing
             }}
           />
 
-          {/* Info */}
           <div className="px-6 pt-6 pb-5 flex flex-col justify-center items-center text-center">
             <h3
               className="text-xl sm:text-2xl font-bold mb-1 tracking-tight"

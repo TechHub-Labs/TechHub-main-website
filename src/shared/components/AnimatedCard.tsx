@@ -1,40 +1,49 @@
 /**
- * AnimatedCard — Universal scroll-triggered card reveal wrapper
- * ─────────────────────────────────────────────────────────────
- * Replaces all the repeated IntersectionObserver boilerplate.
- *
- * Usage:
- *   <AnimatedCard index={0} direction="up">
- *     <YourCard />
- *   </AnimatedCard>
+ * AnimatedCard.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
 
-import { useEffect, useRef, useState, ReactNode } from 'react';
+import { useEffect, useRef, useState, ReactNode } from "react";
 
-type Direction = 'up' | 'down' | 'left' | 'right' | 'scale' | 'rotate-left' | 'rotate-right';
+type Direction =
+  | "up"
+  | "down"
+  | "left"
+  | "right"
+  | "scale"
+  | "rotate-left"
+  | "rotate-right";
 
 interface AnimatedCardProps {
   children: ReactNode;
-  index?: number;           // Used to stagger delay: index * stepMs
-  stepMs?: number;          // ms between staggered items (default 100)
-  delay?: number;           // base delay in ms before any stagger
-  direction?: Direction;    // entry direction
-  distance?: number;        // px to travel (default 30)
-  threshold?: number;       // IntersectionObserver threshold (default 0.1)
+  index?: number; // Used to stagger delay: index * stepMs
+  stepMs?: number; // ms between staggered items (default 100)
+  delay?: number; // base delay in ms before any stagger
+  direction?: Direction; // entry direction
+  distance?: number; // px to travel (default 30)
+  threshold?: number; // IntersectionObserver threshold (default 0.1)
   className?: string;
   style?: React.CSSProperties;
-  once?: boolean;           // only animate once (default true)
+  once?: boolean; // only animate once (default true)
 }
 
 function getHiddenTransform(direction: Direction, distance: number): string {
   switch (direction) {
-    case 'up':           return `translateY(${distance}px)`;
-    case 'down':         return `translateY(-${distance}px)`;
-    case 'left':         return `translateX(${distance}px)`;
-    case 'right':        return `translateX(-${distance}px)`;
-    case 'scale':        return `scale(0.85)`;
-    case 'rotate-left':  return `translateY(${distance}px) rotate(-2deg)`;
-    case 'rotate-right': return `translateY(${distance}px) rotate(2deg)`;
+    case "up":
+      return `translateY(${distance}px)`;
+    case "down":
+      return `translateY(-${distance}px)`;
+    case "left":
+      return `translateX(${distance}px)`;
+    case "right":
+      return `translateX(-${distance}px)`;
+    case "scale":
+      return `scale(0.85)`;
+    case "rotate-left":
+      return `translateY(${distance}px) rotate(-2deg)`;
+    case "rotate-right":
+      return `translateY(${distance}px) rotate(2deg)`;
   }
 }
 
@@ -43,10 +52,10 @@ export function AnimatedCard({
   index = 0,
   stepMs = 100,
   delay = 0,
-  direction = 'up',
+  direction = "up",
   distance = 30,
   threshold = 0.1,
-  className = '',
+  className = "",
   style = {},
   once = true,
 }: AnimatedCardProps) {
@@ -70,7 +79,7 @@ export function AnimatedCard({
           setVisible(false);
         }
       },
-      { threshold }
+      { threshold },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -82,7 +91,9 @@ export function AnimatedCard({
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0) translateX(0) scale(1) rotate(0deg)' : getHiddenTransform(direction, distance),
+        transform: visible
+          ? "translateY(0) translateX(0) scale(1) rotate(0deg)"
+          : getHiddenTransform(direction, distance),
         transition: `opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.34,1.56,0.64,1)`,
         ...style,
       }}

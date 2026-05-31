@@ -1,7 +1,7 @@
 /**
- * MEMBERS PAGE
- * Design: "Our Members" hero, filter tabs (All / Undergrad / Alumni / '25 / '26),
- * 3-column card grid, click-to-open modal with photo, name, role, quote, socials, skills, projects.
+ * MembersPage.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
 
 import { useEffect, useState, useCallback } from "react";
@@ -15,7 +15,6 @@ import { SectionTitle } from "../../../shared/components/SectionTitle";
 import { DemoMember as Member } from "../../../core/data/demoData";
 import { supabase } from "../../../core/supabase/client";
 
-// Import modular subcomponents
 import { MemberCard } from "./components/MemberCard";
 import { MemberModal } from "./components/MemberModal";
 
@@ -40,10 +39,10 @@ export function MembersPage() {
     const loadData = async () => {
       try {
         const { data, error } = await supabase
-          .from('members')
-          .select('*')
-          .eq('visible', true)
-          .order('sort_order', { ascending: true });
+          .from("members")
+          .select("*")
+          .eq("visible", true)
+          .order("sort_order", { ascending: true });
 
         if (error) {
           console.warn("Failed to load members from Supabase:", error.message);
@@ -51,15 +50,15 @@ export function MembersPage() {
           const mapped: Member[] = data.map((m: any) => ({
             id: m.id,
             name: m.name,
-            role: m.role_title || 'Member',
-            quote: m.quote || '',
+            role: m.role_title || "Member",
+            quote: m.quote || "",
             avatar_url: m.avatar_url,
             category: m.category || [],
             skills: m.skills || [],
             projects: m.projects || [],
-            linkedin: m.linkedin || '',
-            twitter: m.twitter || '',
-            portfolio: m.github || '', // github column holds portfolio link
+            linkedin: m.linkedin || "",
+            twitter: m.twitter || "",
+            portfolio: m.github || "", // github column holds portfolio link
           }));
           setMembersList(mapped);
         }
@@ -72,8 +71,8 @@ export function MembersPage() {
     loadData();
   }, [colors]);
 
-  const filtered = membersList.filter((m) =>
-    activeFilter === "All" || m.category.includes(activeFilter as any)
+  const filtered = membersList.filter(
+    (m) => activeFilter === "All" || m.category.includes(activeFilter as any),
   );
 
   const handleCardClick = useCallback((m: Member) => setSelectedMember(m), []);
@@ -100,7 +99,6 @@ export function MembersPage() {
 
       <main className="flex-1 w-full">
         <PageMargin>
-          {/* ── HERO ── */}
           <div
             className="text-center pt-16 pb-24"
             style={{
@@ -109,7 +107,6 @@ export function MembersPage() {
               transition: "opacity 0.6s ease, transform 0.6s ease",
             }}
           >
-            {/* Standardized and animated SectionTitle */}
             <SectionTitle
               title="Our Members"
               subtitle="Builders. Designers. Developers."
@@ -120,7 +117,6 @@ export function MembersPage() {
             />
           </div>
 
-          {/* ── FILTER TABS ── */}
           <div
             className="flex flex-wrap gap-2 sm:gap-3 mb-10 justify-center border p-[6px] rounded-sm w-fit items-center mx-auto"
             style={{
@@ -151,7 +147,6 @@ export function MembersPage() {
             ))}
           </div>
 
-          {/* ── CATEGORY LABEL ── */}
           <div className="mb-6">
             <h2
               className="text-3xl sm:text-4xl font-bold"
@@ -162,10 +157,12 @@ export function MembersPage() {
             <div className="mt-1 h-[3px] w-10 bg-[#A3D045]" />
           </div>
 
-          {/* ── GRID ── */}
           {loading ? (
             <div className="flex justify-center items-center py-24">
-              <span className="text-xl font-semibold animate-pulse" style={{ color: colors.textMuted }}>
+              <span
+                className="text-xl font-semibold animate-pulse"
+                style={{ color: colors.textMuted }}
+              >
                 Loading members...
               </span>
             </div>
@@ -190,7 +187,6 @@ export function MembersPage() {
 
       <Footer colors={colors} />
 
-      {/* ── MODAL ── */}
       {selectedMember && (
         <MemberModal
           member={selectedMember}

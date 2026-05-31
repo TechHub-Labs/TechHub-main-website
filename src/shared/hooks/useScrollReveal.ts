@@ -1,12 +1,10 @@
 /**
- * useScrollReveal — Reusable intersection-observer hook for scroll animations.
- *
- * Usage:
- *   const { ref, visible } = useScrollReveal({ threshold: 0.1, delay: 200 });
- *   <div ref={ref} style={{ opacity: visible ? 1 : 0, ... }}>...</div>
+ * useScrollReveal.ts
+ * 
+ * Core component/utility for the TechHub application.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface UseScrollRevealOptions {
   threshold?: number;
@@ -39,7 +37,7 @@ export function useScrollReveal({
           setVisible(false);
         }
       },
-      { threshold }
+      { threshold },
     );
 
     observer.observe(el);
@@ -63,11 +61,11 @@ export function useStaggeredReveal(
     baseDelay = 0,
     step = 120,
     threshold = 0.08,
-  }: { baseDelay?: number; step?: number; threshold?: number } = {}
+  }: { baseDelay?: number; step?: number; threshold?: number } = {},
 ) {
   const ref = useRef<HTMLElement | null>(null);
   const [visibleItems, setVisibleItems] = useState<boolean[]>(
-    new Array(count).fill(false)
+    new Array(count).fill(false),
   );
 
   useEffect(() => {
@@ -78,18 +76,21 @@ export function useStaggeredReveal(
       ([entry]) => {
         if (entry.isIntersecting) {
           for (let i = 0; i < count; i++) {
-            setTimeout(() => {
-              setVisibleItems((prev) => {
-                const next = [...prev];
-                next[i] = true;
-                return next;
-              });
-            }, baseDelay + i * step);
+            setTimeout(
+              () => {
+                setVisibleItems((prev) => {
+                  const next = [...prev];
+                  next[i] = true;
+                  return next;
+                });
+              },
+              baseDelay + i * step,
+            );
           }
           observer.disconnect();
         }
       },
-      { threshold }
+      { threshold },
     );
 
     observer.observe(el);

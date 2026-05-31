@@ -1,16 +1,7 @@
 /**
- * CustomCursor — Orbital ring cursor + Background Spotlight
- * ─────────────────────────────────────────────────────────────────────────────
- * 1. Inner dot    — snaps to cursor position instantly
- * 2. Broken orbit — spins continuously, trails behind cursor (lerp 0.25)
- * 3. Dashed ring  — appears + spins opposite direction on hover
- * 4. SPOTLIGHT    — a large (550px) radial gradient that drifts SLOWLY behind
- *                   the cursor (lerp 0.06). Uses screen/multiply blend mode
- *                   to illuminate the moving background square nodes around
- *                   the cursor — like a torch shining across the grid.
- * 5. TRAIL DOTS   — 6 tiny squares that shrink and fade, echoing the nodes.
- *
- * Desktop only — touch devices get no cursor elements.
+ * CustomCursor.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -21,21 +12,18 @@ const TRAIL_LENGTH = 6;
 export function CustomCursor() {
   const { dark } = useTheme();
 
-  // ── Cursor element refs ──────────────────────────────────────────────────
-  const dotRef       = useRef<HTMLDivElement>(null);
-  const orbit1Ref    = useRef<HTMLDivElement>(null);
-  const orbit2Ref    = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const orbit1Ref = useRef<HTMLDivElement>(null);
+  const orbit2Ref = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
-  const trailRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const trailRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ── Physics state refs (mutated directly in rAF — no setState) ───────────
-  const mouse     = useRef({ x: -300, y: -300 });
-  const trailing  = useRef({ x: -300, y: -300 });
+  const mouse = useRef({ x: -300, y: -300 });
+  const trailing = useRef({ x: -300, y: -300 });
   const spotlight = useRef({ x: -300, y: -300 });
 
-  // trail positions ring-buffer
   const trailPositions = useRef<{ x: number; y: number }[]>(
-    Array.from({ length: TRAIL_LENGTH }, () => ({ x: -300, y: -300 }))
+    Array.from({ length: TRAIL_LENGTH }, () => ({ x: -300, y: -300 })),
   );
 
   const rotation1 = useRef(0);
@@ -60,8 +48,8 @@ export function CustomCursor() {
       const t = e.target as HTMLElement;
       setIsHovering(
         t.closest("a") !== null ||
-        t.closest("button") !== null ||
-        window.getComputedStyle(t).cursor === "pointer"
+          t.closest("button") !== null ||
+          window.getComputedStyle(t).cursor === "pointer",
       );
     };
 
@@ -74,15 +62,12 @@ export function CustomCursor() {
     const render = () => {
       frameCount++;
 
-      // ── 1. Lerp trailing cursor ────────────────────────────────────────
       trailing.current.x += (mouse.current.x - trailing.current.x) * 0.25;
       trailing.current.y += (mouse.current.y - trailing.current.y) * 0.25;
 
-      // ── 2. Lerp spotlight (very slow — drifts behind cursor) ──────────
       spotlight.current.x += (mouse.current.x - spotlight.current.x) * 0.06;
       spotlight.current.y += (mouse.current.y - spotlight.current.y) * 0.06;
 
-      // ── 3. Update trail positions every 2 frames ───────────────────────
       if (frameCount % 2 === 0) {
         const tp = trailPositions.current;
         for (let i = tp.length - 1; i > 0; i--) {
@@ -93,46 +78,39 @@ export function CustomCursor() {
         tp[0].y = mouse.current.y;
       }
 
-      // ── 4. Spin rings ─────────────────────────────────────────────────
       rotation1.current += isHoveringRef.current ? 4 : 1.5;
       rotation2.current -= isHoveringRef.current ? 5 : 2;
 
-      // ── 5. Apply transforms ────────────────────────────────────────────
       if (dotRef.current) {
         const scale = isHoveringRef.current ? 0 : 1;
-        dotRef.current.style.transform =
-          `translate3d(${mouse.current.x}px,${mouse.current.y}px,0) translate(-50%,-50%) scale(${scale})`;
+        dotRef.current.style.transform = `translate3d(${mouse.current.x}px,${mouse.current.y}px,0) translate(-50%,-50%) scale(${scale})`;
       }
 
       if (orbit1Ref.current) {
         const scale = isHoveringRef.current ? 1.8 : 1;
-        orbit1Ref.current.style.transform =
-          `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation1.current}deg)`;
+        orbit1Ref.current.style.transform = `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation1.current}deg)`;
       }
 
       if (orbit2Ref.current) {
         const scale = isHoveringRef.current ? 1.2 : 0;
-        orbit2Ref.current.style.transform =
-          `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation2.current}deg)`;
+        orbit2Ref.current.style.transform = `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation2.current}deg)`;
         orbit2Ref.current.style.opacity = isHoveringRef.current ? "1" : "0";
       }
 
-      // ── 6. Move spotlight ──────────────────────────────────────────────
       if (spotlightRef.current) {
-        const sx = spotlight.current.x - 275;  // center the 550px element
+        const sx = spotlight.current.x - 275; // center the 550px element
         const sy = spotlight.current.y - 275;
         spotlightRef.current.style.transform = `translate3d(${sx}px,${sy}px,0)`;
       }
 
-      // ── 7. Update trail dots ──────────────────────────────────────────
       trailRefs.current.forEach((el, i) => {
         if (!el) return;
         const p = trailPositions.current[i];
-        const progress = (i + 1) / TRAIL_LENGTH;        // 0.16 … 1.0
-        const size = 4 * (1 - progress * 0.7);          // shrinks toward tail
-        const opacity = (1 - progress) * 0.5;           // fades toward tail
+        const progress = (i + 1) / TRAIL_LENGTH; // 0.16 … 1.0
+        const size = 4 * (1 - progress * 0.7); // shrinks toward tail
+        const opacity = (1 - progress) * 0.5; // fades toward tail
         el.style.transform = `translate3d(${p.x}px,${p.y}px,0) translate(-50%,-50%)`;
-        el.style.width  = `${size}px`;
+        el.style.width = `${size}px`;
         el.style.height = `${size}px`;
         el.style.opacity = opacity.toString();
       });
@@ -151,10 +129,9 @@ export function CustomCursor() {
 
   if (window.matchMedia("(pointer: coarse)").matches) return null;
 
-  const cursorColor = dark ? "#A3D045"          : "#2563EB";
-  const glowColor   = dark ? "rgba(163,208,69,0.6)" : "rgba(37,99,235,0.4)";
+  const cursorColor = dark ? "#A3D045" : "#2563EB";
+  const glowColor = dark ? "rgba(163,208,69,0.6)" : "rgba(37,99,235,0.4)";
 
-  // Spotlight gradient: very subtle, just enough to illuminate the grid nodes
   const spotGradient = dark
     ? "radial-gradient(circle, rgba(163,208,69,0.07) 0%, rgba(163,208,69,0.03) 40%, transparent 70%)"
     : "radial-gradient(circle, rgba(13,19,64,0.05) 0%, rgba(13,19,64,0.02) 40%, transparent 70%)";
@@ -165,7 +142,6 @@ export function CustomCursor() {
         @media (pointer: fine) { * { cursor: none !important; } }
       `}</style>
 
-      {/* ── SPOTLIGHT — drifts slowly, illuminates bg nodes ── */}
       <div
         ref={spotlightRef}
         style={{
@@ -183,18 +159,19 @@ export function CustomCursor() {
         }}
       />
 
-      {/* ── TRAIL DOTS — tiny squares echoing background nodes ── */}
       {Array.from({ length: TRAIL_LENGTH }).map((_, i) => (
         <div
           key={i}
-          ref={el => { trailRefs.current[i] = el; }}
+          ref={(el) => {
+            trailRefs.current[i] = el;
+          }}
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             width: "4px",
             height: "4px",
-            borderRadius: "0.5px",           // square with tiny radius — matches bg nodes
+            borderRadius: "0.5px", // square with tiny radius — matches bg nodes
             background: cursorColor,
             pointerEvents: "none",
             zIndex: 9996,
@@ -203,7 +180,6 @@ export function CustomCursor() {
         />
       ))}
 
-      {/* ── INNER DOT — snaps instantly ── */}
       <div
         ref={dotRef}
         style={{
@@ -221,7 +197,6 @@ export function CustomCursor() {
         }}
       />
 
-      {/* ── BROKEN ORBIT — spins continuously ── */}
       <div
         ref={orbit1Ref}
         style={{
@@ -240,7 +215,6 @@ export function CustomCursor() {
         }}
       />
 
-      {/* ── DASHED LOCK-ON RING — appears on hover ── */}
       <div
         ref={orbit2Ref}
         style={{

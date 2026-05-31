@@ -1,13 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import { useTheme } from '../../../landing/domain/useTheme';
-import { DemoMember as Member } from '../../../../core/data/demoData';
-import { ModalCloseButton } from '../../../../shared/components/ModalCloseButton';
-import { SocialLinks } from '../../../../shared/components/SocialLinks';
+/**
+ * MemberModal.tsx
+ * 
+ * Core component/utility for the TechHub application.
+ */
+
+import { useEffect, useRef, useState } from "react";
+import { useTheme } from "../../../landing/domain/useTheme";
+import { DemoMember as Member } from "../../../../core/data/demoData";
+import { ModalCloseButton } from "../../../../shared/components/ModalCloseButton";
+import { SocialLinks } from "../../../../shared/components/SocialLinks";
 
 interface MemberModalProps {
   member: Member;
   onClose: () => void;
-  colors: ReturnType<typeof useTheme>['colors'];
+  colors: ReturnType<typeof useTheme>["colors"];
   isDark: boolean;
 }
 
@@ -59,33 +65,32 @@ export function MemberModal({
         style={{
           background: modalBg,
           transform: mounted
-            ? 'translateY(0) scale(1)'
-            : 'translateY(24px) scale(0.97)',
-          transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+            ? "translateY(0) scale(1)"
+            : "translateY(24px) scale(0.97)",
+          transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
           maxHeight: "90vh",
           overflowY: "auto",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
       >
-        {/* Left Column - Portrait Image */}
         <div
           className="md:col-span-5 w-full h-64 md:h-full min-h-[260px] md:min-h-[460px] bg-cover bg-center shrink-0"
           style={{
-            backgroundImage: (member.avatar_url || member.portfolio) ? `url(${member.avatar_url || member.portfolio})` : 'none',
-            backgroundPosition: 'center 15%', // Centers portrait facial layouts cleanly
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
+            backgroundImage:
+              member.avatar_url || member.portfolio
+                ? `url(${member.avatar_url || member.portfolio})`
+                : "none",
+            backgroundPosition: "center 15%", // Centers portrait facial layouts cleanly
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
             backgroundColor: imgBg,
           }}
         />
 
-        {/* Right Column - Text Details */}
         <div className="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between relative min-h-[300px]">
-          {/* Close button inside the content panel */}
           <ModalCloseButton onClose={onClose} colors={colors} isDark={isDark} />
 
-          {/* Details wrapper */}
           <div className="flex flex-col gap-6 pr-6">
             <div>
               <h2
@@ -102,7 +107,6 @@ export function MemberModal({
               </p>
             </div>
 
-            {/* Blockquote Quote */}
             {member.quote && (
               <blockquote
                 className="pl-4 italic text-sm sm:text-base leading-relaxed border-l-2"
@@ -112,7 +116,6 @@ export function MemberModal({
               </blockquote>
             )}
 
-            {/* Skills */}
             {member.skills && member.skills.length > 0 && (
               <div>
                 <h4
@@ -138,36 +141,47 @@ export function MemberModal({
               </div>
             )}
 
-            {/* Projects */}
-            {member.projects && member.projects.filter(p => p && p.trim() !== '').length > 0 && (
-              <div>
-                <h4
-                  className="text-xs font-bold uppercase tracking-wider mb-2"
-                  style={{ color: colors.textSubtle }}
-                >
-                  Featured Projects
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {member.projects.filter(p => p && p.trim() !== '').map((project) => (
-                    <span
-                      key={project}
-                      className="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
-                      style={{
-                        background: tagBg,
-                        color: colors.text,
-                      }}
-                    >
-                      {project}
-                    </span>
-                  ))}
+            {member.projects &&
+              member.projects.filter((p) => p && p.trim() !== "").length >
+                0 && (
+                <div>
+                  <h4
+                    className="text-xs font-bold uppercase tracking-wider mb-2"
+                    style={{ color: colors.textSubtle }}
+                  >
+                    Featured Projects
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {member.projects
+                      .filter((p) => p && p.trim() !== "")
+                      .map((project) => (
+                        <span
+                          key={project}
+                          className="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
+                          style={{
+                            background: tagBg,
+                            color: colors.text,
+                          }}
+                        >
+                          {project}
+                        </span>
+                      ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
 
-          {/* Social Links Block */}
-          {(member.portfolio?.trim() || member.linkedin?.trim() || member.twitter?.trim()) ? (
-            <div className="mt-8 pt-5 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>
+          {member.portfolio?.trim() ||
+          member.linkedin?.trim() ||
+          member.twitter?.trim() ? (
+            <div
+              className="mt-8 pt-5 border-t"
+              style={{
+                borderColor: isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(0,0,0,0.08)",
+              }}
+            >
               <h4
                 className="text-xs font-bold uppercase tracking-wider mb-3"
                 style={{ color: colors.textSubtle }}

@@ -1,3 +1,9 @@
+/**
+ * types.ts
+ * 
+ * Core component/utility for the TechHub application.
+ */
+
 export interface Builder {
   name: string;
   role: string;
@@ -5,11 +11,11 @@ export interface Builder {
 }
 
 export interface Project {
-  status: 'LIVE' | 'UPCOMING' | 'IN-DEV';
+  status: "LIVE" | "UPCOMING" | "IN-DEV";
   name: string;
   desc: string;
   tags: string[];
-  statusColor: 'text-green-400' | 'text-yellow-400' | 'text-blue-400';
+  statusColor: "text-green-400" | "text-yellow-400" | "text-blue-400";
 }
 
 export interface TerminalLine {
@@ -29,8 +35,8 @@ export interface ThemeColors {
   textSubtle: string;
   accent: string;
   accentText: string;
-  teal: string;           // ADDED
-  tealText: string;       // ADDED
+  teal: string; // ADDED
+  tealText: string; // ADDED
   btnPrimary: string;
   btnPrimaryText: string;
   btnSecondary: string;
@@ -46,9 +52,9 @@ export interface ThemeColors {
   liveGreen: string;
   liveYellow: string;
   memberBg: string;
-  statusPaused: string;   // ADDED
-  statusInDev: string;    // ADDED
+  statusPaused: string; // ADDED
+  statusInDev: string; // ADDED
   statusUpcoming: string; // ADDED
-  statusLive: string;     // ADDED
-  cardBorder: string;     // ADDED — consistent card border color
+  statusLive: string; // ADDED
+  cardBorder: string; // ADDED — consistent card border color
 }

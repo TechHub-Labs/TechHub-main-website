@@ -1,6 +1,9 @@
 /**
- * NotFoundPage — 404 page matching TechHub's design system
+ * NotFoundPage.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
+
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../../landing/domain/useTheme";
@@ -25,9 +28,15 @@ export function NotFoundPage() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
       <WebsiteBackground isDark={dark} bgColor={colors.bg} />
-      <Navigation colors={colors} dark={dark} onThemeToggle={() => setDark(!dark)} />
+      <Navigation
+        colors={colors}
+        dark={dark}
+        onThemeToggle={() => setDark(!dark)}
+      />
 
       <main
         style={{
@@ -38,10 +47,17 @@ export function NotFoundPage() {
           padding: "2rem",
         }}
       >
-        <div ref={containerRef} style={{ textAlign: "center", maxWidth: "560px" }}>
-
-          {/* Glitchy 404 number */}
-          <div style={{ position: "relative", display: "inline-block", marginBottom: "24px" }}>
+        <div
+          ref={containerRef}
+          style={{ textAlign: "center", maxWidth: "560px" }}
+        >
+          <div
+            style={{
+              position: "relative",
+              display: "inline-block",
+              marginBottom: "24px",
+            }}
+          >
             <span
               style={{
                 fontSize: "clamp(7rem, 20vw, 10rem)",
@@ -56,7 +72,7 @@ export function NotFoundPage() {
             >
               404
             </span>
-            {/* Green accent fill on "0" in middle */}
+
             <span
               style={{
                 position: "absolute",
@@ -76,7 +92,6 @@ export function NotFoundPage() {
             </span>
           </div>
 
-          {/* Accent line */}
           <div
             style={{
               height: "3px",
@@ -111,8 +126,14 @@ export function NotFoundPage() {
             Let's get you back on track.
           </p>
 
-          {/* CTAs */}
-          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <Link
               to="/"
               style={{
@@ -128,12 +149,15 @@ export function NotFoundPage() {
                 textDecoration: "none",
                 transition: "transform 0.15s, box-shadow 0.15s",
               }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1.03)";
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 24px rgba(163,208,69,0.35)";
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.transform =
+                  "scale(1.03)";
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+                  "0 8px 24px rgba(163,208,69,0.35)";
               }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1)";
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.transform =
+                  "scale(1)";
                 (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none";
               }}
             >
@@ -153,13 +177,17 @@ export function NotFoundPage() {
                 textDecoration: "none",
                 transition: "border-color 0.2s, transform 0.15s",
               }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "#A3D045";
-                (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1.03)";
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor =
+                  "#A3D045";
+                (e.currentTarget as HTMLAnchorElement).style.transform =
+                  "scale(1.03)";
               }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = colors.divider;
-                (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1)";
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor =
+                  colors.divider;
+                (e.currentTarget as HTMLAnchorElement).style.transform =
+                  "scale(1)";
               }}
             >
               Meet the Team

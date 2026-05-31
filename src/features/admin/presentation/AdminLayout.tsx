@@ -1,70 +1,109 @@
 /**
- * AdminLayout — Sidebar shell for all admin pages
- * - Dark sidebar (240px) with role badge + nav links filtered by role
- * - Main content area on the right
- * - Mobile: sidebar collapses to top bar
+ * AdminLayout.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
-import { useState, useEffect } from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../shared/hooks/useAuth';
-import { useTheme } from '../../landing/domain/useTheme';
-import { WebsiteBackground } from '../../../shared/components/WebsiteBackground';
-import { supabase } from '../../../core/supabase/client';
+
+import { useState, useEffect } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../shared/hooks/useAuth";
+import { useTheme } from "../../landing/domain/useTheme";
+import { WebsiteBackground } from "../../../shared/components/WebsiteBackground";
+import { supabase } from "../../../core/supabase/client";
 
 const NAV_ITEMS = [
-  { path: '/admin',             label: 'Dashboard',   icon: '▣',  roles: ['member', 'executive', 'super_admin'] },
-  { path: '/admin/profile',     label: 'Create Profile', icon: '👤', roles: ['member'] },
-  { path: '/admin/exec-profile',label: 'Create Profile', icon: '👤', roles: ['executive'] },
-  { path: '/admin/request-edit',label: 'Request Edit',icon: '📝', roles: ['member', 'executive'] },
-  { path: '/admin/messages',    label: 'Messages',    icon: '📬', roles: ['super_admin'] },
-  { path: '/admin/members',     label: 'Members',     icon: '👥', roles: ['super_admin'] },
-  { path: '/admin/executives',  label: 'Executives',  icon: '🏛', roles: ['super_admin'] },
-  { path: '/admin/projects',    label: 'Projects',    icon: '🚀', roles: ['super_admin'] },
+  {
+    path: "/admin",
+    label: "Dashboard",
+    icon: "▣",
+    roles: ["member", "executive", "super_admin"],
+  },
+  {
+    path: "/admin/profile",
+    label: "Create Profile",
+    icon: "👤",
+    roles: ["member"],
+  },
+  {
+    path: "/admin/exec-profile",
+    label: "Create Profile",
+    icon: "👤",
+    roles: ["executive"],
+  },
+  {
+    path: "/admin/request-edit",
+    label: "Request Edit",
+    icon: "📝",
+    roles: ["member", "executive"],
+  },
+  {
+    path: "/admin/messages",
+    label: "Messages",
+    icon: "📬",
+    roles: ["super_admin"],
+  },
+  {
+    path: "/admin/members",
+    label: "Members",
+    icon: "👥",
+    roles: ["super_admin"],
+  },
+  {
+    path: "/admin/executives",
+    label: "Executives",
+    icon: "🏛",
+    roles: ["super_admin"],
+  },
+  {
+    path: "/admin/projects",
+    label: "Projects",
+    icon: "🚀",
+    roles: ["super_admin"],
+  },
 ] as const;
 
 const ROLE_LABELS: Record<string, string> = {
-  member:      'Member',
-  executive:   'Executive',
-  super_admin: 'Super Admin',
+  member: "Member",
+  executive: "Executive",
+  super_admin: "Super Admin",
 };
 const ROLE_COLORS: Record<string, string> = {
-  member:      '#38bdf8',
-  executive:   '#a78bfa',
-  super_admin: '#A3D045',
+  member: "#38bdf8",
+  executive: "#a78bfa",
+  super_admin: "#A3D045",
 };
 
-import { ToastContainer } from '../../../shared/components/Toast';
+import { ToastContainer } from "../../../shared/components/Toast";
 
 export function AdminLayout() {
   const { role, logout, user } = useAuth();
   const { dark, setDark, colors } = useTheme();
-  const location  = useLocation();
-  const navigate  = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
   useEffect(() => {
-    if (role !== 'super_admin') return;
+    if (role !== "super_admin") return;
 
     const fetchUnreadCount = async () => {
       const { count } = await supabase
-        .from('admin_messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_read', false);
+        .from("admin_messages")
+        .select("*", { count: "exact", head: true })
+        .eq("is_read", false);
       setUnreadMessages(count ?? 0);
     };
 
     fetchUnreadCount();
 
-    // Subscribe to real-time postgres changes for instant updates
     const channel = supabase
-      .channel('admin_messages_sidebar')
+      .channel("admin_messages_sidebar")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'admin_messages' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "admin_messages" },
         () => {
           fetchUnreadCount();
-        }
+        },
       )
       .subscribe();
 
@@ -73,102 +112,159 @@ export function AdminLayout() {
     };
   }, [role]);
 
-  const visibleNav = NAV_ITEMS.filter(item =>
-    role !== null && (item.roles as readonly string[]).includes(role)
+  const visibleNav = NAV_ITEMS.filter(
+    (item) => role !== null && (item.roles as readonly string[]).includes(role),
   );
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin/login');
+    navigate("/admin/login");
   };
 
   const SidebarContent = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Logo */}
-      <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <Link to="/" style={{ display: 'block', marginBottom: '16px' }}>
-          <img src="/images/Logo.png" alt="TechHub" style={{ height: '40px' }} />
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <div
+        style={{
+          padding: "24px 20px 20px",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        <Link to="/" style={{ display: "block", marginBottom: "16px" }}>
+          <img
+            src="/images/Logo.png"
+            alt="TechHub"
+            style={{ height: "40px" }}
+          />
         </Link>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '6px',
-          background: dark
-            ? 'var(--min-bg-dark)'
-            : role === 'super_admin'
-              ? 'rgba(163,208,69,0.18)'
-              : role === 'executive'
-                ? 'rgba(167,139,250,0.18)'
-                : 'rgba(56,189,248,0.18)', 
-          borderRadius: '8px', padding: '6px 14px',
-          border: dark ? '1px solid var(--min-border)' : 'none',
-        }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: ROLE_COLORS[role ?? 'member'], boxShadow: `0 0 8px ${ROLE_COLORS[role ?? 'member']}` }} />
-          <span style={{
-            color: dark
-              ? ROLE_COLORS[role ?? 'member']
-              : role === 'super_admin'
-                ? '#4d7c0f'
-                : role === 'executive'
-                  ? '#6d28d9'
-                  : '#0284c7',
-            fontSize: '12px',
-            fontWeight: 700
-          }}>
-            {ROLE_LABELS[role ?? 'member']}
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            background: dark
+              ? "var(--min-bg-dark)"
+              : role === "super_admin"
+                ? "rgba(163,208,69,0.18)"
+                : role === "executive"
+                  ? "rgba(167,139,250,0.18)"
+                  : "rgba(56,189,248,0.18)",
+            borderRadius: "8px",
+            padding: "6px 14px",
+            border: dark ? "1px solid var(--min-border)" : "none",
+          }}
+        >
+          <div
+            style={{
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              background: ROLE_COLORS[role ?? "member"],
+              boxShadow: `0 0 8px ${ROLE_COLORS[role ?? "member"]}`,
+            }}
+          />
+          <span
+            style={{
+              color: dark
+                ? ROLE_COLORS[role ?? "member"]
+                : role === "super_admin"
+                  ? "#4d7c0f"
+                  : role === "executive"
+                    ? "#6d28d9"
+                    : "#0284c7",
+              fontSize: "12px",
+              fontWeight: 700,
+            }}
+          >
+            {ROLE_LABELS[role ?? "member"]}
           </span>
         </div>
-        <p style={{ color: '#64748b', fontSize: '11px', marginTop: '6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <p
+          style={{
+            color: "#64748b",
+            fontSize: "11px",
+            marginTop: "6px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
           {user?.email}
         </p>
       </div>
 
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '16px 12px', overflow: 'hidden' }}>
-        {visibleNav.map(item => {
-          const isActive = item.path === '/admin'
-            ? location.pathname === '/admin'
-            : location.pathname.startsWith(item.path);
+      <nav style={{ flex: 1, padding: "16px 12px", overflow: "hidden" }}>
+        {visibleNav.map((item) => {
+          const isActive =
+            item.path === "/admin"
+              ? location.pathname === "/admin"
+              : location.pathname.startsWith(item.path);
           return (
             <Link
               key={item.path}
               to={item.path}
               onClick={() => setMobileOpen(false)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '10px 16px',
-                paddingLeft: isActive ? '13px' : '16px',
-                borderLeft: isActive ? (dark ? '3px solid #A3D045' : '3px solid #4f46e5') : '3px solid transparent',
-                borderRadius: '8px', marginBottom: '4px',
-                color: isActive ? (dark ? '#A3D045' : '#4f46e5') : colors.textMuted,
-                background: isActive ? (dark ? 'rgba(163,208,69,0.1)' : 'rgba(79,70,229,0.08)') : 'transparent',
-                textDecoration: 'none', fontSize: '14px', fontWeight: isActive ? 600 : 500,
-                transition: 'all 0.15s',
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "10px 16px",
+                paddingLeft: isActive ? "13px" : "16px",
+                borderLeft: isActive
+                  ? dark
+                    ? "3px solid #A3D045"
+                    : "3px solid #4f46e5"
+                  : "3px solid transparent",
+                borderRadius: "8px",
+                marginBottom: "4px",
+                color: isActive
+                  ? dark
+                    ? "#A3D045"
+                    : "#4f46e5"
+                  : colors.textMuted,
+                background: isActive
+                  ? dark
+                    ? "rgba(163,208,69,0.1)"
+                    : "rgba(79,70,229,0.08)"
+                  : "transparent",
+                textDecoration: "none",
+                fontSize: "14px",
+                fontWeight: isActive ? 600 : 500,
+                transition: "all 0.15s",
               }}
-              onMouseEnter={e => { 
+              onMouseEnter={(e) => {
                 if (!isActive) {
-                  (e.currentTarget as HTMLAnchorElement).style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)';
-                  (e.currentTarget as HTMLAnchorElement).style.color = dark ? '#f1f5f9' : '#111827';
+                  (e.currentTarget as HTMLAnchorElement).style.background = dark
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.03)";
+                  (e.currentTarget as HTMLAnchorElement).style.color = dark
+                    ? "#f1f5f9"
+                    : "#111827";
                 }
               }}
-              onMouseLeave={e => { 
+              onMouseLeave={(e) => {
                 if (!isActive) {
-                  (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; 
-                  (e.currentTarget as HTMLAnchorElement).style.color = colors.textMuted;
+                  (e.currentTarget as HTMLAnchorElement).style.background =
+                    "transparent";
+                  (e.currentTarget as HTMLAnchorElement).style.color =
+                    colors.textMuted;
                 }
               }}
             >
-              <span style={{ fontSize: '16px' }}>{item.icon}</span>
+              <span style={{ fontSize: "16px" }}>{item.icon}</span>
               <span style={{ flex: 1 }}>{item.label}</span>
-              {item.path === '/admin/messages' && unreadMessages > 0 && (
-                <span style={{
-                  background: '#fbbf24',
-                  color: '#0f172a',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  borderRadius: '999px',
-                  padding: '2px 8px',
-                  boxShadow: '0 0 8px rgba(251,191,36,0.35)',
-                  animation: 'adminFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                }}>
+              {item.path === "/admin/messages" && unreadMessages > 0 && (
+                <span
+                  style={{
+                    background: "#fbbf24",
+                    color: "#0f172a",
+                    fontSize: "11px",
+                    fontWeight: 800,
+                    borderRadius: "999px",
+                    padding: "2px 8px",
+                    boxShadow: "0 0 8px rgba(251,191,36,0.35)",
+                    animation: "adminFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
+                >
                   {unreadMessages}
                 </span>
               )}
@@ -177,34 +273,71 @@ export function AdminLayout() {
         })}
       </nav>
 
-      {/* Theme toggle & Logout */}
-      <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '32px' }}>
+      <div
+        style={{
+          padding: "20px 16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          paddingBottom: "32px",
+        }}
+      >
         <button
           onClick={() => setDark(!dark)}
           className="min-button"
           style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--min-border)', background: 'transparent',
-            color: dark ? '#f1f5f9' : '#111827', fontSize: '13px', fontWeight: 500,
-            cursor: 'pointer', transition: 'all 0.15s',
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "10px 16px",
+            borderRadius: "8px",
+            border: "1px solid var(--min-border)",
+            background: "transparent",
+            color: dark ? "#f1f5f9" : "#111827",
+            fontSize: "13px",
+            fontWeight: 500,
+            cursor: "pointer",
+            transition: "all 0.15s",
           }}
-          onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = 'var(--min-hover)'}
-          onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'transparent'}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLButtonElement).style.background =
+              "var(--min-hover)")
+          }
+          onMouseLeave={(e) =>
+            ((e.currentTarget as HTMLButtonElement).style.background =
+              "transparent")
+          }
         >
-          <span>{dark ? '☀️' : '🌙'}</span> {dark ? 'Light Mode' : 'Dark Mode'}
+          <span>{dark ? "☀️" : "🌙"}</span> {dark ? "Light Mode" : "Dark Mode"}
         </button>
 
         <button
           onClick={handleLogout}
           className="min-button"
           style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-            padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--min-border)', background: 'transparent',
-            color: '#ef4444', fontSize: '13px', fontWeight: 500,
-            cursor: 'pointer', transition: 'all 0.15s',
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "10px 16px",
+            borderRadius: "8px",
+            border: "1px solid var(--min-border)",
+            background: "transparent",
+            color: "#ef4444",
+            fontSize: "13px",
+            fontWeight: 500,
+            cursor: "pointer",
+            transition: "all 0.15s",
           }}
-          onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.1)'}
-          onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = 'transparent'}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLButtonElement).style.background =
+              "rgba(239,68,68,0.1)")
+          }
+          onMouseLeave={(e) =>
+            ((e.currentTarget as HTMLButtonElement).style.background =
+              "transparent")
+          }
         >
           <span>⎋</span> Sign out
         </button>
@@ -213,87 +346,135 @@ export function AdminLayout() {
   );
 
   return (
-    <div style={{ 
-      height: '100vh', overflow: 'hidden', display: 'flex', fontFamily: "'Inter', 'Geist', sans-serif",
-      background: 'transparent',
-      transition: 'background 0.2s ease', position: 'relative'
-    }} className="admin-layout-root">
-      
-      {/* Toast notifications */}
+    <div
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        display: "flex",
+        fontFamily: "'Inter', 'Geist', sans-serif",
+        background: "transparent",
+        transition: "background 0.2s ease",
+        position: "relative",
+      }}
+      className="admin-layout-root"
+    >
       <ToastContainer />
-      
-      {/* Dynamic Animated Background */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: -1 }}>
+
+      <div style={{ position: "absolute", inset: 0, zIndex: -1 }}>
         <WebsiteBackground isDark={dark} bgColor={colors.bg} opacity={0.6} />
       </div>
 
-      <aside style={{
-        width: '260px', flexShrink: 0, 
-        background: dark ? 'var(--min-surface-dark)' : 'var(--min-surface-light)',
-        borderRight: '1px solid var(--min-border)',
-        height: '100vh', display: 'none',
-        zIndex: 10
-      }}
+      <aside
+        style={{
+          width: "260px",
+          flexShrink: 0,
+          background: dark
+            ? "var(--min-surface-dark)"
+            : "var(--min-surface-light)",
+          borderRight: "1px solid var(--min-border)",
+          height: "100vh",
+          display: "none",
+          zIndex: 10,
+        }}
         className="lg:!block"
       >
         <SidebarContent />
       </aside>
 
-      {/* Mobile top bar */}
-      <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, height: '64px', zIndex: 100,
-        background: colors.bg,
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "64px",
+          zIndex: 100,
+          background: colors.bg,
 
-        borderBottom: '1px solid var(--min-border)',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 20px',
-      }} className="lg:!hidden">
-        <img src="/images/Logo.png" alt="TechHub" style={{ height: '32px', filter: !dark ? 'invert(1)' : 'none' }} />
+          borderBottom: "1px solid var(--min-border)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 20px",
+        }}
+        className="lg:!hidden"
+      >
+        <img
+          src="/images/Logo.png"
+          alt="TechHub"
+          style={{ height: "32px", filter: !dark ? "invert(1)" : "none" }}
+        />
         <button
-          onClick={() => setMobileOpen(v => !v)}
-          style={{ background: 'none', border: 'none', color: colors.text, fontSize: '20px', cursor: 'pointer' }}
+          onClick={() => setMobileOpen((v) => !v)}
+          style={{
+            background: "none",
+            border: "none",
+            color: colors.text,
+            fontSize: "20px",
+            cursor: "pointer",
+          }}
         >
-          {mobileOpen ? '✕' : '☰'}
+          {mobileOpen ? "✕" : "☰"}
         </button>
       </div>
 
-      {/* Mobile sidebar overlay */}
       {mobileOpen && (
         <>
           <div
             onClick={() => setMobileOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 101 }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.6)",
+              zIndex: 101,
+            }}
           />
-          <aside style={{
-            position: 'fixed', top: 0, left: 0, width: '260px', height: '100vh',
-            background: dark ? 'var(--min-surface-dark)' : 'var(--min-surface-light)',
-            borderRight: '1px solid var(--min-border)',
-            zIndex: 102, overflowY: 'auto',
-          }}>
+          <aside
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "260px",
+              height: "100vh",
+              background: dark
+                ? "var(--min-surface-dark)"
+                : "var(--min-surface-light)",
+              borderRight: "1px solid var(--min-border)",
+              zIndex: 102,
+              overflowY: "auto",
+            }}
+          >
             <SidebarContent />
           </aside>
         </>
       )}
 
-      {/* Main content */}
-      <main 
-        style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', paddingTop: 0, paddingBottom: '40px' }} 
+      <main
+        style={{
+          flex: 1,
+          minWidth: 0,
+          overflowY: "auto",
+          overflowX: "hidden",
+          paddingTop: 0,
+          paddingBottom: "40px",
+        }}
         className="lg:!pt-0 pt-24 admin-fade-in"
       >
         <Outlet />
       </main>
 
-      {/* Global Admin Styles */}
       <style>{`
         :root {
           --min-bg-light: ${colors.bg};
           --min-surface-light: rgba(255, 255, 255, 0.7);
-          
+
           --min-bg-dark: ${colors.bg};
           --min-surface-dark: ${colors.nav};
         }
 
-        ${!dark ? `
+        ${
+          !dark
+            ? `
           :root {
             --min-border: rgba(79,70,229,0.12);
             --min-hover: rgba(79,70,229,0.04);
@@ -312,7 +493,8 @@ export function AdminLayout() {
           .min-input:hover { border-color: rgba(79, 70, 229, 0.6) !important; }
           .min-input:focus { border-color: #4f46e5 !important; outline: none; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2) !important; }
           .min-input::placeholder { color: #64748b !important; opacity: 1 !important; }
-        ` : `
+        `
+            : `
           :root {
             --min-border: rgba(255,255,255,0.1);
             --min-hover: rgba(255,255,255,0.05);
@@ -328,8 +510,9 @@ export function AdminLayout() {
           .min-input:focus { border-color: #A3D045 !important; outline: none; box-shadow: 0 0 0 3px rgba(163, 208, 69, 0.25) !important; }
           .min-input::placeholder { color: #94a3b8 !important; opacity: 0.7 !important; }
           .admin-label { color: #94a3b8; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
-        `}
-        
+        `
+        }
+
         @keyframes adminFadeIn {
           from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
           to { opacity: 1; transform: translateY(0); filter: blur(0); }

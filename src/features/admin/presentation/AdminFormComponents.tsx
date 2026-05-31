@@ -1,11 +1,13 @@
 /**
- * Shared admin form utilities — inputs, tag editor, avatar uploader
+ * AdminFormComponents.tsx
+ * 
+ * Core component/utility for the TechHub application.
  */
+
 import { useRef, useState, useEffect } from "react";
 import { supabase } from "../../../core/supabase/client";
 import { toast } from "../../../shared/components/Toast";
 
-// ─── Styled input ─────────────────────────────────────────────────────────────
 export function AdminInput({
   label,
   value,
@@ -98,7 +100,6 @@ export function AdminTextarea({
   );
 }
 
-// ─── Tag / array editor ───────────────────────────────────────────────────────
 export function TagEditor({
   label,
   tags,
@@ -119,7 +120,7 @@ export function TagEditor({
       .split(",")
       .map((t) => t.trim())
       .filter((t) => t && !tags.includes(t));
-      
+
     if (newTags.length > 0) {
       onChange([...tags, ...newTags]);
     }
@@ -215,7 +216,6 @@ export function TagEditor({
   );
 }
 
-// ─── Avatar uploader ──────────────────────────────────────────────────────────
 export function AvatarUploader({
   currentUrl,
   onUploaded,
@@ -329,7 +329,6 @@ export function AvatarUploader({
   );
 }
 
-// ─── Toggle ───────────────────────────────────────────────────────────────────
 export function AdminToggle({
   label,
   description,
@@ -351,12 +350,22 @@ export function AdminToggle({
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
-      <div> 
-        <div className="admin-label" style={{ fontSize: "14px", marginBottom: 0 }}>
+      <div>
+        <div
+          className="admin-label"
+          style={{ fontSize: "14px", marginBottom: 0 }}
+        >
           {label}
         </div>
         {description && (
-          <div style={{ color: "inherit", opacity: 0.7, fontSize: "12px", marginTop: "2px" }}>
+          <div
+            style={{
+              color: "inherit",
+              opacity: 0.7,
+              fontSize: "12px",
+              marginTop: "2px",
+            }}
+          >
             {description}
           </div>
         )}
@@ -393,7 +402,6 @@ export function AdminToggle({
   );
 }
 
-// ─── Save button / status ─────────────────────────────────────────────────────
 export function SaveBar({
   saving,
   saved,
@@ -454,7 +462,6 @@ export function SaveBar({
   );
 }
 
-// ─── Admin Messages Panel ─────────────────────────────────────────────────────
 export interface AdminMessage {
   id: string;
   sender_name: string;
