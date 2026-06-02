@@ -458,7 +458,7 @@ export function AdminLayout() {
           paddingTop: 0,
           paddingBottom: "40px",
         }}
-        className="lg:!pt-0 pt-24 admin-fade-in"
+        className="lg:!pt-0 pt-24"
       >
         <Outlet />
       </main>
@@ -511,14 +511,6 @@ export function AdminLayout() {
           .min-input::placeholder { color: #94a3b8 !important; opacity: 0.7 !important; }
           .admin-label { color: #94a3b8; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
         `
-        }
-
-        @keyframes adminFadeIn {
-          from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
-          to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
-        .admin-fade-in {
-          animation: adminFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         /* Make scrollbars look nice in admin panel */
         ::-webkit-scrollbar { width: 8px; height: 8px; }

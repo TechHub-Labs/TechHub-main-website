@@ -127,12 +127,25 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
         .select("avatar_url")
         .order("sort_order", { ascending: true })
         .limit(5);
+      
       if (data && data.length > 0) {
-        setAvatars(
-          data.map(
-            (m, i) => m.avatar_url || `https://i.pravatar.cc/100?img=${i + 10}`,
-          ),
+        const newAvatars = data.map(
+          (m, i) => m.avatar_url || `https://i.pravatar.cc/100?img=${i + 10}`
         );
+
+        // Preload images before swapping out placeholders
+        await Promise.all(
+          newAvatars.map((url) => {
+            return new Promise((resolve) => {
+              const img = new Image();
+              img.onload = resolve;
+              img.onerror = resolve; // resolve on error to avoid hanging
+              img.src = url;
+            });
+          })
+        );
+
+        setAvatars(newAvatars);
       }
     };
     fetchAvatars();
@@ -230,6 +243,8 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
                     key={i}
                     src={src}
                     alt={`Member ${i + 1}`}
+                    loading="lazy"
+                    decoding="async"
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] object-cover"
                     style={{
                       borderColor:

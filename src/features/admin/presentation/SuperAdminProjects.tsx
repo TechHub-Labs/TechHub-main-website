@@ -382,6 +382,8 @@ export function SuperAdminProjects() {
                           <img
                             src={p.image_url}
                             alt=""
+                            loading="lazy"
+                            decoding="async"
                             style={{
                               width: "100%",
                               height: "100%",
@@ -400,7 +402,7 @@ export function SuperAdminProjects() {
                           </span>
                         )}
                       </div>
-                      <span style={{ color: "#f1f5f9", fontWeight: 600 }}>
+                      <span style={{ color: "inherit", fontWeight: 600 }}>
                         {p.title ?? "—"}
                       </span>
                     </div>

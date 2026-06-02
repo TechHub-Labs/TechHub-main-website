@@ -91,6 +91,8 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
               <img
                 src={project.image_url}
                 alt={project.title}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             ) : (

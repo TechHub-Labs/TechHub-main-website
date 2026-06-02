@@ -197,6 +197,8 @@ export function ProjectDetailsPage() {
                       <img
                         src={project.image}
                         alt={project.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                     ) : (

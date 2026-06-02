@@ -138,7 +138,26 @@ export function TagEditor({
         <input
           value={input}
           placeholder={placeholder ?? "Add item…"}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.includes(",")) {
+              const parts = val.split(",");
+              // all parts except the last one are definitely complete tags
+              const newTags = parts
+                .slice(0, -1)
+                .map((t) => t.trim())
+                .filter((t) => t && !tags.includes(t));
+                
+              const lastPart = parts[parts.length - 1];
+              
+              if (newTags.length > 0) {
+                onChange([...tags, ...newTags]);
+              }
+              setInput(lastPart.trimStart());
+            } else {
+              setInput(val);
+            }
+          }}
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
           className="min-input"
           style={{
@@ -589,6 +608,121 @@ export function AdminMessagesPanel({ role }: { role: "member" | "executive" }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+export function AdminSelect({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  options: { label: string; value: string }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const selectedLabel = options.find((o) => o.value === value)?.label || value;
+
+  // Close when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    const handleOutsideClick = () => setOpen(false);
+    // Timeout prevents immediate trigger
+    setTimeout(() => document.addEventListener("click", handleOutsideClick), 10);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [open]);
+
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        type="button"
+        className="min-input"
+        onClick={() => setOpen(!open)}
+        style={{
+          padding: "10px 16px",
+          borderRadius: "12px",
+          color: "inherit",
+          fontSize: "13px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "8px",
+          cursor: "pointer",
+          border: "none",
+        }}
+      >
+        <span style={{ fontWeight: 600 }}>{selectedLabel}</span>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s",
+            opacity: 0.6,
+          }}
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      {open && (
+        <div
+          className="min-card"
+          style={{
+            position: "absolute",
+            top: "calc(100% + 4px)",
+            right: 0,
+            width: "160px",
+            padding: "8px",
+            zIndex: 50,
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              className="min-button"
+              onClick={() => {
+                onChange(opt.value);
+                setOpen(false);
+              }}
+              style={{
+                textAlign: "left",
+                padding: "8px 12px",
+                border: "none",
+                background: opt.value === value ? "rgba(163,208,69,0.15)" : "transparent",
+                color: opt.value === value ? "#A3D045" : "inherit",
+                fontSize: "13px",
+                fontWeight: opt.value === value ? 700 : 600,
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                if (opt.value !== value)
+                  (e.currentTarget as HTMLButtonElement).style.background =
+                    "rgba(255,255,255,0.05)";
+              }}
+              onMouseLeave={(e) => {
+                if (opt.value !== value)
+                  (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

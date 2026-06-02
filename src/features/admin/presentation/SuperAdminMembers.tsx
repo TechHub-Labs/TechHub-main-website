@@ -15,6 +15,7 @@ import {
   AdminToggle,
   SaveBar,
   AdminMessagesPanel,
+  AdminSelect,
 } from "./AdminFormComponents";
 
 const CATEGORY_OPTIONS = ["Undergrad", "Alumni"];
@@ -43,12 +44,14 @@ export function SuperAdminMembers() {
   const [formErr, setFormErr] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"All" | "Visible" | "Hidden">("All");
 
   const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
       .from("members")
       .select("*")
+      .order("visible", { ascending: false })
       .order("sort_order", { ascending: true });
     setMembers((data ?? []) as Member[]);
     setLoading(false);
@@ -231,10 +234,11 @@ export function SuperAdminMembers() {
     }
   };
 
-  const filtered = members.filter(
-    (m) =>
-      !search || (m.name ?? "").toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = members.filter((m) => {
+    const matchSearch = !search || (m.name ?? "").toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "All" || (statusFilter === "Visible" ? m.visible : !m.visible);
+    return matchSearch && matchStatus;
+  });
 
   const set = (key: keyof Member) => (val: any) =>
     setEditing((prev) => (prev ? { ...prev, [key]: val } : prev));
@@ -289,6 +293,15 @@ export function SuperAdminMembers() {
               transition: "all 0.2s",
               border: "none",
             }}
+          />
+          <AdminSelect
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val as any)}
+            options={[
+              { label: "All Status", value: "All" },
+              { label: "Visible", value: "Visible" },
+              { label: "Hidden", value: "Hidden" },
+            ]}
           />
           <button
             onClick={openNew}
@@ -356,15 +369,15 @@ export function SuperAdminMembers() {
                   key={m.id}
                   style={{
                     borderBottom: "1px solid rgba(255,255,255,0.04)",
-                    cursor: search ? "default" : "grab",
                   }}
-                  draggable={!search}
+                  className="drag-handle"
+                  draggable={!search && statusFilter === "All"}
                   onDragStart={(e) => handleDragStart(e, m.id!)}
                   onDragOver={(e) => {
-                    if (!search) e.preventDefault();
+                    if (!search && statusFilter === "All") e.preventDefault();
                   }}
                   onDrop={(e) => {
-                    if (!search) handleDrop(e, m.id!);
+                    if (!search && statusFilter === "All") handleDrop(e, m.id!);
                   }}
                   onMouseEnter={(e) =>
                     ((e.currentTarget as HTMLTableRowElement).style.background =
@@ -384,49 +397,44 @@ export function SuperAdminMembers() {
                         alignItems: "center",
                       }}
                     >
-                      {!search && (
-                        <div
-                          style={{
-                            color: "#475569",
-                            fontSize: "10px",
-                            marginBottom: "2px",
-                          }}
-                        >
-                          ⋮⋮
-                        </div>
-                      )}
-                      <button
-                        onClick={() => moveRow(m.id!, "up")}
-                        disabled={idx === 0 || search !== ""}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color:
-                            idx === 0 || search !== "" ? "#334155" : "#94a3b8",
-                          cursor:
-                            idx === 0 || search !== "" ? "default" : "pointer",
-                        }}
-                      >
-                        ▲
-                      </button>
-                      <button
-                        onClick={() => moveRow(m.id!, "down")}
-                        disabled={idx === filtered.length - 1 || search !== ""}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color:
-                            idx === filtered.length - 1 || search !== ""
-                              ? "#334155"
-                              : "#94a3b8",
-                          cursor:
-                            idx === filtered.length - 1 || search !== ""
-                              ? "default"
-                              : "pointer",
-                        }}
-                      >
-                        ▼
-                      </button>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        {!search && statusFilter === "All" && (
+                          <button
+                            onClick={() => moveRow(m.id!, "up")}
+                            disabled={idx === 0}
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "4px",
+                              background: "transparent",
+                              border: "1px solid",
+                              borderColor: idx === 0 ? "#334155" : "#94a3b8",
+                              color: idx === 0 ? "#334155" : "#94a3b8",
+                              cursor: idx === 0 ? "default" : "pointer",
+                              fontSize: "12px",
+                            }}
+                          >
+                            ↑
+                          </button>
+                        )}
+                        {!search && statusFilter === "All" && (
+                          <button
+                            onClick={() => moveRow(m.id!, "down")}
+                            disabled={idx === filtered.length - 1}
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "4px",
+                              background: "transparent",
+                              border: "1px solid",
+                              borderColor: idx === filtered.length - 1 ? "#334155" : "#94a3b8",
+                              color: idx === filtered.length - 1 ? "#334155" : "#94a3b8",
+                              cursor: idx === filtered.length - 1 ? "default" : "pointer",
+                              fontSize: "12px",
+                            }}
+                          >
+                            ↓
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td style={{ padding: "12px" }}>
@@ -452,6 +460,8 @@ export function SuperAdminMembers() {
                           <img
                             src={m.avatar_url}
                             alt=""
+                            loading="lazy"
+                            decoding="async"
                             style={{
                               width: "100%",
                               height: "100%",
