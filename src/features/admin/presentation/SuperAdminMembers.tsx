@@ -132,6 +132,7 @@ export function SuperAdminMembers() {
       twitter: editing.twitter,
       category: editing.category ?? [],
       visible: editing.visible ?? false,
+      sort_order: Date.now(),
     };
 
     const { error } = isNew
@@ -165,7 +166,7 @@ export function SuperAdminMembers() {
 
   const toggleVisible = async (m: Member) => {
     await (supabase.from("members") as any)
-      .update({ visible: !m.visible })
+      .update({ visible: !m.visible, sort_order: Date.now() })
       .eq("id", m.id);
     load();
   };
@@ -626,7 +627,7 @@ export function SuperAdminMembers() {
 
       {deleting && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 lg:left-[260px] z-[9999] flex items-center justify-center p-4"
           style={{ background: "rgba(0,0,0,0.8)" }}
         >
           <div
@@ -707,7 +708,7 @@ export function SuperAdminMembers() {
 
       {editing && (
         <div
-          className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4"
+          className="fixed inset-0 lg:left-[260px] z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4"
           style={{ background: "rgba(0,0,0,0.7)" }}
         >
           <div

@@ -479,7 +479,7 @@ export function SuperAdminProjects() {
 
       {deleting && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 lg:left-[260px] z-[9999] flex items-center justify-center p-4"
           style={{ background: "rgba(0,0,0,0.8)" }}
         >
           <div
@@ -559,7 +559,7 @@ export function SuperAdminProjects() {
 
       {editing && (
         <div
-          className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4"
+          className="fixed inset-0 lg:left-[260px] z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4"
           style={{ background: "rgba(0,0,0,0.7)" }}
         >
           <div

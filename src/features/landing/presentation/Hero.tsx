@@ -6,25 +6,27 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ThemeColors } from "../domain/types";
+
 import { useCountUp } from "../../../shared/hooks/useCountUp";
 import { useMobileScrollHover } from "../../../shared/hooks/useMobileScrollHover";
 import { supabase } from "../../../core/supabase/client";
 
 import { ThemeButton } from "../../../shared/components/ThemeButton";
 
-interface HeroProps {
-  colors: ThemeColors;
-  dark?: boolean;
+interface Props {
+  colors: any;
+  dark: boolean;
+  onLoaded?: () => void;
 }
 
-export function HeroSection({ colors, dark = false }: HeroProps) {
+export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
   const [typed, setTyped] = useState("");
   const [cursorVisible, setCursorVisible] = useState(true);
   const words = ["Launch.", "Innovate.", "Create.", "Scale."];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const isDark = dark;
+  const [isReady, setIsReady] = useState(false);
+
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const refMembers = useMobileScrollHover("members", setHoveredCard);
@@ -66,9 +68,11 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
   });
 
   useEffect(() => {
-    const t = setTimeout(() => setStarted(true), 300);
-    return () => clearTimeout(t);
-  }, []);
+    if (isReady) {
+      const t = setTimeout(() => setStarted(true), 300);
+      return () => clearTimeout(t);
+    }
+  }, [isReady]);
 
   useEffect(() => {
     const origin = performance.now();
@@ -83,6 +87,7 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
   }, []);
 
   useEffect(() => {
+    if (!isReady) return;
     const currentWord = words[currentWordIndex];
     let timeout: ReturnType<typeof setTimeout>;
     if (!isDeleting) {
@@ -103,7 +108,7 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
       }
     }
     return () => clearTimeout(timeout);
-  }, [typed, isDeleting, currentWordIndex]); // eslint-disable-line
+  }, [typed, isDeleting, currentWordIndex, isReady]); // eslint-disable-line
 
   useEffect(() => {
     const iv = setInterval(() => setCursorVisible((v) => !v), 500);
@@ -112,13 +117,7 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
 
   const normalCardBg = isDark ? colors.bgCardHover : colors.bgCard;
 
-  const [avatars, setAvatars] = useState<string[]>([
-    "https://i.pravatar.cc/100?img=33",
-    "https://i.pravatar.cc/100?img=47",
-    "https://i.pravatar.cc/100?img=12",
-    "https://i.pravatar.cc/100?img=32",
-    "https://i.pravatar.cc/100?img=57",
-  ]);
+  const [avatars, setAvatars] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchAvatars = async () => {
@@ -133,8 +132,8 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
           (m, i) => m.avatar_url || `https://i.pravatar.cc/100?img=${i + 10}`
         );
 
-        // Preload images before swapping out placeholders
-        await Promise.all(
+        // Preload images before swapping out placeholders, but don't block forever
+        const preloadPromise = Promise.all(
           newAvatars.map((url) => {
             return new Promise((resolve) => {
               const img = new Image();
@@ -145,11 +144,16 @@ export function HeroSection({ colors, dark = false }: HeroProps) {
           })
         );
 
+        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 800));
+        await Promise.race([preloadPromise, timeoutPromise]);
+
         setAvatars(newAvatars);
       }
+      setIsReady(true);
+      if (onLoaded) onLoaded();
     };
     fetchAvatars();
-  }, []);
+  }, [onLoaded]);
 
   const f1 = Math.sin(ft * ((2 * Math.PI) / 4.0)) * 5;
   const f2 = Math.sin((ft + 0.8) * ((2 * Math.PI) / 5.2)) * 5;

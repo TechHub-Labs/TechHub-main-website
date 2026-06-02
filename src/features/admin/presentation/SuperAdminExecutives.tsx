@@ -124,6 +124,7 @@ export function SuperAdminExecutives() {
       github: editing.github,
       linkedin: editing.linkedin,
       twitter: editing.twitter,
+      sort_order: Date.now(),
     };
 
     const { error } = isNew
@@ -157,7 +158,7 @@ export function SuperAdminExecutives() {
 
   const toggleVisible = async (ex: Executive) => {
     await (supabase.from("executives") as any)
-      .update({ visible: !ex.visible })
+      .update({ visible: !ex.visible, sort_order: Date.now() })
       .eq("id", ex.id);
     load();
   };
@@ -569,7 +570,7 @@ export function SuperAdminExecutives() {
 
       {deleting && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 lg:left-[260px] z-[9999] flex items-center justify-center p-4"
           style={{ background: "rgba(0,0,0,0.8)" }}
         >
           <div
@@ -650,7 +651,7 @@ export function SuperAdminExecutives() {
 
       {editing && (
         <div
-          className="fixed inset-0 z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4"
+          className="fixed inset-0 lg:left-[260px] z-[9000] flex items-center justify-center p-4 pt-[80px] lg:pt-4"
           style={{ background: "rgba(0,0,0,0.7)" }}
         >
           <div

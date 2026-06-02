@@ -4,7 +4,7 @@
  * Core component/utility for the TechHub application.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../domain/useTheme";
 import { HeroSection } from "./Hero";
 import { ProjectsSection } from "./ProjectsSection";
@@ -19,6 +19,7 @@ import { PageMargin } from "../../../shared/components/PageMargin";
 
 export function LandingPage() {
   const { dark, setDark, colors } = useTheme();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.documentElement.style.color = colors.text;
@@ -26,10 +27,43 @@ export function LandingPage() {
   }, [colors]);
 
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
-      <WebsiteBackground isDark={dark} bgColor={colors.bg} />
+    <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: colors.bg,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              width: "40px",
+              height: "40px",
+              border: `3px solid ${colors.divider}`,
+              borderTopColor: colors.accent,
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+            }}
+          />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          opacity: loading ? 0 : 1,
+          transition: "opacity 0.6s ease",
+        }}
+      >
+        <WebsiteBackground isDark={dark} bgColor={colors.bg} />
 
       <Navigation
         colors={colors}
@@ -39,7 +73,11 @@ export function LandingPage() {
 
       <main className="flex-1 w-full">
         <PageMargin>
-          <HeroSection colors={colors} dark={dark} />
+          <HeroSection
+            colors={colors}
+            dark={dark}
+            onLoaded={() => setLoading(false)}
+          />
           <ProjectsSection colors={colors} />
           <MembersSection colors={colors} />
           <TerminalSection colors={colors} />
@@ -48,6 +86,7 @@ export function LandingPage() {
       </main>
 
       <Footer colors={colors} />
-    </div>
+      </div>
+    </>
   );
 }
