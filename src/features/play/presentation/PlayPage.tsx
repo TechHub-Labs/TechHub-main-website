@@ -56,7 +56,7 @@ export function PlayPage() {
     setTimeout(() => setHeaderVisible(true), 80);
   }, [colors]);
 
-  const [status, setStatus] = useState<"idle" | "playing" | "finished">("idle");
+  const [status, setStatus] = useState<"idle" | "playing" | "paused" | "finished">("idle");
   const [words, setWords] = useState<string[]>([]);
   const [typedWords, setTypedWords] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState("");
@@ -86,6 +86,13 @@ export function PlayPage() {
     setCurrentInput("");
     setTimeLeft(30);
     setStatus("playing");
+  };
+
+  const handlePause = () => setStatus("paused");
+
+  const handleResume = () => {
+    setStatus("playing");
+    setTimeout(() => inputRef.current?.focus(), 10);
   };
 
   const handleFinish = () => {
@@ -190,7 +197,7 @@ export function PlayPage() {
                   className="px-10 py-3.5 rounded text-base font-bold transition-all duration-200 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98]"
                   style={{ background: "#A3D045", color: "#0F1524" }}
                 >
-                  Play Now
+                  Start Game
                 </button>
               </div>
             )}
@@ -202,27 +209,43 @@ export function PlayPage() {
                   style={{ color: "#A3D045" }}
                 >
                   <span>{timeLeft}s</span>
-                  <button
-                    onClick={handleStart}
-                    className="text-sm opacity-50 hover:opacity-100 transition-opacity"
-                  >
-                    Restart ↻
-                  </button>
+                  <div className="flex items-center gap-5">
+                    <button
+                      onClick={handlePause}
+                      className="text-sm opacity-50 hover:opacity-100 transition-opacity"
+                    >
+                      Pause ⏸
+                    </button>
+                    <button
+                      onClick={handleStart}
+                      className="text-sm opacity-50 hover:opacity-100 transition-opacity"
+                    >
+                      Restart ↻
+                    </button>
+                  </div>
                 </div>
 
                 <div className="font-mono text-lg sm:text-2xl leading-loose flex flex-wrap gap-x-3 gap-y-2 select-none overflow-hidden content-start h-full pb-4">
                   {words.map((word, wIdx) => {
                     if (wIdx < typedWords.length) {
-                      const isCorrect = typedWords[wIdx] === word;
+                      const typed = typedWords[wIdx];
                       return (
-                        <span
-                          key={wIdx}
-                          style={{
-                            color: isCorrect ? "#A3D045" : "#ef4444",
-                            textDecoration: isCorrect ? "none" : "underline",
-                          }}
-                        >
-                          {word}
+                        <span key={wIdx} className="relative">
+                          {word.split("").map((char, cIdx) => {
+                            const isTyped = cIdx < typed.length;
+                            const isCorrect = isTyped && typed[cIdx] === char;
+                            const charColor = isTyped ? (isCorrect ? "#A3D045" : "#ef4444") : "#ef4444";
+                            return (
+                              <span key={cIdx} style={{ color: charColor }}>
+                                {char}
+                              </span>
+                            );
+                          })}
+                          {typed.length > word.length && (
+                            <span style={{ color: "#ef4444" }}>
+                              {typed.slice(word.length)}
+                            </span>
+                          )}
                         </span>
                       );
                     }
@@ -270,6 +293,21 @@ export function PlayPage() {
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {status === "paused" && (
+              <div className="flex flex-col items-center justify-center h-[340px] sm:h-[420px] animate-in fade-in zoom-in duration-300">
+                <p className="text-gray-400 font-mono mb-6 tracking-widest uppercase text-sm">
+                  Game Paused
+                </p>
+                <button
+                  onClick={handleResume}
+                  className="px-10 py-3.5 rounded text-base font-bold transition-all duration-200 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98]"
+                  style={{ background: "#A3D045", color: "#0F1524" }}
+                >
+                  Resume Game
+                </button>
               </div>
             )}
 

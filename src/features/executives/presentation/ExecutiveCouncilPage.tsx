@@ -125,13 +125,13 @@ export function ExecutiveCouncilPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 mb-24 min-h-[40vh]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mb-24 min-h-[40vh]">
             {loading ? (
-              <div className="col-span-1 sm:col-span-2 flex justify-center items-center">
+              <div className="col-span-full flex justify-center items-center">
                 <p style={{ color: colors.textMuted }}>Loading executives...</p>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="col-span-1 sm:col-span-2 flex justify-center items-center">
+              <div className="col-span-full flex justify-center items-center">
                 <p style={{ color: colors.textMuted }}>
                   No executives found in this category.
                 </p>

@@ -48,19 +48,19 @@ export function CouncilCard({
         className="rounded-2xl flex flex-col justify-between overflow-hidden cursor-pointer border border-transparent transition-all duration-300 hover:scale-[1.01] active:scale-95"
         style={{
           background: colors.bgCard,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.02)",
           height: "100%",
         }}
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = colors.accent;
-          el.style.boxShadow = "0 12px 36px rgba(0,0,0,0.1)";
+          el.style.boxShadow = "0 8px 24px rgba(0,0,0,0.06)";
           el.style.transform = "translateY(-6px)";
         }}
         onMouseLeave={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "transparent";
-          el.style.boxShadow = "0 4px 20px rgba(0,0,0,0.04)";
+          el.style.boxShadow = "0 2px 10px rgba(0,0,0,0.02)";
           el.style.transform = "translateY(0)";
         }}
       >

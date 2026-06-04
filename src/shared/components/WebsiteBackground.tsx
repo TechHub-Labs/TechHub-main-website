@@ -13,7 +13,7 @@ interface WebsiteBackgroundProps {
 export function WebsiteBackground({
   isDark = false,
   bgColor,
-  opacity = 1,
+  opacity = 0.35,
 }: WebsiteBackgroundProps) {
   const lightPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect x='0' y='0' width='2' height='2' rx='0.4' fill='%23d8dae8'/%3E%3Crect x='5' y='5' width='2' height='2' rx='0.4' fill='%23d8dae8'/%3E%3C/svg%3E")`;
   const darkPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect x='0' y='0' width='2' height='2' rx='0.4' fill='rgba(255%2C255%2C255%2C0.07)'/%3E%3Crect x='5' y='5' width='2' height='2' rx='0.4' fill='rgba(255%2C255%2C255%2C0.07)'/%3E%3C/svg%3E")`;

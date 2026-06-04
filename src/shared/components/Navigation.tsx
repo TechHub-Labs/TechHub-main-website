@@ -100,7 +100,7 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
               return (
                 <div
                   key={link.name}
-                  className="relative"
+                  className="relative cursor-pointer"
                   onMouseEnter={() => setHoveredLink(link.name)}
                   onMouseLeave={() => setHoveredLink(null)}
                 >
