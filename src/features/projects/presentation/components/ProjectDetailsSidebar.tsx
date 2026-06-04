@@ -60,7 +60,7 @@ export function ProjectDetailsSidebar({
       style={{ background: colors.bgCard, borderColor: colors.divider }}
     >
       <div
-        className="w-24 h-24 rounded-full mx-auto mb-8 flex items-center justify-center overflow-hidden"
+        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-6 sm:mb-8 flex items-center justify-center overflow-hidden"
         style={{ background: dark ? "#202868" : "#ECEFF7" }}
       >
         {project.image ? (
@@ -74,7 +74,8 @@ export function ProjectDetailsSidebar({
           />
         ) : (
           <span
-            style={{ fontSize: "36px", fontWeight: 700, color: colors.text }}
+            className="text-2xl sm:text-4xl font-bold"
+            style={{ color: colors.text }}
           >
             {project.name.charAt(0).toUpperCase()}
           </span>
@@ -85,11 +86,11 @@ export function ProjectDetailsSidebar({
         {rows.map(([label, value]) => (
           <div
             key={label}
-            className="flex items-center justify-between text-[15px]"
+            className="flex items-center justify-between text-[13px] sm:text-[15px]"
           >
             <span style={{ color: colors.textMuted }}>{label}:</span>
             <span
-              className="font-medium text-right"
+              className="font-medium text-right max-w-[150px] sm:max-w-none text-right truncate"
               style={{
                 color:
                   label === "Status"

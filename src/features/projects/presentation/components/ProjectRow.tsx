@@ -57,7 +57,7 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
     <Link to={`/projects/${project.id}`} className="block no-underline">
       <div
         ref={ref}
-        className="group flex flex-col sm:flex-row sm:items-center justify-between border-b px-5 sm:px-7 py-6 gap-3 sm:gap-4 relative"
+        className="group flex flex-col sm:flex-row sm:items-center justify-between border-b px-4 sm:px-7 py-5 sm:py-6 gap-3 sm:gap-4 relative"
         style={{
           borderColor: colors.divider,
           background: colors.bgCard,
@@ -84,7 +84,7 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
       >
         <div className="flex flex-1 items-start sm:items-center gap-4 sm:gap-5 lg:gap-7 min-w-0 w-full">
           <div
-            className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 flex items-center justify-center overflow-hidden"
+            className="h-12 w-12 sm:h-16 sm:w-16 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 flex items-center justify-center overflow-hidden"
             style={{ background: colors.memberBg }}
           >
             {project.image_url ? (
@@ -110,13 +110,13 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
 
           <div className="min-w-0 flex-1">
             <h3
-              className="mb-1 sm:mb-2 text-xl sm:text-[2rem] font-bold leading-none tracking-tight"
+              className="mb-1 sm:mb-2 text-lg sm:text-[2rem] font-bold leading-none tracking-tight"
               style={{ color: colors.text }}
             >
               {project.title}
             </h3>
             <p
-              className="mb-3 text-sm sm:text-base leading-relaxed line-clamp-2 sm:line-clamp-1"
+              className="mb-3 text-xs sm:text-base leading-relaxed line-clamp-2 sm:line-clamp-1"
               style={{ color: colors.textMuted }}
             >
               {project.short_description}
@@ -125,7 +125,7 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
               {(project.tech || []).map((tag: string) => (
                 <span
                   key={tag}
-                  className="rounded-full px-3 py-1 text-xs font-semibold sm:text-sm transition-transform duration-200 hover:scale-105"
+                  className="rounded-full px-2 py-0.5 text-[10px] sm:text-sm sm:px-3 sm:py-1 font-semibold transition-transform duration-200 hover:scale-105"
                   style={{ background: colors.tagBg, color: colors.text }}
                 >
                   {tag}
@@ -135,7 +135,7 @@ export function ProjectRow({ project, index, colors }: ProjectRowProps) {
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 self-start sm:self-center ml-[72px] sm:ml-4 mt-1 sm:mt-0">
+        <div className="flex shrink-0 items-center gap-2 self-start sm:self-center ml-[64px] sm:ml-4 mt-1 sm:mt-0">
           <span
             className="h-[10px] w-[10px] rounded-full"
             style={{

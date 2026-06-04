@@ -80,7 +80,7 @@ export function ExecutiveCouncilPage() {
       <main className="flex-1 w-full">
         <PageMargin>
           <div
-            className="text-center pt-16 pb-10"
+            className="text-center pt-6 sm:pt-8 pb-10"
             style={{
               opacity: headerVisible ? 1 : 0,
               transform: headerVisible ? "translateY(0)" : "translateY(20px)",

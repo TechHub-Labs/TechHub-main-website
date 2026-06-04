@@ -76,19 +76,19 @@ export function CouncilCard({
           />
           <div className="px-6 pt-6 pb-4 flex flex-col justify-center items-center text-center">
             <h3
-              className="text-2xl font-bold mb-1 tracking-tight"
+              className="text-lg sm:text-xl font-bold mb-1 tracking-tight"
               style={{ color: colors.text }}
             >
               {member.name}
             </h3>
             <p
-              className="text-sm font-semibold mb-3"
+              className="text-xs sm:text-sm font-semibold mb-3"
               style={{ color: colors.accent }}
             >
               {member.role}
             </p>
             <p
-              className="text-base italic leading-relaxed max-w-xs"
+              className="text-xs sm:text-sm italic leading-relaxed max-w-xs"
               style={{ color: colors.textMuted }}
             >
               {member.description}

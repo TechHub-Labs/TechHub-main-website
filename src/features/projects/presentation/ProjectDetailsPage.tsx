@@ -190,7 +190,7 @@ export function ProjectDetailsPage() {
               >
                 <div className="flex flex-col sm:flex-row items-start gap-7 mb-8">
                   <div
-                    className="w-24 h-24 rounded-full shrink-0 flex items-center justify-center overflow-hidden"
+                    className="w-16 h-16 sm:w-24 sm:h-24 rounded-full shrink-0 flex items-center justify-center overflow-hidden"
                     style={{ background: dark ? colors.bgCard : "#ECEFF7" }}
                   >
                     {project.image ? (
@@ -204,7 +204,7 @@ export function ProjectDetailsPage() {
                     ) : (
                       <span
                         style={{
-                          fontSize: "36px",
+                          fontSize: "24px",
                           fontWeight: 700,
                           color: colors.text,
                         }}
@@ -229,7 +229,7 @@ export function ProjectDetailsPage() {
                           style={{ background: getStatusColor(project.status) }}
                         />
                         <span
-                          className="text-[15px] font-semibold"
+                          className="text-xs sm:text-[15px] font-semibold"
                           style={{ color: colors.text }}
                         >
                           {project.status}
@@ -237,7 +237,7 @@ export function ProjectDetailsPage() {
                       </div>
                     </div>
                     <p
-                      className="text-base sm:text-lg leading-relaxed mb-5 max-w-3xl"
+                      className="text-sm sm:text-lg leading-relaxed mb-5 max-w-3xl"
                       style={{ color: colors.textMuted }}
                     >
                       {project.desc}
@@ -246,7 +246,7 @@ export function ProjectDetailsPage() {
                       {project.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="px-4 py-2 rounded-full text-sm font-semibold"
+                          className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold"
                           style={{
                             background: dark
                               ? "rgba(255,255,255,0.06)"
@@ -262,11 +262,11 @@ export function ProjectDetailsPage() {
                 </div>
 
                 <div
-                  className="flex items-center justify-between py-6 border-y mb-10"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-5 sm:py-6 gap-3 sm:gap-0 border-y mb-10"
                   style={{ borderColor: colors.divider }}
                 >
                   <span
-                    className="text-lg font-semibold"
+                    className="text-base sm:text-lg font-semibold"
                     style={{ color: colors.text }}
                   >
                     Website
@@ -276,7 +276,7 @@ export function ProjectDetailsPage() {
                     href={project.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 text-base transition-opacity hover:opacity-70"
+                    className="flex items-center gap-2 text-sm sm:text-base transition-opacity hover:opacity-70"
                     style={{ color: "#3B5BDB" }}
                   >
                     <svg
@@ -296,7 +296,7 @@ export function ProjectDetailsPage() {
                 </div>
 
                 <div
-                  className="space-y-10 text-[17px] lg:text-[18px] leading-[2]"
+                  className="space-y-8 sm:space-y-10 text-[15px] sm:text-[17px] lg:text-[18px] leading-[1.8] sm:leading-[2]"
                   style={{ color: colors.textMuted }}
                 >
                   <p className="whitespace-pre-wrap">

@@ -120,7 +120,7 @@ export function ProjectsPage() {
       <main className="w-full flex-1 overflow-x-hidden">
         <PageMargin>
           <section
-            className="pb-12 pt-20"
+            className="pb-8 pt-6 sm:pt-8"
             style={{
               opacity: mounted ? 1 : 0,
               transform: mounted ? "translateY(0px)" : "translateY(24px)",
@@ -137,7 +137,7 @@ export function ProjectsPage() {
             />
           </section>
 
-          <section className="relative z-50 mb-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <section className="relative z-50 mb-10 flex flex-col items-end gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div
               className="flex h-16 w-full items-center gap-3 rounded-2xl border px-5 lg:max-w-[720px]"
               style={{ background: colors.bgCard, borderColor: colors.divider }}
@@ -214,7 +214,7 @@ export function ProjectsPage() {
                   setShowStatusDrop(!showStatusDrop);
                   setShowCatDrop(false);
                 }}
-                className="flex h-16 items-center gap-3 rounded-2xl border px-6 text-sm font-semibold w-full lg:w-auto"
+                className="flex h-12 lg:h-16 items-center gap-3 rounded-xl lg:rounded-2xl border px-4 lg:px-6 text-xs lg:text-sm font-semibold w-auto"
                 style={{
                   background: colors.bgCard,
                   borderColor: colors.divider,
