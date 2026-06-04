@@ -61,24 +61,27 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
     : "none";
 
   return (
-    <nav
-      style={{
-        background: navBg,
-        backdropFilter: navBlur,
-        WebkitBackdropFilter: navBlur,
-        borderBottom: `1px solid ${colors.navBorder}`,
-        boxShadow: navShadow,
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
+    <>
+      <nav
+        style={{
+          background: navBg,
+          backdropFilter: navBlur,
+          WebkitBackdropFilter: navBlur,
+          borderBottom: `1px solid ${colors.navBorder}`,
+          boxShadow: navShadow,
+          position: "fixed",
+          width: "100%",
+          top: 0,
+          left: 0,
+          zIndex: 1000,
 
-        transform: mounted ? "translateY(0)" : "translateY(-100%)",
-        opacity: mounted ? 1 : 0,
-        transition:
-          "transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease, background 0.3s ease, box-shadow 0.4s ease, backdrop-filter 0.3s ease",
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
+          transform: mounted ? "translateY(0)" : "translateY(-100%)",
+          opacity: mounted ? 1 : 0,
+          transition:
+            "transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease, background 0.3s ease, box-shadow 0.4s ease, backdrop-filter 0.3s ease",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex items-center justify-between h-16">
           <Link
             to="/"
@@ -265,5 +268,8 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
         </div>
       </div>
     </nav>
+    {/* Spacer to prevent content from jumping up under the fixed nav */}
+    <div className="h-16 w-full shrink-0" />
+    </>
   );
 }

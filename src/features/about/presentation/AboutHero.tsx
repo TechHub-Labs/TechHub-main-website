@@ -95,7 +95,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
   return (
     <section
       ref={heroRef}
-      className="relative pt-12 pb-24 lg:pt-3 lg:pb-0 overflow-hidden flex items-center min-h-[calc(100vh-80px)]"
+      className="relative pt-4 lg:pt-8 pb-8 lg:pb-16 overflow-hidden flex items-start min-h-[calc(100vh-80px)]"
     >
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
@@ -119,12 +119,12 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[500px] sm:h-[460px]">
+          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-4 h-[420px] sm:h-[400px] lg:h-[380px] lg:w-[90%] lg:ml-auto">
             <div
               ref={refA}
               onMouseEnter={() => setHovered("a")}
               onMouseLeave={() => setHovered(null)}
-              className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end cursor-default shadow-sm"
+              className="row-span-3 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle("a", f1)}
             >
               <div className="mt-8">
@@ -147,11 +147,11 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               ref={refB}
               onMouseEnter={() => setHovered("b")}
               onMouseLeave={() => setHovered(null)}
-              className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-end cursor-default shadow-sm"
+              className="row-span-2 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle("b", f2)}
             >
               <div
-                className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-1 tracking-tight tabular-nums"
+                className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-1 tracking-tight tabular-nums"
                 style={{ color: textCol("b") }}
               >
                 {stat2}
@@ -168,11 +168,11 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               ref={refC}
               onMouseEnter={() => setHovered("c")}
               onMouseLeave={() => setHovered(null)}
-              className="row-span-2 rounded-sm p-4 sm:p-6 flex flex-col justify-center cursor-default shadow-sm"
+              className="row-span-2 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-center cursor-default shadow-sm"
               style={cardStyle("c", f3)}
             >
               <div
-                className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-1 tracking-tight"
+                className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-1 tracking-tight"
                 style={{ color: textCol("c") }}
               >
                 1 in 5
@@ -189,7 +189,7 @@ export function AboutHero({ colors }: { colors: ThemeColors }) {
               ref={refD}
               onMouseEnter={() => setHovered("d")}
               onMouseLeave={() => setHovered(null)}
-              className="row-span-3 rounded-sm p-4 sm:p-6 flex flex-col justify-end cursor-default shadow-sm"
+              className="row-span-3 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
               style={cardStyle("d", f4)}
             >
               <div
