@@ -4,7 +4,16 @@
  * Core component/utility for the TechHub application.
  */
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 import { LandingPage } from "./features/landing/presentation/LandingPage";
 import { AboutPage } from "./features/about/presentation/AboutPage";
 import { MembersPage } from "./features/members/presentation/MembersPage";
@@ -31,7 +40,8 @@ import { NotFoundPage } from "./features/notfound/presentation/NotFoundPage";
 function App() {
   return (
     <BrowserRouter>
-      <div className="w-full min-h-screen bg-transparent">
+      <ScrollToTop />
+      <div className="w-full max-w-[100vw] overflow-x-hidden min-h-screen bg-transparent">
         <CustomCursor />
         <Routes>
           <Route path="/" element={<LandingPage />} />

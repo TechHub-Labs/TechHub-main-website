@@ -132,8 +132,8 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
           (m, i) => m.avatar_url || `https://i.pravatar.cc/100?img=${i + 10}`
         );
 
-        // Preload images before swapping out placeholders, but don't block forever
-        const preloadPromise = Promise.all(
+        // Preload images completely before showing the page
+        await Promise.all(
           newAvatars.map((url) => {
             return new Promise((resolve) => {
               const img = new Image();
@@ -143,9 +143,6 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
             });
           })
         );
-
-        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 800));
-        await Promise.race([preloadPromise, timeoutPromise]);
 
         setAvatars(newAvatars);
       }
@@ -172,12 +169,12 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
     hoveredCard === key ? colors.tealText : colors.text;
 
   return (
-    <section className="relative pt-3 overflow-hidden flex items-center min-h-[calc(100vh-80px)]">
+    <section className="relative pt-4 lg:pt-8 pb-8 lg:pb-16 overflow-hidden flex items-start min-h-[calc(100vh-80px)]">
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="max-w-xl">
             <h1
-              className="text-4xl sm:text-5xl lg:text-[5.5rem] font-bold mb-5 leading-[0.9] tracking-tight min-h-[3.15em]"
+              className="text-[3.25rem] sm:text-6xl lg:text-[4.5rem] font-bold mb-4 leading-[1.05] tracking-tight min-h-[3.15em]"
               style={{ color: colors.text }}
             >
               Build.
@@ -202,30 +199,30 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
             </h1>
 
             <p
-              className="text-base sm:text-xl mb-10 leading-relaxed font-normal"
+              className="text-lg sm:text-xl mb-8 leading-relaxed font-normal"
               style={{ color: colors.text }}
             >
               TechHub is a community of developers, designers, and innovators
               building real products and real opportunities.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/join" className="w-max">
+            <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <Link to="/join" className="w-full sm:w-max">
                 <ThemeButton
                   variant="primary"
                   colors={colors}
                   isDark={isDark}
-                  className="fun-cursor"
+                  className="fun-cursor w-full sm:w-auto flex justify-center"
                 >
                   Join TechHub
                 </ThemeButton>
               </Link>
-              <Link to="/projects" className="w-max">
+              <Link to="/projects" className="w-full sm:w-max">
                 <ThemeButton
                   variant="secondary"
                   colors={colors}
                   isDark={isDark}
-                  className="fun-cursor"
+                  className="fun-cursor w-full sm:w-auto flex justify-center"
                 >
                   Explore Projects
                 </ThemeButton>
@@ -233,12 +230,12 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 grid-rows-5 grid-flow-col gap-4 sm:gap-5 h-[500px] sm:h-[460px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-5 sm:grid-flow-col gap-4 sm:gap-4 h-auto sm:h-[400px] lg:h-[380px] mt-8 sm:mt-0">
             <div
               ref={refMembers}
               onMouseEnter={() => setHoveredCard("members")}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-3 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-between cursor-default shadow-sm"
+              className="sm:row-span-3 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-between cursor-default shadow-sm min-h-[160px] sm:min-h-0"
               style={cardStyle("members", f1, normalCardBg, colors.text)}
             >
               <div className="flex -space-x-3">
@@ -259,13 +256,13 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
               </div>
               <div className="mt-8">
                 <div
-                  className="text-3xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums"
+                  className="text-5xl sm:text-4xl lg:text-5xl font-medium mb-2 sm:mb-1 tracking-tight tabular-nums"
                   style={{ color: textCol("members") }}
                 >
                   {members}
                 </div>
                 <div
-                  className="text-sm sm:text-base font-medium"
+                  className="text-base sm:text-sm font-medium"
                   style={{ color: textCol("members") }}
                 >
                   Active members
@@ -277,17 +274,17 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
               ref={refStacks}
               onMouseEnter={() => setHoveredCard("stacks")}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-2 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
+              className="sm:row-span-2 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-end cursor-default shadow-sm min-h-[130px] sm:min-h-0"
               style={cardStyle("stacks", f2, normalCardBg, colors.text)}
             >
               <div
-                className="text-2xl sm:text-4xl font-medium mb-1 tracking-tight tabular-nums"
+                className="text-4xl sm:text-3xl lg:text-4xl font-medium mb-2 sm:mb-1 tracking-tight tabular-nums"
                 style={{ color: textCol("stacks") }}
               >
                 {stacks}
               </div>
               <div
-                className="text-xs sm:text-sm font-medium"
+                className="text-sm font-medium"
                 style={{ color: textCol("stacks") }}
               >
                 Tech Stacks Used
@@ -298,17 +295,17 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
               ref={refProjects}
               onMouseEnter={() => setHoveredCard("projects")}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-2 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-center cursor-default shadow-sm"
+              className="sm:row-span-2 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-center cursor-default shadow-sm min-h-[130px] sm:min-h-0"
               style={cardStyle("projects", f3, normalCardBg, colors.text)}
             >
               <div
-                className="text-2xl sm:text-4xl font-medium mb-1 tracking-tight tabular-nums"
+                className="text-4xl sm:text-3xl lg:text-4xl font-medium mb-2 sm:mb-1 tracking-tight tabular-nums"
                 style={{ color: textCol("projects") }}
               >
                 {projects}
               </div>
               <div
-                className="text-xs sm:text-sm font-medium"
+                className="text-sm font-medium"
                 style={{ color: textCol("projects") }}
               >
                 Projects Built
@@ -319,17 +316,17 @@ export function HeroSection({ colors, dark: isDark, onLoaded }: Props) {
               ref={refTeams}
               onMouseEnter={() => setHoveredCard("teams")}
               onMouseLeave={() => setHoveredCard(null)}
-              className="row-span-3 rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-end cursor-default shadow-sm"
+              className="sm:row-span-3 rounded-sm p-5 sm:p-7 lg:p-8 flex flex-col justify-end cursor-default shadow-sm min-h-[160px] sm:min-h-0"
               style={cardStyle("teams", f4, normalCardBg, colors.text)}
             >
               <div
-                className="text-3xl sm:text-5xl font-medium mb-1 tracking-tight tabular-nums"
+                className="text-5xl sm:text-4xl lg:text-5xl font-medium mb-2 sm:mb-1 tracking-tight tabular-nums"
                 style={{ color: textCol("teams") }}
               >
                 {teams}
               </div>
               <div
-                className="text-sm sm:text-base font-medium"
+                className="text-base sm:text-sm font-medium"
                 style={{ color: textCol("teams") }}
               >
                 Active Teams

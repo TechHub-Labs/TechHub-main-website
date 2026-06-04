@@ -103,7 +103,7 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
                 >
                   <Link
                     to={link.path}
-                    className="text-[15px] font-medium transition-opacity duration-200"
+                    className="text-[15px] font-medium transition-opacity duration-200 cursor-pointer select-none"
                     style={{
                       color: colors.text,
                       opacity: isActive ? 1 : 0.75,
@@ -225,7 +225,7 @@ export function Navigation({ colors, dark, onThemeToggle }: NavigationProps) {
                 <Link
                   key={link.name}
                   to={link.path}
-                  className="flex items-center gap-3 px-2 py-3 rounded-lg text-base font-medium transition-all duration-200"
+                  className="flex items-center gap-3 px-2 py-3 rounded-lg text-base font-medium transition-all duration-200 cursor-pointer select-none"
                   style={{
                     color: isActive ? "#A3D045" : colors.text,
                     background: isActive
