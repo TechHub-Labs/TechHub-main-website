@@ -30,6 +30,7 @@ export function CustomCursor() {
   const rotation2 = useRef(0);
 
   const [isHovering, setIsHovering] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const isHoveringRef = useRef(false);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export function CustomCursor() {
     const onMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
+      if (!isVisible) setIsVisible(true);
     };
 
     const onMouseOver = (e: MouseEvent) => {
@@ -53,8 +55,13 @@ export function CustomCursor() {
       );
     };
 
+    const onMouseLeave = () => {
+      setIsVisible(false);
+    };
+
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseover", onMouseOver);
+    document.addEventListener("mouseleave", onMouseLeave);
 
     let raf: number;
     let frameCount = 0;
@@ -123,9 +130,10 @@ export function CustomCursor() {
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseover", onMouseOver);
+      document.removeEventListener("mouseleave", onMouseLeave);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [isVisible]);
 
   if (window.matchMedia("(pointer: coarse)").matches) return null;
 
@@ -141,23 +149,6 @@ export function CustomCursor() {
       <style>{`
         @media (pointer: fine) { * { cursor: none !important; } }
       `}</style>
-
-      <div
-        ref={spotlightRef}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "550px",
-          height: "550px",
-          borderRadius: "50%",
-          pointerEvents: "none",
-          zIndex: 0,
-          background: spotGradient,
-          mixBlendMode: dark ? "screen" : "multiply",
-          willChange: "transform",
-        }}
-      />
 
       {Array.from({ length: TRAIL_LENGTH }).map((_, i) => (
         <div
