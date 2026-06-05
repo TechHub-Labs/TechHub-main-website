@@ -15,12 +15,10 @@ export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const orbit1Ref = useRef<HTMLDivElement>(null);
   const orbit2Ref = useRef<HTMLDivElement>(null);
-  const spotlightRef = useRef<HTMLDivElement>(null);
   const trailRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const mouse = useRef({ x: -300, y: -300 });
   const trailing = useRef({ x: -300, y: -300 });
-  const spotlight = useRef({ x: -300, y: -300 });
 
   const trailPositions = useRef<{ x: number; y: number }[]>(
     Array.from({ length: TRAIL_LENGTH }, () => ({ x: -300, y: -300 })),
@@ -72,9 +70,6 @@ export function CustomCursor() {
       trailing.current.x += (mouse.current.x - trailing.current.x) * 0.25;
       trailing.current.y += (mouse.current.y - trailing.current.y) * 0.25;
 
-      spotlight.current.x += (mouse.current.x - spotlight.current.x) * 0.06;
-      spotlight.current.y += (mouse.current.y - spotlight.current.y) * 0.06;
-
       if (frameCount % 2 === 0) {
         const tp = trailPositions.current;
         for (let i = tp.length - 1; i > 0; i--) {
@@ -102,12 +97,6 @@ export function CustomCursor() {
         const scale = isHoveringRef.current ? 1.2 : 0;
         orbit2Ref.current.style.transform = `translate3d(${trailing.current.x}px,${trailing.current.y}px,0) translate(-50%,-50%) scale(${scale}) rotate(${rotation2.current}deg)`;
         orbit2Ref.current.style.opacity = isHoveringRef.current ? "1" : "0";
-      }
-
-      if (spotlightRef.current) {
-        const sx = spotlight.current.x - 275; // center the 550px element
-        const sy = spotlight.current.y - 275;
-        spotlightRef.current.style.transform = `translate3d(${sx}px,${sy}px,0)`;
       }
 
       trailRefs.current.forEach((el, i) => {
@@ -139,10 +128,6 @@ export function CustomCursor() {
 
   const cursorColor = dark ? "#A3D045" : "#2563EB";
   const glowColor = dark ? "rgba(163,208,69,0.6)" : "rgba(37,99,235,0.4)";
-
-  const spotGradient = dark
-    ? "radial-gradient(circle, rgba(163,208,69,0.07) 0%, rgba(163,208,69,0.03) 40%, transparent 70%)"
-    : "radial-gradient(circle, rgba(13,19,64,0.05) 0%, rgba(13,19,64,0.02) 40%, transparent 70%)";
 
   return (
     <>
