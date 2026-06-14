@@ -166,7 +166,7 @@ export function SuperAdminMembers() {
 
   const toggleVisible = async (m: Member) => {
     await (supabase.from("members") as any)
-      .update({ visible: !m.visible, sort_order: Date.now() })
+      .update({ visible: !m.visible })
       .eq("id", m.id);
     load();
   };

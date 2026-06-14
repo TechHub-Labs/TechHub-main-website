@@ -157,9 +157,11 @@ export function SuperAdminExecutives() {
   };
 
   const toggleVisible = async (ex: Executive) => {
-    await (supabase.from("executives") as any)
-      .update({ visible: !ex.visible, sort_order: Date.now() })
-      .eq("id", ex.id);
+    const { error } = await supabase
+        .from("executives")
+        .update({ visible: !ex.visible })
+        .eq("id", ex.id);
+    if (error) console.error(error);
     load();
   };
 
