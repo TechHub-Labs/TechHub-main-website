@@ -164,8 +164,8 @@ export function AdminDashboard() {
 
   return (
     <div
-      style={{ padding: "40px", maxWidth: "1000px" }}
-      className="admin-fade-in"
+      style={{ maxWidth: "1000px" }}
+      className="admin-fade-in p-5 md:p-10"
     >
       <div style={{ marginBottom: "40px" }}>
         <h1
@@ -201,7 +201,7 @@ export function AdminDashboard() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
               gap: "20px",
               marginBottom: "40px",
             }}
@@ -243,7 +243,7 @@ export function AdminDashboard() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           gap: "20px",
         }}
       >

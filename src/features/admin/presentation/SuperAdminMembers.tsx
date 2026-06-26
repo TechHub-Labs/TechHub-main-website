@@ -252,7 +252,7 @@ export function SuperAdminMembers() {
     );
 
   return (
-    <div style={{ padding: "32px" }}>
+    <div className="p-4 md:p-8">
       <div
         style={{
           display: "flex",

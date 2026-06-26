@@ -131,7 +131,7 @@ export function SuperAdminMessages() {
   const borderCol = dark ? "rgba(255,255,255,0.06)" : "rgba(79,70,229,0.12)";
 
   return (
-    <div style={{ padding: "32px" }}>
+    <div className="p-4 md:p-8">
       <div
         style={{
           display: "flex",

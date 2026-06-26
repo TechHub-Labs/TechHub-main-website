@@ -348,7 +348,7 @@ export function AdminLayout() {
   return (
     <div
       style={{
-        height: "100vh",
+        height: "100dvh",
         overflow: "hidden",
         display: "flex",
         fontFamily: "'Inter', 'Geist', sans-serif",
@@ -372,7 +372,7 @@ export function AdminLayout() {
             ? "var(--min-surface-dark)"
             : "var(--min-surface-light)",
           borderRight: "1px solid var(--min-border)",
-          height: "100vh",
+          height: "100dvh",
           display: "none",
           zIndex: 10,
         }}
@@ -435,7 +435,7 @@ export function AdminLayout() {
               top: 0,
               left: 0,
               width: "260px",
-              height: "100vh",
+              height: "100dvh",
               background: dark
                 ? "var(--min-surface-dark)"
                 : "var(--min-surface-light)",
@@ -455,10 +455,9 @@ export function AdminLayout() {
           minWidth: 0,
           overflowY: "auto",
           overflowX: "hidden",
-          paddingTop: 0,
           paddingBottom: "40px",
         }}
-        className="lg:!pt-0 pt-24"
+        className="lg:!pt-0 pt-20"
       >
         <Outlet />
       </main>
